@@ -1,4 +1,4 @@
-// package *Inserte nombre del paquete*
+package gestorAplicacion.operacion.individuos;
 
 public class Chofer{
     private static int cantidadChoferes;

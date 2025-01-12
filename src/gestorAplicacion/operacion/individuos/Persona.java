@@ -1,4 +1,4 @@
-// package *Inserte nombre del paquete*
+package gestorAplicacion.operacion.individuos;
 
 public abstract class Persona{
     String nombre;

@@ -1,4 +1,6 @@
-// package *Inserte nombre del paquete*
+package gestorAplicacion.administracion;
+import gestorAplicacion.operacion.individuos.Chofer;
+import gestorAplicacion.operacion.logistica.Bus;
 
 public class Empresa{
     private String nombre;

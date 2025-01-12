@@ -1,4 +1,5 @@
-// package *Inserte nombre del paquete*
+package gestorAplicacion.operacion.logistica;
+import gestorAplicacion.administracion.Asiento;
 
 public class Bus{
     private String placa;

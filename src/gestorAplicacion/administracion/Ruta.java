@@ -1,4 +1,5 @@
-// package *Inserte nombre del paquete*
+package gestorAplicacion.administracion;
+import gestorAplicacion.operacion.logistica.Bus;
 
 public class Ruta{
     private int idRuta;
