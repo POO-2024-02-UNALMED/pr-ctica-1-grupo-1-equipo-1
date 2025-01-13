@@ -1,5 +1,4 @@
 package gestorAplicacion.operacion.logistica;
-import gestorAplicacion.operacion.logistica.Bus;
 import gestorAplicacion.operacion.individuos.Pasajero;
 
 public class Asiento{

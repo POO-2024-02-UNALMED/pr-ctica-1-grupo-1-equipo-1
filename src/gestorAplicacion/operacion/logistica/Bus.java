@@ -1,5 +1,4 @@
 package gestorAplicacion.operacion.logistica;
-import gestorAplicacion.operacion.logistica.Asiento;
 
 public class Bus{
     private String placa;

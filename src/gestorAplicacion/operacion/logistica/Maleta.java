@@ -11,27 +11,27 @@ public class Maleta{
 
     //Getters y Setters//
 
-    public int getIdMaleta() {
+    public int getIdMaleta(){
         return idMaleta;
     }
 
-    public void setIdMaleta(int idMaleta) {
+    public void setIdMaleta(int idMaleta){
         this.idMaleta = idMaleta;
     }
 
-    public int getPeso() {
+    public int getPeso(){
         return peso;
     }
 
-    public void setPeso(int peso) {
+    public void setPeso(int peso){
         this.peso = peso;
     }
 
-    public Pasajero getPropietario() {
+    public Pasajero getPropietario(){
         return Propietario;
     }
 
-    public void setPropietario(Pasajero propietario) {
+    public void setPropietario(Pasajero propietario){
         Propietario = propietario;
     }
 

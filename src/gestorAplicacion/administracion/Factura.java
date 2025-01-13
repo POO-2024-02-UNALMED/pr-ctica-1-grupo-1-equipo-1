@@ -1,5 +1,4 @@
 package gestorAplicacion.administracion;
-import gestorAplicacion.administracion.Ruta;
 
 public class Factura{
 

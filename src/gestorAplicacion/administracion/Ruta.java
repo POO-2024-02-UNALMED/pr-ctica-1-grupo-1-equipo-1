@@ -1,14 +1,31 @@
 package gestorAplicacion.administracion;
 import gestorAplicacion.operacion.logistica.Bus;
+import java.util.ArrayList;
 
 public class Ruta{
+    private static int totalRutas;
     private int idRuta;
     private Bus busAsociado;
     private int horaSalida;  // Cambiar por objeto de tiempo
     private int horaLlegada; // Cambiar por objeto de tiempo
-    private String lugarInicio;
-    private String lugarFinal;
-    private String[] paradas;
+    private int lugarInicio;
+    private int lugarFinal;
+    private ArrayList<Parada> paradas;
+
+    public Ruta(Bus busAsociado, int horaSalida, int horaLlegada, // Cambiar por objetos de tiempo
+     int lugarInicio, int lugarFinal, ArrayList<Parada> paradas){
+        totalRutas++;
+        this.idRuta = totalRutas;
+        this.busAsociado = busAsociado;
+        this.horaSalida = horaSalida;
+        this.horaLlegada = horaLlegada;
+        this.lugarInicio = lugarInicio;
+        this.lugarFinal = lugarFinal;
+    }
+
+    public Ruta(int lugarInicio, int lugarFinal, ArrayList<Parada> paradas){
+        this(null, 0, 0, lugarInicio, lugarFinal, paradas);
+    }
 
     // Métodos get-set
     public int getIdRuta(){
@@ -43,27 +60,27 @@ public class Ruta{
         horaLlegada = nuevaHoraLlegada;
     }
 
-    public String getLugarInicio(){
+    public int getLugarInicio(){
         return lugarInicio;
     }
 
-    public void setLugarInicio(String nuevoLugarInicio){
+    public void setLugarInicio(int nuevoLugarInicio){
         lugarInicio = nuevoLugarInicio;
     }
 
-    public String getLugarFinal(){
+    public int getLugarFinal(){
         return lugarFinal;
     }
 
-    public void setLugarFinal(String nuevoLugarFinal){
+    public void setLugarFinal(int nuevoLugarFinal){
         lugarFinal = nuevoLugarFinal;
     }
 
-    public String[] getParadas(){
+    public ArrayList<Parada> getParadas(){
         return paradas;
     }
 
-    public void setParadas(String[] nuevasParadas){
+    public void setParadas(ArrayList<Parada> nuevasParadas){
         paradas = nuevasParadas;
     }
 
