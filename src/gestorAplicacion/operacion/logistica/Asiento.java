@@ -1,7 +1,6 @@
-package logistica;
-
-import src.gestorAplicacion.operacion.logistica.Bus;
-import src.gestorAplicacion.operacion.individuos.Pasajero;
+package gestorAplicacion.operacion.logistica;
+import gestorAplicacion.operacion.logistica.Bus;
+import gestorAplicacion.operacion.individuos.Pasajero;
 
 public class Asiento{
 
@@ -15,43 +14,43 @@ public class Asiento{
 
     // Getters y Setters//
 
-    public Bus getBus() {
+    public Bus getBus(){
         return bus;
     }
 
-    public void setBus(Bus bus) {
+    public void setBus(Bus bus){
         this.bus = bus;
     }
 
-    public boolean isEstado() {
+    public boolean isEstado(){
         return estado;
     }
 
-    public void setEstado(boolean estado) {
+    public void setEstado(boolean estado){
         this.estado = estado;
     }
 
-    public int getIdAsiento() {
+    public int getIdAsiento(){
         return idAsiento;
     }
 
-    public void setIdAsiento(int idAsiento) {
+    public void setIdAsiento(int idAsiento){
         this.idAsiento = idAsiento;
     }
 
-    public String getIntegridad() {
+    public String getIntegridad(){
         return integridad;
     }
 
-    public void setIntegridad(String integridad) {
+    public void setIntegridad(String integridad){
         this.integridad = integridad;
     }
 
-    public Pasajero getUsuario() {
+    public Pasajero getUsuario(){
         return Usuario;
     }
 
-    public void setUsuario(Pasajero usuario) {
+    public void setUsuario(Pasajero usuario){
         Usuario = usuario;
     }
 

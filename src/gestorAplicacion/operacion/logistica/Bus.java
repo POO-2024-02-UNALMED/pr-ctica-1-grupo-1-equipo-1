@@ -1,5 +1,5 @@
 package gestorAplicacion.operacion.logistica;
-import gestorAplicacion.administracion.Asiento;
+import gestorAplicacion.operacion.logistica.Asiento;
 
 public class Bus{
     private String placa;
@@ -72,6 +72,6 @@ public class Bus{
     }
 
     public float danoAleatorio(){
-
+        return 0;
     }
 }

@@ -1,12 +1,11 @@
-package logistica;
-
-import src.gestorAplicacion.operacion.individuos.Pasajero;
+package gestorAplicacion.operacion.logistica;
+import gestorAplicacion.operacion.individuos.Pasajero;
 
 public class Maleta{
 
     //Atributos//
 
-    private int idMaleta
+    private int idMaleta;
     private Pasajero Propietario;
     private int peso;
 

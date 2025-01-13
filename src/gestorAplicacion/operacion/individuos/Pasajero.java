@@ -1,6 +1,6 @@
-package individuos;
-
-import src.gestorAplicacion.administracion.Factura;
+package gestorAplicacion.operacion.individuos;
+import gestorAplicacion.operacion.logistica.Maleta;
+import gestorAplicacion.administracion.Factura;
 
 public class Pasajero{
 
@@ -13,27 +13,27 @@ public class Pasajero{
 
     //Getters y Setters//
 
-    public Factura getFactura() {
+    public Factura getFactura(){
         return factura;
     }
 
-    public void setFactura(Factura factura) {
+    public void setFactura(Factura factura){
         this.factura = factura;
     }
 
-    public Maleta[] getMaletas() {
+    public Maleta[] getMaletas(){
         return maletas;
     }
 
-    public void setMaletas(Maleta[] maletas) {
+    public void setMaletas(Maleta[] maletas){
         this.maletas = maletas;
     }
 
-    public double getWallet() {
+    public double getWallet(){
         return wallet;
     }
 
-    public void setWallet(double wallet) {
+    public void setWallet(double wallet){
         this.wallet = wallet;
     }
 

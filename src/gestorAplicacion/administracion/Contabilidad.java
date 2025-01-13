@@ -1,29 +1,28 @@
-package administracion;
+package gestorAplicacion.administracion;
+import gestorAplicacion.administracion.Factura;
 
-import src.gestorAplicacion.administracion.Factura;
-
-public  class Contabilidad {
+public  class Contabilidad{
 
     //Atributos//
 
     private double ingresos;
-    private Facturas[] ventas;
+    private Factura[] ventas;
 
     //Getters y Setters//
 
-    public double getIngresos() {
+    public double getIngresos(){
         return ingresos;
     }
 
-    public void setIngresos(double ingresos) {
+    public void setIngresos(double ingresos){
         this.ingresos = ingresos;
     }
 
-    public Facturas[] getVentas() {
+    public Factura[] getVentas(){
         return ventas;
     }
 
-    public void setVentas(Facturas[] ventas) {
+    public void setVentas(Factura[] ventas){
         this.ventas = ventas;
     }
 
