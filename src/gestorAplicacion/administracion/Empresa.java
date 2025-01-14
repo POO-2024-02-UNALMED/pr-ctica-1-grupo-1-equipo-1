@@ -2,13 +2,15 @@ package gestorAplicacion.administracion;
 import gestorAplicacion.operacion.individuos.Chofer;
 import gestorAplicacion.operacion.logistica.Bus;
 import java.util.ArrayList; // Para crear la red de carreteras que tiene el terminal.
+import java.util.Arrays; // Para ordenar arrays.
+import java.util.Comparator;
 
 public class Empresa{
     private String nombre;
     private Chofer[] empleados;
     private Bus[] busesTotales;
     private Bus[] busesDisponibles;
-    private Ruta[] rutas;
+    private ArrayList<Ruta> rutas;
     private int caja;
 
     // Atributo donde se guardará el grafo de la red de carreteras
@@ -50,6 +52,14 @@ public class Empresa{
     }
 
     // Métodos get-set
+    public static ArrayList<int[][]> getRedCarreteras(){
+        return redCarreteras;
+    }
+
+    public static void setRedCarreteras(ArrayList<int[][]> nuevaRedCarreteras){
+        redCarreteras = nuevaRedCarreteras;
+    }
+
     public String getNombre(){
         return nombre;
     }
@@ -82,11 +92,11 @@ public class Empresa{
         busesDisponibles = nuevosBusesDisponibles;
     }
 
-    public Ruta[] getRutas(){
+    public ArrayList<Ruta> getRutas(){
         return rutas;
     }
 
-    public void setRutas(Ruta[] nuevasRutas){
+    public void setRutas(ArrayList<Ruta> nuevasRutas){
         rutas = nuevasRutas;
     }
 
@@ -96,14 +106,6 @@ public class Empresa{
 
     public void setCaja(int nuevaCaja){
         caja = nuevaCaja;
-    }
-
-    public static ArrayList<int[][]> getRedCarreteras(){
-        return redCarreteras;
-    }
-
-    public static void setRedCarreteras(ArrayList<int[][]> nuevaRedCarreteras){
-        redCarreteras = nuevaRedCarreteras;
     }
 
     // Métodos de la clase
@@ -119,7 +121,7 @@ public class Empresa{
         
     }
 
-    // Algoritmo de Bellman-Ford para hacer la "distancia" más corta
+    // Algoritmo de Bellman-Ford para hacer la ruta más corta
     private int w(int distancia, int tiempo){
         /*
          * Devuelve el peso asociado a la arista de la red de carreteras.
@@ -206,5 +208,221 @@ public class Empresa{
         // Construcción de la ruta óptima.
         Ruta rutaOptima = new Ruta(verticeInicial, verticeFinal, paradas);
         return rutaOptima;
+    }
+
+    // Implementación de la funcionalidad 4.
+    // Creación de rutas con paradas muy concurridas.
+    public float[] flujoPromedio(Boolean eje){
+        /*
+         * Calcula el promedio de personas por viaje desde una parada a otra.
+         * 
+         * Parámetros:
+         *      - eje: bool,
+         *          Determina si el promedio se calcula en las filas (False) o columnas (True).
+         * 
+         * Retorna:
+         *      - promedios: int[# Paradas][# Paradas],
+         *          Matriz de cantidad de personas que compran este viaje.
+         *          La entrada i, j representa el flujo desde la ciudad con ordinal i hasta la ciudad con ordinal j.
+         */
+
+        // 
+        int numeroParadas = Parada.values().length;
+        int[][] flujoDemanda = new int[numeroParadas][numeroParadas]; // Matriz de personas que realizan el viaje.
+        int[][] flujoOferta = new int[numeroParadas][numeroParadas];  // Matriz de viajes totales realizados.
+        ArrayList<Ruta> rutasCopia = new ArrayList<Ruta>();           // Contador de rutas ya analizadas.
+
+        // Generando la copia del atributo rutas.
+        for(Ruta ruta: rutas){rutasCopia.add(ruta);}
+
+        // Contando el número de personas que viajan y viajes realizados (En la empresa).
+        ArrayList<Factura> facturas = Contabilidad.getVentas(); // Las facturas llevan registro de esto.
+        for(Factura factura: facturas){
+            // Definiendo el origen y destino de la ruta.
+            Ruta rutaAsociada = factura.getRutaElegida();
+            int origen = factura.getOrigen().ordinal();
+            int destino = factura.getDestino().ordinal();
+
+            // Viendo si la ruta fue realizada por esta empresa.
+            if(rutas.contains(rutaAsociada)){
+                flujoDemanda[origen][destino] += factura.getAsientosAsignados();
+
+                // Viendo si ya se tomó en cuenta esta ruta.
+                if(rutasCopia.contains(rutaAsociada)){
+                    flujoOferta[origen][destino]++;
+                    flujoOferta[destino][origen]++;
+                    rutasCopia.remove(rutaAsociada);
+                }
+            }
+        }
+
+        // Definiendo los promedios de flujo entre paradas.
+        float[] promedios = new float[numeroParadas];
+        if(eje){
+            for(int i = 0; i < numeroParadas; i++){
+                // Calculando el flujo de la columna i.
+                int sumaOferta  = 0;
+                int sumaDemanda = 0;
+                for(int j = 0; j < numeroParadas; j++){
+                    sumaOferta  += flujoOferta[j][i];
+                    sumaDemanda += flujoDemanda[j][i];
+                }
+
+                // Computando el promedio del flujo.
+                if(sumaOferta != 0){
+                    promedios[i] = sumaDemanda / sumaOferta;
+                }
+            }
+        }
+        else{
+            for(int i = 0; i < numeroParadas; i++){
+                // Calculando el flujo de la fila i.
+                int sumaOferta  = 0;
+                int sumaDemanda = 0;
+                for(int j = 0; j < numeroParadas; j++){
+                    sumaOferta  += flujoOferta[i][j];
+                    sumaDemanda += flujoDemanda[i][j];
+                }
+
+                // Computando el promedio del flujo.
+                if(sumaOferta != 0){
+                    promedios[i] = sumaDemanda / sumaOferta;
+                }
+            }
+        }
+
+        return promedios;
+    }
+
+    public float[][] flujoPromedio(){
+        /*
+         * Calcula el promedio de personas por viaje desde una parada a otra.
+         * 
+         * Retorna:
+         *      - promedios: int[# Paradas][# Paradas],
+         *          Matriz de cantidad de personas que compran este viaje.
+         *          La entrada i, j representa el flujo desde la ciudad con ordinal i hasta la ciudad con ordinal j.
+         */
+
+        // 
+        int numeroParadas = Parada.values().length;
+        int[][] flujoDemanda = new int[numeroParadas][numeroParadas]; // Matriz de personas que realizan el viaje.
+        int[][] flujoOferta = new int[numeroParadas][numeroParadas];  // Matriz de viajes totales realizados.
+        ArrayList<Ruta> rutasCopia = new ArrayList<Ruta>();           // Contador de rutas ya analizadas.
+
+        // Generando la copia del atributo rutas.
+        for(Ruta ruta: rutas){rutasCopia.add(ruta);}
+
+        // Contando el número de personas que viajan y viajes realizados (En la empresa).
+        ArrayList<Factura> facturas = Contabilidad.getVentas(); // Las facturas llevan registro de esto.
+        for(Factura factura: facturas){
+            // Definiendo el origen y destino de la ruta.
+            Ruta rutaAsociada = factura.getRutaElegida();
+            int origen = factura.getOrigen().ordinal();
+            int destino = factura.getDestino().ordinal();
+
+            // Viendo si la ruta fue realizada por esta empresa.
+            if(rutas.contains(rutaAsociada)){
+                flujoDemanda[origen][destino] += factura.getAsientosAsignados();
+
+                // Viendo si ya se tomó en cuenta esta ruta.
+                if(rutasCopia.contains(rutaAsociada)){
+                    flujoOferta[origen][destino]++;
+                    flujoOferta[destino][origen]++;
+                    rutasCopia.remove(rutaAsociada);
+                }
+            }
+        }
+
+        // Definiendo los promedios de flujo entre paradas.
+        float[][] promedios = new float[numeroParadas][numeroParadas];
+        for(int i = 0; i < numeroParadas; i++){
+            for(int j = 0; j < numeroParadas; j++){
+                if(flujoOferta[i][j] != 0){
+                    promedios[i][j] = flujoDemanda[i][j] / flujoOferta[i][j];
+                }
+            }
+        }
+
+        return promedios;
+    }
+
+    public void funcionalidad4(){
+        int totalParadas = Parada.values().length;
+        Integer[] tuplasParadas = new Integer[totalParadas * totalParadas];
+        float[][] promedios = flujoPromedio();
+
+        for(int i = 0; i < totalParadas * totalParadas; i++){
+            int cocienteI = i / totalParadas;
+            int residuoI  = i % totalParadas;
+            float promedioI = promedios[cocienteI][residuoI];
+
+            if(promedioI < 10){tuplasParadas[i] = -1;}
+            else{tuplasParadas[i] = i;}
+        }
+
+        Comparator<Integer> comparator = new Comparator<Integer>(){
+            @Override
+            public int compare(Integer n, Integer m){
+                int cocienteN = n / totalParadas;
+                int residuoN  = n % cocienteN;
+                int cocienteM = m / totalParadas;
+                int residuoM  = m % cocienteM;
+
+                float promedioN = promedios[cocienteN][residuoN];
+                float promedioM = promedios[cocienteM][residuoM];
+
+                if(promedioN - promedioM > 0){return 1;}
+                else if(promedioN - promedioM < 0){return -1;}
+                else{return 0;}
+            }
+        };
+
+        Arrays.sort(tuplasParadas, comparator);
+
+        int tuplaMasSolicitada = tuplasParadas[0];
+        int cocienteT = tuplaMasSolicitada / totalParadas;
+        int residuoT  = tuplaMasSolicitada % totalParadas;
+        Ruta rutaMasSolicitada = algoritmoBellmanFord(cocienteT, residuoT);
+    }
+
+    public void funcionalidad4(int paradaOrigen, int paradaDestino, int numeroParadas, float factor){
+        int totalParadas = Parada.values().length;
+        Integer[] tuplasParadas = new Integer[totalParadas * totalParadas];
+        float[][] promedios = flujoPromedio();
+
+        for(int i = 0; i < totalParadas * totalParadas; i++){
+            int cocienteI = i / totalParadas;
+            int residuoI  = i % totalParadas;
+            float promedioI = promedios[cocienteI][residuoI];
+
+            if(promedioI < 10){tuplasParadas[i] = -1;}
+            else{tuplasParadas[i] = i;}
+        }
+
+        Comparator<Integer> comparator = new Comparator<Integer>(){
+            @Override
+            public int compare(Integer n, Integer m){
+                int cocienteN = n / totalParadas;
+                int residuoN  = n % cocienteN;
+                int cocienteM = m / totalParadas;
+                int residuoM  = m % cocienteM;
+
+                float promedioN = promedios[cocienteN][residuoN];
+                float promedioM = promedios[cocienteM][residuoM];
+
+                if(promedioN - promedioM > 0){return 1;}
+                else if(promedioN - promedioM < 0){return -1;}
+                else{return 0;}
+            }
+        };
+
+        Arrays.sort(tuplasParadas, comparator);
+
+        Ruta rutaMasSolicitada = algoritmoBellmanFord(paradaOrigen, paradaDestino);
+    }
+
+    public void funcionalidad4(String parada1, String parada2, int numeroParadas, float factor){
+
     }
 }

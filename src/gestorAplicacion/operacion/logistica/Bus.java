@@ -1,4 +1,5 @@
 package gestorAplicacion.operacion.logistica;
+import gestorAplicacion.administracion.Ruta;
 
 public class Bus{
     private String placa;
@@ -7,6 +8,7 @@ public class Bus{
     private Boolean disponible;
     private int capacidadMaletas;
     private int kilometrosRecorridos;
+    private Ruta ruta;
 
     // Métodos get-set
     public String getPlaca(){
@@ -55,6 +57,14 @@ public class Bus{
 
     public void setKilometrosRecorridos(int nuevosKilometrosRecorridos){
         kilometrosRecorridos = nuevosKilometrosRecorridos;
+    }
+
+    public Ruta getRuta(){
+        return ruta;
+    }
+
+    public void setRuta(Ruta nuevaRuta){
+        ruta = nuevaRuta;
     }
 
     //Métodos de la clase

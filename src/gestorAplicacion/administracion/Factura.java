@@ -1,16 +1,16 @@
 package gestorAplicacion.administracion;
 
 public class Factura{
-
-    //Atributos//
-
+    // Atributos
     private int idFacturas;
     private String usuarioNombre;
     private int valor;
     private int asientosAsignados;
-    private int Fecha;
+    private int fecha;
     private int cantidadMaletas;
-    private Ruta Ruta_elegida;
+    private Ruta rutaElegida;
+    private Parada origen;
+    private Parada destino;
 
     //Getters y Setters//
 
@@ -31,11 +31,11 @@ public class Factura{
     }
 
     public int getFecha(){
-        return Fecha;
+        return fecha;
     }
 
     public void setFecha(int fecha){
-        Fecha = fecha;
+        this.fecha = fecha;
     }
 
     public int getIdFacturas(){
@@ -46,12 +46,12 @@ public class Factura{
         this.idFacturas = idFacturas;
     }
 
-    public Ruta getRuta_elegida(){
-        return Ruta_elegida;
+    public Ruta getRutaElegida(){
+        return rutaElegida;
     }
 
-    public void setRuta_elegida(Ruta ruta_elegida){
-        Ruta_elegida = ruta_elegida;
+    public void setRutaElegida(Ruta rutaElegida){
+        this.rutaElegida = rutaElegida;
     }
 
     public String getUsuarioNombre(){
@@ -68,6 +68,22 @@ public class Factura{
 
     public void setValor(int valor){
         this.valor = valor;
+    }
+
+    public Parada getOrigen(){
+        return origen;
+    }
+
+    public void setOrigen(Parada origen){
+        this.origen = origen;
+    }
+
+    public Parada getDestino(){
+        return destino;
+    }
+
+    public void setDestino(Parada destino){
+        this.destino = destino;
     }
 
     //Metodos de clase//

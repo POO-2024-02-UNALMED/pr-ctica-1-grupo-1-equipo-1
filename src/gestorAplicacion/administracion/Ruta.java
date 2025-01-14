@@ -28,6 +28,14 @@ public class Ruta{
     }
 
     // Métodos get-set
+    public static int getTotalRutas(){
+        return totalRutas;
+    }
+
+    public static void setTotalRutas(int nuevoTotalRutas){
+        totalRutas = nuevoTotalRutas;
+    }
+
     public int getIdRuta(){
         return idRuta;
     }

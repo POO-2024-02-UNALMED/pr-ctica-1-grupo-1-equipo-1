@@ -1,11 +1,11 @@
 package gestorAplicacion.administracion;
+import java.util.ArrayList;
 
 public  class Contabilidad{
-
     //Atributos//
 
     private double ingresos;
-    private Factura[] ventas;
+    private static ArrayList<Factura> ventas;
 
     //Getters y Setters//
 
@@ -17,12 +17,12 @@ public  class Contabilidad{
         this.ingresos = ingresos;
     }
 
-    public Factura[] getVentas(){
+    public static ArrayList<Factura> getVentas(){
         return ventas;
     }
 
-    public void setVentas(Factura[] ventas){
-        this.ventas = ventas;
+    public static void setVentas(ArrayList<Factura> ventas){
+        Contabilidad.ventas = ventas;
     }
 
     //Metodos de clase//
