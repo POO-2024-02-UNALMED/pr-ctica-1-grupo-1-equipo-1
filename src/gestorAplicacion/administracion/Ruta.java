@@ -110,7 +110,10 @@ public class Ruta {
     public void finalizarRuta() {
 
     }
-
+    public ArrayList<Ruta> filtrarRutas(){
+        
+    }
+    
     public void agregarParada(Parada nuevaParada) {
         /*
          * Añade la nueva parada haciendo minimizando su efecto en la ruta.
@@ -170,7 +173,7 @@ public class Ruta {
         // Iterar sobre las rutas de la empresa
         for (Ruta ruta : empresa.getRutas()) {
             
-            if (ruta.getLugarFinal() == this.lugarFinal && ruta.getLugarInicio() != this.lugarInicio) {
+            if (ruta.getLugarFinal().equals(this.lugarFinal) && ruta.getLugarInicio() != this.lugarInicio) {
                 // Verificar si la ruta esta activa y si el bus esta disponible tambien
                 if (ruta.getBusAsociado() != null
                         && ruta.getBusAsociado().isDisponible(this.fechaSalida, this.fechaLlegada)) {

@@ -3,11 +3,11 @@ package gestorAplicacion.administracion;
 import gestorAplicacion.operacion.individuos.Chofer;
 import gestorAplicacion.operacion.individuos.Pasajero;
 import gestorAplicacion.operacion.logistica.Bus;
-import gestorAplicacion.operacion.individuos.*;
+//import gestorAplicacion.operacion.individuos.*;
 import java.util.ArrayList; // Para crear la red de carreteras que tiene el terminal.
 import java.util.Arrays; // Para ordenar arrays.
 import java.util.Comparator;
-import java.util.List;
+//import java.util.List;
 
 public class Empresa {
     private String nombre;
@@ -518,7 +518,7 @@ public class Empresa {
         Arrays.sort(tuplasParadas, comparator);
 
         // Tomando la ruta según el algoritmo de BellmanFord modificado.
-        ArrayList<Parada> paradas = algoritmoBellmanFord(paradaOrigen, paradaDestino);
+        //ArrayList<Parada> paradas = algoritmoBellmanFord(paradaOrigen, paradaDestino);
     }
 
     public void funcionalidad4(String parada1, String parada2, int numeroParadas, float factor) {
@@ -557,7 +557,7 @@ public class Empresa {
                         rutaOrigen.getFechaSalida())) {
                     // Reasignacion de el pasajero a una nueva ruta
                     nuevaRuta.getBusAsociado().asignarPasajero(pasajero);
-                    rutaOrigen.eliminarPasajero(pasajero);
+                    rutaOrigen.getBusAsociado().eliminarPasajero(pasajero);
                     System.out.println("Pasajero " + pasajero.getNombre() + " ha sido reasignado a la ruta "
                             + nuevaRuta.getIdRuta());
                     reasingnado = true;

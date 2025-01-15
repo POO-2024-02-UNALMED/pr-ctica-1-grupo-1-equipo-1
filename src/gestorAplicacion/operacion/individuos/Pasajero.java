@@ -57,7 +57,8 @@ public class Pasajero extends Persona {
     public String mostrarDatos() {
         return this.nombre + this.edad + this.id;
     }
-    public String getNombre(){
+
+    public String getNombre() {
         return this.nombre;
     }
     // Metodos de Clase//
@@ -65,6 +66,7 @@ public class Pasajero extends Persona {
     // Metodos Funcionalidad 3
     public String solicitarReembolso( int idPasajeroUser, int idFacturaUser,LocalDateTime horaZero){
         //Calculo la diferencia con la fecha de inicio del programa
+        LocalDateTime nowTime = LocalDateTime.now(); //Obtengo el tiempo exacto de solicitud
         Duration diferenciaZero = Duration.between(horaZero, nowTime);
 
         int numReembolsoDispUser = this.getNumReembolsoDisp();
@@ -85,7 +87,7 @@ public class Pasajero extends Persona {
 
                 if (idPasajeroUser == idPasajero){
 
-                    LocalDateTime nowTime = LocalDateTime.now(); //Obtengo el tiempo exacto de solicitud
+                    
                     LocalDateTime timecreation = factura.getFecha();
                     // Calcular la diferencia entre las fechas
                     Duration diferencia = Duration.between(timecreation, nowTime);
@@ -120,7 +122,7 @@ public class Pasajero extends Persona {
         System.out.println("Rutas disponibles entre " + origen + " y " + destino + ":");
         int i = 1;
         for (Ruta ruta : rutasDisponibles) {
-            System.out.println(i + ". " + "Empresa: " + ruta.getEmpresa().getNombre() +
+            System.out.println(i + ". " + "Empresa: " + ruta.getBusAsociado().getEmpresa().getNombre() +
                     ", Tipo de asiento: " + (ruta.getBusAsociado().getAsientos().equals("VIP") ? "VIP" : "Estándar") +
                     ", Escalas: " + ruta.getParadas());
             i++;
@@ -154,7 +156,9 @@ public class Pasajero extends Persona {
         }
 
         // Paso 8: Mostrar los asientos disponibles en el bus
-        Asiento[] asientosDisponibles = busAsignado.getAsientos();
+        ArrayList<Asiento> asientosDisponiblesList = busAsignado.getAsientos(); // Obtener el ArrayList
+        Asiento[] asientosDisponibles = asientosDisponiblesList.toArray(new Asiento[0]); // Convertir a un arreglo
+
         System.out.println("Asientos disponibles:");
         i = 1;
         for (Asiento asiento : asientosDisponibles) {
