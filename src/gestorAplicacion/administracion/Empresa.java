@@ -219,6 +219,8 @@ public class Empresa {
         }
     }
 
+    // Estaba muy básica anteriormente, así que decidí modificarlo para que
+    // a una ruta le halle un bus que pueda incluirla.
     public void asignarRuta(Bus bus, Ruta ruta) {
         bus.anadirRuta(ruta);
     }
@@ -464,27 +466,97 @@ public class Empresa {
         return promedios;
     }
 
+    public Integer[] ordenar(float[] valores, Boolean invertido){
+        /*
+         * Se encuentra la posición en que los valores en el array deberían tener para que
+         * esté ordenado. (Ejemplo: [0.5, 0.1, 0] devolvería [2, 1, 0], porque [0, 0.1, 0.5] está ordenado,
+         * así, 0.5 debería ocupar la posición dos, 0.1 la posición uno y 0 la posición cero).
+         * 
+         * Parámetros:
+         *      - valores: float[],
+         *          Array a encontrar el orden.
+         *      - invertido: Boolean,
+         *          Pregunta si se escribe en orden ascendente (false) o descendente (true).
+         * 
+         * Retorna:
+         *      - posiciones: Integer[],
+         *          Array de posiciones que se deberían ocupar.
+         */
+
+        // Creando el array de las posiciones que ocupan los valores.
+        Integer[] posiciones = new Integer[valores.length];
+        for(int i = 0; i < valores.length; i++){
+            posiciones[i] = i;
+        }
+
+        // Forma de ordenar el array para hallar las posiciones.
+        Comparator<Integer> comparator = new Comparator<Integer>() {
+            @Override
+            public int compare(Integer n, Integer m) {
+                if (valores[n] - valores[m] > 0) {
+                    return 1;
+                } else if (valores[n] - valores[m] < 0) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        };
+
+        // Hallando las posiciones que deben tener.
+        if(invertido){comparator = comparator.reversed();}
+        Arrays.sort(posiciones, comparator);
+
+        // Devolviendo las posiciones
+        return posiciones;
+    }
+
+    public Integer[] ordenar(float[][] matrizValores, Boolean invertido){
+        /*
+         * Dada una matriz del estilo {{a, b}, {c, d}}, aplica el mismo método de ordenar,
+         * teniendo en cuenta que se va a ordenar como si se tratara del array {a, b, c, d}.
+         * Es decir, se concatenan las filas.
+         * 
+         * Parámetros:
+         *      - valores: float[][],
+         *          Matriz a hallar el orden.
+         *      - invertido: Boolean,
+         *          Pregunta si se escribe en orden ascendente (false) o descendente (true).
+         * 
+         * Retorna:
+         *      - posiciones: Integer[],
+         *          Array de posiciones que se deberían ocupar.
+         */
+
+        // Escribiendo la matriz como un único array concatenando las filas.
+        int numeroFilas = matrizValores.length;
+        int numeroColumnas = matrizValores[0].length;
+        float[] valores = new float[numeroFilas * numeroColumnas];
+        for(int i = 0; i < valores.length; i++){
+            /* 
+             * Definiendo la relación entre un número y la casilla de la matriz que representa,
+             * usando el algoritmo de la división, i = (#Columnas) * q + r con el algoritmo,
+             * así, la casilla que representa es [Fila][Columna] = [q][r]
+            */
+            valores[i] = matrizValores[i / numeroColumnas][i % numeroColumnas];
+        }
+
+        return ordenar(valores, invertido);
+    }
+
     public void funcionalidad4() {
 
     }
 
-    public void funcionalidad4(int paradaOrigen, int paradaDestino, int numeroParadas, float factor) {
+    public Ruta funcionalidad4(int paradaOrigen, int paradaDestino, int numeroParadas, float factor) {
+
+        // Verificación de errores.
+        if(numeroParadas < 2){
+            // Presentar un error.
+        }
 
         // Calculando el promedio de personas que hacen los trayectos.
-        int totalParadas = Parada.values().length;
-        Integer[] tuplasParadas = new Integer[totalParadas * totalParadas];
         float[][] promedios = flujoPromedio();
-
-        /*
-         * Contruyendo un array que involucre todos los trayectos posibles
-         * Aquí, la entrada i = totalParadas * q + r (Expresión con el algoritmo de la
-         * división), nos indica
-         * que es el trayecto desde la parada con ordinal (q) hacia la ciudad con
-         * ordinal (r).
-         */
-        for (int i = 0; i < totalParadas * totalParadas; i++) {
-            tuplasParadas[i] = i;
-        }
 
         // Viendo solo los trayectos que se solicitan
         float[][] promediosSesgados = new float[totalParadas][totalParadas];
@@ -500,36 +572,57 @@ public class Empresa {
             }
         }
 
-        // Comparador que indica cómo ordenar los trayectos más solicitados según
-        // especificaciones de paradas.
-        Comparator<Integer> comparator = new Comparator<Integer>() {
-            @Override
-            public int compare(Integer n, Integer m) {
-                // Hallando la relación entre los números y el trayecto que representan.
-                int cocienteN = n / totalParadas;
-                int residuoN = n % cocienteN;
-                int cocienteM = m / totalParadas;
-                int residuoM = m % cocienteM;
-
-                // Encontrando el flujo de ese trayecto.
-                float promedioN = promediosSesgados[cocienteN][residuoN];
-                float promedioM = promediosSesgados[cocienteM][residuoM];
-
-                if (promedioN - promedioM > 0) {
-                    return 1;
-                } else if (promedioN - promedioM < 0) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            }
-        };
-
-        // Ordenando el array.
-        Arrays.sort(tuplasParadas, comparator);
+        /* 
+         * Contruyendo un array que involucre todos los trayectos posibles
+         * Aquí, la entrada i = totalParadas * q + r (Expresión con el algoritmo de la
+         * división), nos indica
+         * que es el trayecto desde la parada con ordinal (q) hacia la ciudad con
+         * ordinal (r).
+         * Y a este se le busca cuáles tienen los mayores viajes según las especificaciones.
+         */
+        Integer[] tuplasParadas = ordenar(promediosSesgados, true);
 
         // Tomando la ruta según el algoritmo de BellmanFord modificado.
-        //ArrayList<Parada> paradas = algoritmoBellmanFord(paradaOrigen, paradaDestino);
+        int mayorFlujo = tuplasParadas[0];
+        ArrayList<Parada> paradasOptimas = algoritmoBellmanFord(mayorFlujo / totalParadas, mayorFlujo % totalParadas);
+
+        // Ajustando para que se tenga la cantidad de paradas deseada.
+        int numeroParadasCreadas = paradasOptimas.size();
+        Parada[] paradasReales = new Parada[numeroParadas];
+        if(numeroParadasCreadas > numeroParadas){
+            /* 
+             * Se buscará una ruta que maximice la cantidad de personas que usarán la ruta.
+             * Para esto se verá las paradas con mayor cantidad de personas que realizan el viaje
+             * parada inicial -> parada, para cada parada.
+            */
+            float[] SalidasParadasCreadas = new float[numeroParadasCreadas - 2];
+            for(int i = 0; i < numeroParadasCreadas - 2; i++){
+                int inicio = paradasOptimas.getFirst().ordinal();
+                int actual = paradasOptimas.get(i + 1).ordinal();
+                SalidasParadasCreadas[i] = promedios[inicio][actual];
+            }
+
+            // Hallando el orden de la cantidad de personas que se bajan en esa parada.
+            Integer[] concurrencia = ordenar(SalidasParadasCreadas, true);
+
+            // Creando el array con las paradas adecuadas.
+            paradasReales[0] = paradasOptimas.getFirst();
+            paradasReales[numeroParadas - 1] = paradasOptimas.getLast();
+            for(int i = 1; i < concurrencia.length - 1; i++){
+                paradasReales[i] = paradasOptimas.get(concurrencia[i]);
+            }
+        }
+        else if(numeroParadasCreadas < numeroParadas){
+            int recorridoTotal = 0;
+            // Se va a implementar el recorrido original según la paradasOptimas
+            // Luego se expandirá buscando puntos cercanos a las paradasOptimas para añadirlos.
+        }
+        else{paradasReales = paradasOptimas.toArray(paradasReales);}
+
+        Parada paradaInicial = paradasReales[0];
+        Parada paradaFinal = paradasReales[paradasReales.length];
+        Ruta rutaFinal = new Ruta(paradaInicial, paradaFinal, paradasReales);
+        return rutaFinal;
     }
 
     public void funcionalidad4(String parada1, String parada2, int numeroParadas, float factor) {

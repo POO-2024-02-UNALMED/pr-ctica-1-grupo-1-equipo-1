@@ -73,13 +73,23 @@ public class Bus {
         return rutasFuturas;
     }
 
-    public void setRutasFuturas(ArrayList<Ruta> nuevasRutasFuturas) {
-        // Se añadirán todas las rutas en forma ascendente sin repeticiones,
-        // mostrando error si existen cruces de horarios.
+    public ArrayList<Ruta> setRutasFuturas(ArrayList<Ruta> nuevasRutasFuturas){
+        /*
+         * Se añadirán todas las rutas en forma ascendente sin repeticiones,
+         * y se devuelven las rutas que no pudieron incluirse.
+         */
+
+        // Incluyendo las rutas que se puedan incorporar.
+        ArrayList<Ruta> rutasNoIncluidas = new ArrayList<Ruta>();
         rutasFuturas = new ArrayList<Ruta>();
-        for (Ruta nuevaRuta : nuevasRutasFuturas) {
-            this.anadirRuta(nuevaRuta);
+        for(Ruta nuevaRuta: nuevasRutasFuturas){
+            if(!this.anadirRuta(nuevaRuta)){
+                rutasNoIncluidas.add(nuevaRuta);
+            }
         }
+
+        // Muestra las rutas que no se pueden incluir.
+        return rutasNoIncluidas;
     }
 
     public Empresa getEmpresa() {
@@ -135,14 +145,18 @@ public class Bus {
         return disponibilidad;
     }
 
-    public void anadirRuta(Ruta nuevaRuta) {
+    public Boolean anadirRuta(Ruta nuevaRuta){
         /*
          * Busca si se puede agregar la ruta en las ya establecidas para el bus,
          * mostrando una advertencia si la ruta no puede ser añadida.
          * 
          * Parámetros:
-         * - nuevaRuta: Ruta,
-         * Ruta a ser añadida.
+         *      - nuevaRuta: Ruta,
+         *          Ruta a ser añadida.
+         * 
+         * Retorna:
+         *      - asignado: Boolean,
+         *          Indica si se pudo añadir la ruta.
          */
 
         // Se busca dónde debería ir la nueva ruta.
@@ -178,9 +192,11 @@ public class Bus {
         if (posicion != -1) {
             rutasFuturas.add(posicion, nuevaRuta);
             nuevaRuta.setBusAsociado(this);
+            return true;
         }
-
-        // Añadir advertencia por si no se puede añadir.
+        else{
+            return false;
+        }
     }
 
     public void quitarRuta(Ruta ruta) {

@@ -107,11 +107,12 @@ public class Ruta {
 
     }
 
-    public void finalizarRuta() {
+    public void finalizarRutas() {
 
     }
+
     public ArrayList<Ruta> filtrarRutas(){
-        
+        return null;
     }
     
     public void agregarParada(Parada nuevaParada) {
@@ -221,7 +222,7 @@ public class Ruta {
          * 
          * Parámetros:
          * - nuevaParada: Parada.
-         * Parada a añadir
+         *      Parada a eliminar
          */
 
         // Caso donde no existan paradas.
@@ -230,11 +231,27 @@ public class Ruta {
             return;
         }
 
-        // Tomando el número de paradas
+        // Tomando el número de paradas.
         int nParadas = paradas.length;
 
+        // Creando un array donde se quitó la parada.
         Parada[] temp = new Parada[nParadas - 1];
+        Boolean estaEnElArray = false;
+        for(int i = 0; i < nParadas - 1; i++){
+            if(paradas[i] == parada){estaEnElArray = true;}       // Viendo si está la parada.
+            else{temp[i] = paradas[i - (estaEnElArray ? 1 : 0)];} // Desplazando lo adecuado.
+        }
 
+        // Preguntando si la parada se encontraba en el array.
+        if(!estaEnElArray && paradas[nParadas - 1] != parada){
+            return;
+        }
+        else if(!estaEnElArray && paradas[nParadas - 1] == parada){
+            temp[nParadas - 2] = paradas[nParadas - 1];
+        }
+
+        // Guardando el cambio.
+        paradas = temp;
     }
 
     public int contarPasajerosEnParada(Parada parada) {
