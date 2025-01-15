@@ -2,7 +2,7 @@ package gestorAplicacion.operacion.individuos;
 import gestorAplicacion.operacion.logistica.Maleta;
 import gestorAplicacion.administracion.Factura;
 
-public class Pasajero{
+public class Pasajero extends Persona{
 
     // Atributos //
 
@@ -35,6 +35,11 @@ public class Pasajero{
 
     public void setWallet(double wallet){
         this.wallet = wallet;
+    }
+
+    // Método abstracto
+    public String mostrarDatos(){
+        return this.nombre + this.edad + this.id;
     }
 
     //Metodos de Clase//

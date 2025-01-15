@@ -6,24 +6,26 @@ public class Ruta{
     private static int totalRutas;
     private int idRuta;
     private Bus busAsociado;
-    private int horaSalida;  // Cambiar por objeto de tiempo
-    private int horaLlegada; // Cambiar por objeto de tiempo
+    private int fechaSalida;  // Cambiar por objeto de tiempo
+    private int fechaLlegada; // Cambiar por objeto de tiempo
     private int lugarInicio;
     private int lugarFinal;
     private ArrayList<Parada> paradas;
 
-    public Ruta(Bus busAsociado, int horaSalida, int horaLlegada, // Cambiar por objetos de tiempo
+    // Constructores
+    public Ruta(Bus busAsociado, int fechaSalida, int fechaLlegada, // Cambiar por objetos de tiempo
      int lugarInicio, int lugarFinal, ArrayList<Parada> paradas){
         totalRutas++;
         this.idRuta = totalRutas;
         this.busAsociado = busAsociado;
-        this.horaSalida = horaSalida;
-        this.horaLlegada = horaLlegada;
+        this.fechaSalida = fechaSalida;     // Hay que verificar que la fecha de salida sea menor a la de llegada
+        this.fechaLlegada = fechaLlegada;   // ""
         this.lugarInicio = lugarInicio;
         this.lugarFinal = lugarFinal;
     }
 
     public Ruta(int lugarInicio, int lugarFinal, ArrayList<Parada> paradas){
+        // Cambiar por objetos de tiempo
         this(null, 0, 0, lugarInicio, lugarFinal, paradas);
     }
 
@@ -52,20 +54,20 @@ public class Ruta{
         busAsociado = nuevoBusAsociado;
     }
 
-    public int getHoraSalida(){
-        return horaSalida;
+    public int getFechaSalida(){
+        return fechaSalida;
     }
 
-    public void setHoraSalida(int nuevaHoraSalida){
-        horaSalida = nuevaHoraSalida;
+    public void setFechaSalida(int nuevafechaSalida){
+        fechaSalida = nuevafechaSalida;
     }
 
-    public int getHoraLlegada(){
-        return horaLlegada;
+    public int getFechaLlegada(){
+        return fechaLlegada;
     }
 
-    public void setHoraLlegada(int nuevaHoraLlegada){
-        horaLlegada = nuevaHoraLlegada;
+    public void setFechaLlegada(int nuevafechaLlegada){
+        fechaLlegada = nuevafechaLlegada;
     }
 
     public int getLugarInicio(){
@@ -92,7 +94,7 @@ public class Ruta{
         paradas = nuevasParadas;
     }
 
-    // Métodos de la clase
+    // Métodos de instancia
     public void calcularDistancia(){
 
     }

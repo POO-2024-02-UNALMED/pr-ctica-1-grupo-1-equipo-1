@@ -1,9 +1,9 @@
 package gestorAplicacion.operacion.individuos;
 
 public abstract class Persona{
-    String nombre;
-    int edad;
-    int id;
+    protected String nombre;
+    protected int edad;
+    protected int id;
 
     abstract String mostrarDatos();
 }
