@@ -12,9 +12,10 @@ public class Empresa{
     private ArrayList<Ruta> rutas;
     private int caja;
 
-    // Atributo donde se guardará el grafo de la red de carreteras
+    // Atributo donde se guardará el grafo de la red de carreteras y las distancias mínimas entre paradas.
     static final int totalParadas = Parada.values().length;
-    private static ArrayList<int[][]> redCarreteras;
+    public static final ArrayList<int[][]> redCarreteras = new ArrayList<int[][]>();
+    public static final int[][] distanciaMinima = new int[totalParadas][totalParadas];
     static{
         /* Creación de la red de carreteras:
          * Esta vendrá representada por un grafo.
@@ -36,9 +37,10 @@ public class Empresa{
          *      5. CIUDAD5.
          *      6. CIUDAD6.
          *      etc... (Aquí hay que enumerar todas las ciudades)
+         * 
+         * Finalmente se calculan todas las distancias mínimas entre paradas.
         */
 
-        redCarreteras = new ArrayList<>();
         redCarreteras.add(new int[][] {{1, 2}, {200, 60}});
         redCarreteras.add(new int[][] {{1, 3}, {300, 120}});
         redCarreteras.add(new int[][] {{1, 4}, {100, 85}});
@@ -49,17 +51,23 @@ public class Empresa{
         redCarreteras.add(new int[][] {{4, 5}, {200, 120}});
         redCarreteras.add(new int[][] {{5, 6}, {400, 180}});
         redCarreteras.add(new int[][] {{6, 2}, {20, 15}});
+
+        // Hallando las distancias mínimas entre cada par de paradas con el algoritmo de Floyd-Warshall.
+        for (int[][] arista: redCarreteras){
+            distanciaMinima[arista[0][0]][arista[0][1]] = Empresa.w(arista[1][0], arista[0][1]);
+            distanciaMinima[arista[0][0]][arista[0][1]] = Empresa.w(arista[1][0], arista[0][1]);
+        }
+        for(int i = 0; i < totalParadas; i++){
+            for(int j = 0; j < totalParadas; j++){
+                for(int k = 0; k < totalParadas; k++){
+                    distanciaMinima[i][j] = Math.min(distanciaMinima[i][j],
+                     distanciaMinima[i][k] + distanciaMinima[k][j]);
+                }
+            }
+        }
     }
 
     // Métodos get-set
-    public static ArrayList<int[][]> getRedCarreteras(){
-        return redCarreteras;
-    }
-
-    public static void setRedCarreteras(ArrayList<int[][]> nuevaRedCarreteras){
-        redCarreteras = nuevaRedCarreteras;
-    }
-
     public String getNombre(){
         return nombre;
     }
@@ -103,23 +111,43 @@ public class Empresa{
     // Métodos de instancia
 
     // Todas las formas de contratar un chofer.
-    public void contratarChofer(int sueldo){
-        contratarChofer(new Chofer(sueldo), sueldo, null);
+    public void contratar(int sueldo){
+        contratar(new Chofer(sueldo), sueldo, null);
     }
 
-    public void contratarChofer(int sueldo, ArrayList<int[]> horario){
-        contratarChofer(new Chofer(sueldo), sueldo, horario);
+    public void contratar(int sueldo, ArrayList<int[]> horario){
+        contratar(new Chofer(sueldo), sueldo, horario);
     }
 
-    public void contratarChofer(Chofer chofer, int sueldo){
-        contratarChofer(chofer, sueldo, null);
+    public void contratar(Chofer chofer, int sueldo){
+        contratar(chofer, sueldo, null);
     }
 
-    public void contratarChofer(Chofer chofer, int sueldo, ArrayList<int[]> horario){
+    public void contratar(Chofer chofer, int sueldo, ArrayList<int[]> horario){
+        /*
+         * Agrega a un chofer a la nómina.
+         * 
+         * Parámetros:
+         *      - chofer: Chofer,
+         *          Persona a contratar.
+         *      - sueldo: int,
+         *          Sueldo ofrecido para contratar.
+         *      - horario: ArrayList<int[]>,
+         *          Horario con el que va a iniciar.
+         */
+
+        // Como los empleados se almacenan en un array, se busca si está disponible un espacio para incluirlo.
         Boolean hayPuesto = false;
         for(int i = 0; i < empleados.length; i++){
             if(empleados[i] == null){
+                // Se mira si la persona acepta el empleo.
                 if(chofer.getSueldo() >= sueldo){
+                    // En caso de estar vinculado a una empresa existente, se le pide la renuncia.
+                    if(chofer.getEmpresa() != null){
+                        chofer.getEmpresa().despedir(chofer);
+                    }
+
+                    // Se incluye al nuevo empleado en la nómina.
                     empleados[i] = chofer;
                     chofer.setEmpresa(this);
                     hayPuesto = true;
@@ -129,14 +157,42 @@ public class Empresa{
             }
         }
 
+        // En caso de no haber espacio en el array, se crea uno nuevo con un espacio extra.
         if(!hayPuesto){
+            // Se crea un array temporal para almacenar a todos los empleados
             Chofer[] temp = new Chofer[empleados.length + 1];
             for(int i = 0; i < empleados.length; i++){
                 temp[i] = empleados[i];
             }
 
+            // Se incluye el nuevo empleado.
             temp[empleados.length] = chofer;
             chofer.setEmpresa(this);
+
+            // Se cambia el array anterior por el nuevo.
+            empleados = temp;
+        }
+    }
+
+    // Despedir un chofer.
+    public void despedir(Chofer chofer){
+        /*
+         * Quita al chofer indicado de la nómina.
+         * 
+         * Parámetros:
+         *      - chofer: Chofer,
+         *          Empleado a despedir.
+         */
+
+        // Buscando si el empleado está vinculado a la empresa y limpiando toda relación con el mismo.
+        for(int i = 0; i < empleados.length; i++){
+            if(empleados[i] == chofer){
+                chofer.setSueldo(0);
+                chofer.setCantidadHorasConducidas(0);
+                chofer.setHorario(null);
+                chofer.setEmpresa(null);
+                empleados[i] = null;
+            }
         }
     }
 
@@ -148,12 +204,8 @@ public class Empresa{
 
     }
 
-    public void contratarEmpleado(){
-        
-    }
-
     // Algoritmo de Bellman-Ford para hacer la ruta más corta
-    private int w(int distancia, int tiempo){
+    private static int w(int distancia, int tiempo){
         /*
          * Devuelve el peso asociado a la arista de la red de carreteras.
          * 
@@ -172,7 +224,7 @@ public class Empresa{
         return peso;
     }
 
-    public Ruta algoritmoBellmanFord(int verticeInicial, int verticeFinal){
+    public ArrayList<Parada> algoritmoBellmanFord(int verticeInicial, int verticeFinal){
         /*
          * Devuelve la ruta más corta dada la función de pesos entre los vértices de origen y llegada.
          * 
@@ -205,7 +257,7 @@ public class Empresa{
             for (int[][] arista: redCarreteras){
                 int vertice1 = arista[0][0];
                 int vertice2 = arista[0][1];
-                int peso = w(arista[1][0], arista[1][1]);
+                int peso = Empresa.w(arista[1][0], arista[1][1]);
 
                 // Comparando si es mejor cambiar el camino hacia el vértice 2 pasando por el vértice 1.
                 if(recorrido[vertice2] > recorrido[vertice1] + peso){
@@ -229,16 +281,15 @@ public class Empresa{
             // Añadiendo al padre a la lista.
             paradas.add(0, Parada.values()[padres[parada]]);
 
-            // Haciendo
+            // Haciendo inducción.
             parada = padres[parada];
         }
 
         // Añadiendo el vértice de origen a la parada.
         paradas.add(0, Parada.values()[verticeInicial]);
 
-        // Construcción de la ruta óptima.
-        Ruta rutaOptima = new Ruta(verticeInicial, verticeFinal, paradas);
-        return rutaOptima;
+        // Retorno de las paradas.
+        return paradas;
     }
 
     // Implementación de la funcionalidad 4.
@@ -381,31 +432,44 @@ public class Empresa{
     }
 
     public void funcionalidad4(int paradaOrigen, int paradaDestino, int numeroParadas, float factor){
+
+        // Calculando el promedio de personas que hacen los trayectos.
         int totalParadas = Parada.values().length;
         Integer[] tuplasParadas = new Integer[totalParadas * totalParadas];
         float[][] promedios = flujoPromedio();
 
+        /* 
+         * Contruyendo un array que involucre todos los trayectos posibles
+         * Aquí, la entrada i = totalParadas * q + r (Expresión con el algoritmo de la división), nos indica
+         * que es el trayecto desde la parada con ordinal (q) hacia la ciudad con ordinal (r).
+        */
         for(int i = 0; i < totalParadas * totalParadas; i++){
             tuplasParadas[i] = i;
         }
 
+        // Viendo solo los trayectos que se solicitan
         float[][] promediosSesgados = new float[totalParadas][totalParadas];
         for(int i = 0; i < totalParadas; i++){
             for(int j = 0; j < totalParadas; j++){
+                // En caso de especificar una parada, solo se involucran los valores que tengan esas paradas.
+                // En caso de no especificar una parada, se tomará como -1 y verán todos los posibles valores.
                 if((paradaOrigen == -1 || paradaOrigen == i) && (paradaDestino == -1 || paradaDestino == j)){
                     promediosSesgados[i][j] = promedios[i][j];
                 }
             }
         }
 
+        // Comparador que indica cómo ordenar los trayectos más solicitados según especificaciones de paradas.
         Comparator<Integer> comparator = new Comparator<Integer>(){
             @Override
             public int compare(Integer n, Integer m){
+                // Hallando la relación entre los números y el trayecto que representan.
                 int cocienteN = n / totalParadas;
                 int residuoN  = n % cocienteN;
                 int cocienteM = m / totalParadas;
                 int residuoM  = m % cocienteM;
 
+                // Encontrando el flujo de ese trayecto.
                 float promedioN = promediosSesgados[cocienteN][residuoN];
                 float promedioM = promediosSesgados[cocienteM][residuoM];
 
@@ -415,9 +479,11 @@ public class Empresa{
             }
         };
 
+        // Ordenando el array.
         Arrays.sort(tuplasParadas, comparator);
 
-        Ruta rutaMasSolicitada = algoritmoBellmanFord(paradaOrigen, paradaDestino);
+        // Tomando la ruta según el algoritmo de BellmanFord modificado.
+        ArrayList<Parada> paradas = algoritmoBellmanFord(paradaOrigen, paradaDestino);
     }
 
     public void funcionalidad4(String parada1, String parada2, int numeroParadas, float factor){

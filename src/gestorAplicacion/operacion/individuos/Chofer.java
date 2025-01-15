@@ -3,7 +3,6 @@ import gestorAplicacion.administracion.Empresa;
 import java.util.ArrayList;
 
 public class Chofer extends Persona{
-    private static int cantidadChoferes = 0;
     private int sueldo;
     private int cantidadHorasConducidas = 0;
     private Empresa empresa;
@@ -17,18 +16,10 @@ public class Chofer extends Persona{
 
     public Chofer(int sueldo, ArrayList<int[]> horario){
         this.sueldo = sueldo;
-        if(horario != null){this.setRutasFuturas(horario);}
-        cantidadChoferes++;
+        if(horario != null){this.setHorario(horario);}
     }
     
     // Métodos get-set
-    public static int getCantidadChoferes(){
-        return cantidadChoferes;
-    }
-
-    public static void setCantidadChoferes(int nuevaCantidadChoferes){
-        cantidadChoferes = nuevaCantidadChoferes;
-    }
 
     public int getSueldo(){
         return sueldo;
@@ -58,7 +49,7 @@ public class Chofer extends Persona{
         return horario;
     }
 
-    public void setRutasFuturas(ArrayList<int[]> nuevoHorario){
+    public void setHorario(ArrayList<int[]> nuevoHorario){
         // Se añadirán todas los lapsos en forma ascendente sin repeticiones,
         // mostrando error si existen cruces de horarios.
         horario = new ArrayList<int[]>();

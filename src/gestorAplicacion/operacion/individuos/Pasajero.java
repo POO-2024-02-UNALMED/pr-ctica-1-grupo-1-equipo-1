@@ -1,6 +1,6 @@
 package gestorAplicacion.operacion.individuos;
 import gestorAplicacion.operacion.logistica.Maleta;
-import gestorAplicacion.administracion.Factura;
+import gestorAplicacion.administracion.*;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
 import java.time.Duration;
@@ -65,7 +65,7 @@ public class Pasajero extends Persona{
         if (diferenciaZero.getSeconds() > secondsInOneYear) {
             numReembolsoDispUser = 2;
         } else if (numReembolsoDispUser == 0) {
-            return "El Pasajero no tiene mas reembolsos por este ano, segun los terminos y condiciones"}
+            return "El Pasajero no tiene mas reembolsos por este ano, segun los terminos y condiciones";}
 
 
         ArrayList<Factura> facturas = Contabilidad.getVentas();
