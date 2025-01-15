@@ -62,10 +62,21 @@ public class Empresa {
 
         // Hallando las distancias mínimas entre cada par de paradas con el algoritmo de
         // Floyd-Warshall.
+        // Iniciando la matriz de pesos.
         for (int[][] arista : redCarreteras) {
             distanciaMinima[arista[0][0]][arista[0][1]] = Empresa.w(arista[1][0], arista[0][1]);
             distanciaMinima[arista[0][0]][arista[0][1]] = Empresa.w(arista[1][0], arista[0][1]);
         }
+        // Definiendo distancia infinita entre puntos que no tiene una ruta directa.
+        for(int i = 0; i < totalParadas; i++){
+            for(int j = i + 1; j < totalParadas; j++){
+                if(distanciaMinima[i][j] == 0){
+                    distanciaMinima[i][j] = 100000; //Distancia infinita.
+                }
+            }
+        }
+
+        // Algoritmo Floyd-Warshall.
         for (int i = 0; i < totalParadas; i++) {
             for (int j = 0; j < totalParadas; j++) {
                 for (int k = 0; k < totalParadas; k++) {
@@ -265,7 +276,7 @@ public class Empresa {
         // inexistente será tomado como -1).
         for (int i = 0; i < numeroVertices; i++) {
             padres[i] = -1;
-            recorrido[i] = 100000;
+            recorrido[i] = 100000; // Distancia infinita.
         }
 
         // Implementación del algoritmo de Bell-Forman para hallar el predecesor y
