@@ -123,24 +123,87 @@ public class Ruta {
          * Parada a añadir
          */
 
+        // Caso donde no existan paradas.
+        if(paradas != null){
+            if(paradas.length == 0){
+                paradas = new Parada[] {nuevaParada};
+                return;
+            }
+        }
+        else{
+            paradas = new Parada[] {nuevaParada};
+            return;
+        }
+
+        // Tomando el número de paradas
+        int nParadas = paradas.length;
+
+        // Caso donde solo exista una parada.
+        if(nParadas == 1){
+            Parada[] temp = new Parada[2];
+            temp[0] = paradas[0];
+            temp[1] = nuevaParada;
+            return;
+        }
+
         // Viendo las distancias mínimas
         int[][] distancias = Empresa.distanciaMinima;
 
         // Encontrando dónde se minimiza la distancia
         int distanciaMinima = distancias[nuevaParada.ordinal()][paradas[0].ordinal()];
         int posicionDistanciaMinima = 0;
-        for (int i = 1; i < paradas.length; i++) {
+        for (int i = 1; i < nParadas; i++) {
+            // Viendo que el punto no esté ya en el array.
+            if(distancias[nuevaParada.ordinal()][paradas[i].ordinal()] == 0){
+                return;
+            }
+
+            // Viendo si la distancia a este punto es menor a las anteriores.
             if (distanciaMinima > distancias[nuevaParada.ordinal()][paradas[i].ordinal()]) {
                 distanciaMinima = distancias[nuevaParada.ordinal()][paradas[i].ordinal()];
                 posicionDistanciaMinima = i;
             }
         }
 
+        // Viendo si es mejor poner la nueva parada antes del punto con distancia mínima o después.
+        int distanciaAnterior; // Distancia al agregar la nueva parada antes de la parada con distancia mínima.
+        int distanciaPosterior; // Distancia al agregar la nueva parada después de la parada con distancia mínima.
+        int anterior, minima, posterior; // Ordinal de paradas anterior al mínimo, mínimo y posterior al mínimo.
+        int nueva = nuevaParada.ordinal(); // Ordinal de la nueva parada.
+        minima = paradas[posicionDistanciaMinima].ordinal();
+        if(posicionDistanciaMinima == 0){
+            posterior = paradas[1].ordinal();
+
+            // Distancia agregando la nueva parada al inicio.
+            distanciaAnterior = distancias[minima][posterior] + distancias[minima][nueva];
+            // Distancia agregando la nueva parada entre la primera y segunda parada.
+            distanciaPosterior = distancias[minima][nueva] + distancias[nueva][posterior];
+        }
+        else if(posicionDistanciaMinima == nParadas - 1){
+            anterior = paradas[posicionDistanciaMinima - 2].ordinal();
+            // Distancia agregando la nueva parada entre la penúltima y última parada.
+            distanciaAnterior = distancias[anterior][minima] + distancias[minima][nueva];
+            // Distancia agregando la nueva parada al final.
+            distanciaPosterior = distancias[anterior][nueva] + distancias[nueva][minima];
+        }
+        else{
+            anterior = paradas[posicionDistanciaMinima - 1].ordinal();
+            posterior = paradas[posicionDistanciaMinima + 1].ordinal();
+            // Distancia agregando la nueva parada entre la penúltima y última parada.
+            distanciaAnterior = distancias[anterior][nueva] + distancias[nueva][minima] +
+                                distancias[minima][posterior];
+            // Distancia agregando la nueva parada al final.
+            distanciaPosterior = distancias[anterior][minima] + distancias[minima][nueva] +
+                                 distancias[nueva][posterior];
+        }
+        // Poniendo la posición real de la nueva parada.
+        if(distanciaAnterior > distanciaPosterior){posicionDistanciaMinima++;}
+
         // Reorganizando el array de paradas para que la nueva parada quede en la
         // posición indicada.
-        Parada[] temp = new Parada[paradas.length + 1];
+        Parada[] temp = new Parada[nParadas + 1];
         temp[posicionDistanciaMinima] = nuevaParada;
-        for (int i = 0; i < paradas.length; i++) {
+        for (int i = 0; i < nParadas; i++) {
             if (i < posicionDistanciaMinima) {
                 temp[i] = paradas[i];
             } else {
@@ -150,6 +213,27 @@ public class Ruta {
 
         // Garantizando el cambio.
         paradas = temp;
+    }
+
+    public void eliminarParada(Parada parada){
+        /*
+         * Añade la nueva parada haciendo minimizando su efecto en la ruta.
+         * 
+         * Parámetros:
+         * - nuevaParada: Parada.
+         * Parada a añadir
+         */
+
+        // Caso donde no existan paradas.
+        if(paradas == null){
+            paradas = new Parada[0];
+            return;
+        }
+
+        // Tomando el número de paradas
+        int nParadas = paradas.length;
+
+        Parada[] temp = new Parada[nParadas - 1];
 
     }
 
