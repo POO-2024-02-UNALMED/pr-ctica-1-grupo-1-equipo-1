@@ -1,12 +1,13 @@
 package gestorAplicacion.operacion.logistica;
 import gestorAplicacion.administracion.Ruta;
 import gestorAplicacion.administracion.Empresa;
+import gestorAplicacion.operacion.individuos.*;
 import java.util.ArrayList;
 
 public class Bus{
     private String placa;
     private int cantidadAsientos;
-    private Asiento[] asientos;
+    private ArrayList<Asiento> asientos;
     private int capacidadMaletas;
     private int kilometrosRecorridos = 0;
     private ArrayList<Ruta> rutasFuturas = new ArrayList<Ruta>();
@@ -41,11 +42,11 @@ public class Bus{
         cantidadAsientos = nuevaCantidadAsientos;
     }
 
-    public Asiento[] getAsientos(){
+    public ArrayList<Asiento> getAsientos(){
         return asientos;
     }
 
-    public void setAsientos(Asiento[] nuevosAsientos){
+    public void setAsientos(ArrayList<Asiento> nuevosAsientos){
         asientos = nuevosAsientos;
     }
 
@@ -181,7 +182,27 @@ public class Bus{
             ruta.setBusAsociado(null);
         }
     }
-
+    public void asignarPasajero(Pasajero pasajero){
+        ArrayList<Asiento> asientosActuales = getAsientos();
+        if(cantidadAsientos - asientosActuales.size() > 0){
+            Asiento asiento = new Asiento(pasajero);
+            asientos.add(asiento);
+            System.out.println("Asiento asignado a " + pasajero.getNombre() + " en el bus " + this.placa);
+        }
+    }
+    public void eliminarPasajero(Pasajero pasajero){
+        ArrayList<Asiento> asientosActuales = getAsientos();
+        if(cantidadAsientos - asientosActuales.size() > 0){
+            for(Asiento asiento : asientosActuales){
+                if(asiento.getUsuario().getNombre() == pasajero.getNombre()){
+                    asientosActuales.remove(asiento);
+                    System.out.println("Asiento quitado a " + pasajero.getNombre() + " en el bus " + this.placa);
+                }
+            }
+            
+            System.out.println("No se ha encontrad al pasajero " + pasajero.getNombre() + " en el bus " + this.placa);
+        }
+    }
     public void reparar(){
 
     }

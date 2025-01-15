@@ -11,12 +11,15 @@ public class Asiento{
     private Pasajero Usuario;
     private String integridad;
 
+    public Asiento(Pasajero pasajero){
+        this.Usuario = pasajero;
+    }
     // Getters y Setters//
 
     public Bus getBus(){
         return bus;
     }
-
+    
     public void setBus(Bus bus){
         this.bus = bus;
     }
