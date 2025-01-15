@@ -1,18 +1,41 @@
 package gestorAplicacion.administracion;
-
+import java.time.LocalDateTime;
 public class Factura{
     // Atributos
-    private int idFacturas;
+    private enum MetodoPago {Efectivo, TarjetadeCredito,TarjetadeDebito,Transferencia}
+
+    private int idFactura;
     private String usuarioNombre;
+    private int idUsuario;
     private int valor;
     private int asientosAsignados;
-    private int fecha;
+    private LocalDateTime fecha;
     private int cantidadMaletas;
     private Ruta rutaElegida;
     private Parada origen;
     private Parada destino;
+    private MetodoPago metodoPago;
+    // Constructores
+
 
     //Getters y Setters//
+
+
+    public gestorAplicacion.administracion.Factura.MetodoPago getMetodoPago() {
+        return metodoPago;
+    }
+
+    public void setMetodoPago(gestorAplicacion.administracion.Factura.MetodoPago metodoPago) {
+        this.metodoPago = metodoPago;
+    }
+
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
 
     public int getAsientosAsignados(){
         return asientosAsignados;
@@ -30,20 +53,20 @@ public class Factura{
         this.cantidadMaletas = cantidadMaletas;
     }
 
-    public int getFecha(){
+    public LocalDateTime getFecha(){
         return fecha;
     }
 
-    public void setFecha(int fecha){
+    public void setFecha(LocalDateTime fecha){
         this.fecha = fecha;
     }
 
-    public int getIdFacturas(){
-        return idFacturas;
+    public int getIdFactura(){
+        return idFactura;
     }
 
-    public void setIdFacturas(int idFacturas){
-        this.idFacturas = idFacturas;
+    public void setIdFactura(int idFactura){
+        this.idFactura = idFactura;
     }
 
     public Ruta getRutaElegida(){
