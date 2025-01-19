@@ -4,7 +4,7 @@ import gestorAplicacion.operacion.logistica.Bus;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Ruta {
+public class Ruta extends Red{
     private static int totalRutas;
     private int idRuta;
     private Bus busAsociado;
@@ -30,6 +30,14 @@ public class Ruta {
     public Ruta(Parada lugarInicio, Parada lugarFinal, Parada[] paradas) {
         // Cambiar por objetos de tiempo
         this(null, 0, 0, lugarInicio, lugarFinal, paradas);
+    }
+
+    public Ruta(int ordinalLugarInicio, int ordinalLugarFinal, int[] ordinalesParadas) {
+        // Cambiar por objetos de tiempo
+        this(null, 0, 0,
+             Parada.values()[ordinalLugarInicio],
+             Parada.values()[ordinalLugarFinal],
+             Red.enteroAParada(ordinalesParadas));
     }
 
     // Métodos get-set
@@ -94,7 +102,9 @@ public class Ruta {
     }
 
     public void setParadas(Parada[] nuevasParadas) {
-        this.paradas = new Parada[0];
+        paradas = new Parada[2];
+        paradas[0] = lugarInicio;
+        paradas[1] = lugarFinal;
 
         // Poniendo todas las paradas en su lugar sin contar null.
         for (Parada parada : nuevasParadas) {
@@ -114,7 +124,7 @@ public class Ruta {
     public ArrayList<Ruta> filtrarRutas(){
         return null;
     }
-    
+
     public void agregarParada(Parada nuevaParada) {
         /*
          * Añade la nueva parada haciendo minimizando su efecto en la ruta.
@@ -124,84 +134,18 @@ public class Ruta {
          * Parada a añadir
          */
 
-        // Caso donde no existan paradas.
-        if(paradas != null){
-            if(paradas.length == 0){
-                paradas = new Parada[] {nuevaParada};
-                return;
-            }
-        }
-        else{
-            paradas = new Parada[] {nuevaParada};
-            return;
-        }
-
         // Tomando el número de paradas
         int nParadas = paradas.length;
 
         // Caso donde solo exista una parada.
-        if(nParadas == 1){
-            Parada[] temp = new Parada[2];
-            temp[0] = paradas[0];
-            temp[1] = nuevaParada;
-            return;
+        if(nParadas < 2){
+            // Debe generar error.
         }
 
-        // Viendo las distancias mínimas
-        int[][] distancias = Empresa.distanciaMinima;
+        int[] posicion = Red.posicion(paradas, nuevaParada);
+        int posicionDistanciaMinima = posicion[0] + 1;
 
-        // Encontrando dónde se minimiza la distancia
-        int distanciaMinima = distancias[nuevaParada.ordinal()][paradas[0].ordinal()];
-        int posicionDistanciaMinima = 0;
-        for (int i = 1; i < nParadas; i++) {
-            // Viendo que el punto no esté ya en el array.
-            if(distancias[nuevaParada.ordinal()][paradas[i].ordinal()] == 0){
-                return;
-            }
-
-            // Viendo si la distancia a este punto es menor a las anteriores.
-            if (distanciaMinima > distancias[nuevaParada.ordinal()][paradas[i].ordinal()]) {
-                distanciaMinima = distancias[nuevaParada.ordinal()][paradas[i].ordinal()];
-                posicionDistanciaMinima = i;
-            }
-        }
-
-        // Viendo si es mejor poner la nueva parada antes del punto con distancia mínima o después.
-        int distanciaAnterior; // Distancia al agregar la nueva parada antes de la parada con distancia mínima.
-        int distanciaPosterior; // Distancia al agregar la nueva parada después de la parada con distancia mínima.
-        int anterior, minima, posterior; // Ordinal de paradas anterior al mínimo, mínimo y posterior al mínimo.
-        int nueva = nuevaParada.ordinal(); // Ordinal de la nueva parada.
-        minima = paradas[posicionDistanciaMinima].ordinal();
-        if(posicionDistanciaMinima == 0){
-            posterior = paradas[1].ordinal();
-
-            // Distancia agregando la nueva parada al inicio.
-            distanciaAnterior = distancias[minima][posterior] + distancias[minima][nueva];
-            // Distancia agregando la nueva parada entre la primera y segunda parada.
-            distanciaPosterior = distancias[minima][nueva] + distancias[nueva][posterior];
-        }
-        else if(posicionDistanciaMinima == nParadas - 1){
-            anterior = paradas[posicionDistanciaMinima - 2].ordinal();
-            // Distancia agregando la nueva parada entre la penúltima y última parada.
-            distanciaAnterior = distancias[anterior][minima] + distancias[minima][nueva];
-            // Distancia agregando la nueva parada al final.
-            distanciaPosterior = distancias[anterior][nueva] + distancias[nueva][minima];
-        }
-        else{
-            anterior = paradas[posicionDistanciaMinima - 1].ordinal();
-            posterior = paradas[posicionDistanciaMinima + 1].ordinal();
-            // Distancia agregando la nueva parada entre la penúltima y última parada.
-            distanciaAnterior = distancias[anterior][nueva] + distancias[nueva][minima] +
-                                distancias[minima][posterior];
-            // Distancia agregando la nueva parada al final.
-            distanciaPosterior = distancias[anterior][minima] + distancias[minima][nueva] +
-                                 distancias[nueva][posterior];
-        }
-        // Poniendo la posición real de la nueva parada.
-        if(distanciaAnterior > distanciaPosterior){posicionDistanciaMinima++;}
-
-        // Reorganizando el array de paradas para que la nueva parada quede en la
-        // posición indicada.
+        // Reorganizando el array de paradas para que la nueva parada quede en la posición indicada.
         Parada[] temp = new Parada[nParadas + 1];
         temp[posicionDistanciaMinima] = nuevaParada;
         for (int i = 0; i < nParadas; i++) {
@@ -211,6 +155,10 @@ public class Ruta {
                 temp[i + 1] = paradas[i];
             }
         }
+
+        // Cambiando los lugares de origen y destino.
+        lugarInicio = temp[0];
+        lugarFinal = temp[nParadas - 1];
 
         // Garantizando el cambio.
         paradas = temp;

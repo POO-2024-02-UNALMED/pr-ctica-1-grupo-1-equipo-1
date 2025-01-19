@@ -12,8 +12,8 @@ public class Factura{
     private LocalDateTime fecha;
     private int cantidadMaletas;
     private Ruta rutaElegida;
-    private Parada origen;
-    private Parada destino;
+    private int origen;
+    private int destino;
     private MetodoPago metodoPago;
     // Constructores
 
@@ -93,19 +93,19 @@ public class Factura{
         this.valor = valor;
     }
 
-    public Parada getOrigen(){
-        return origen;
+    public Red.Parada getOrigen(){
+        return Red.Parada.values()[origen];
     }
 
-    public void setOrigen(Parada origen){
+    public void setOrigen(int origen){
         this.origen = origen;
     }
 
-    public Parada getDestino(){
-        return destino;
+    public Red.Parada getDestino(){
+        return Red.Parada.values()[destino];
     }
 
-    public void setDestino(Parada destino){
+    public void setDestino(int destino){
         this.destino = destino;
     }
 
