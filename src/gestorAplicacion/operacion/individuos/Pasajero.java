@@ -68,14 +68,14 @@ public class Pasajero extends Persona {
         //Calculo la diferencia con la fecha de inicio del programa
         LocalDateTime nowTime = LocalDateTime.now(); //Obtengo el tiempo exacto de solicitud
         Duration diferenciaZero = Duration.between(horaZero, nowTime);
-
+        String mensaje="";
         int numReembolsoDispUser = this.getNumReembolsoDisp();
         // Verificar si la diferencia es mayor a un año (en segundos)
         long secondsInOneYear = 365L * 24 * 60 * 60; // 365 días en segundos
         if (diferenciaZero.getSeconds() > secondsInOneYear) {
             numReembolsoDispUser = 2;
         } else if (numReembolsoDispUser == 0) {
-            return "El Pasajero no tiene mas reembolsos por este ano, segun los terminos y condiciones";}
+            mensaje= "El Pasajero no tiene mas reembolsos por este ano, segun los terminos y condiciones";}
 
 
         ArrayList<Factura> facturas = Contabilidad.getVentas();
@@ -93,18 +93,17 @@ public class Pasajero extends Persona {
                     Duration diferencia = Duration.between(timecreation, nowTime);
 
                     if (diferencia.toHours() < 24) {
-                        return "El reembolso no puede hacerse efectivo, La diferencia no es mayor a 24 horas segun lo establecido por terminos y condiciones.";
-                    } else if(factura.getMetodoPago() == "Efectivo") {
-                        return "El reembolso no es posible, el metodo de pago utilizado fue en efectivo, un metodo de pago invalido para un reembolso"
+                        mensaje= "El reembolso no puede hacerse efectivo, La diferencia no es mayor a 24 horas segun lo establecido por terminos y condiciones.";
+                    } else if (factura.getMetodoPago().toString().equals("Efectivo")) {
+                        mensaje= "El reembolso no es posible, el metodo de pago utilizado fue en efectivo, un metodo de pago invalido para un reembolso";}
                         else{
                             //Seguir Aca No terminado
                         }
-                    }
-                }
-                else { return "El documento no coincide con el del pasajero";}
-            }else{ return "No existe Factura asociada al numero de la factura";}
+                    }else { mensaje= "El documento no coincide con el del pasajero";}
+                }else{ mensaje = "No existe Factura asociada al numero de la factura";}
+            }
+            return mensaje;
         }
-    }
 
     // Metodos de Instancia//
 

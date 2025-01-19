@@ -2,7 +2,7 @@ package gestorAplicacion.administracion;
 import java.time.LocalDateTime;
 public class Factura{
     // Atributos
-    private enum MetodoPago {Efectivo, TarjetadeCredito,TarjetadeDebito,Transferencia}
+    public enum MetodoPago {Efectivo, TarjetadeCredito,TarjetadeDebito,Transferencia}
 
     private int idFactura;
     private String usuarioNombre;
@@ -21,7 +21,7 @@ public class Factura{
     //Getters y Setters//
 
 
-    public gestorAplicacion.administracion.Factura.MetodoPago getMetodoPago() {
+    public MetodoPago getMetodoPago() {
         return metodoPago;
     }
 
