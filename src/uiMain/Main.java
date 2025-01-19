@@ -35,6 +35,9 @@ public class Main{
 
                     break;
                 case 3:
+                    break;
+                case 4:
+                Pasajero pasajero1 = new Pasajero();
                 Scanner sc = new Scanner(System.in);
                 System.out.println("ingrese su numero de documento");
                 int numId = sc.nextInt();
@@ -43,9 +46,6 @@ public class Main{
                 System.out.println("La solicitud esta en proceso");
                 System.out.println(pasajero1.solicitarReembolso(numId,numfactura, horaZero));
                 sc.close();
-                    break;
-                case 4:
-
                     break;
                 case 5:
                     System.out.println("Gracias por usar el sistema. ¡Hasta luego!");
