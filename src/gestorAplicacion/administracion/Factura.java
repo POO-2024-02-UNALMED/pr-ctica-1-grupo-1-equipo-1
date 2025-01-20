@@ -127,7 +127,6 @@ public class Factura{
             mensaje = "Lo sentimos pero no existe bus Asociado a la ruta de dicha factura, por lo cual el reembolso no puede ser efectivo";
         } return mensaje;
     }
-
     public String verificarRutaAsociada(){
      // Obtener el bus asociado a la ruta
         Bus bus = this.rutaElegida.getBusAsociado();

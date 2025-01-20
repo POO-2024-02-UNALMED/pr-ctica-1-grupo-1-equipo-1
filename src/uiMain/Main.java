@@ -70,21 +70,34 @@ public class Main {
                 case 3:
                     // Lógica para ver pasajes comprados (pendiente de implementar)
                     break;
-                case 4:
-                    System.out.print("Ingrese su número de documento: ");
-                    int numId = scanner.nextInt();
-                    System.out.print("Ingrese el número de la factura: ");
-                    int numFactura = scanner.nextInt();
-                    System.out.println("La solicitud está en proceso...");
-
-                    Pasajero pasajero1 = new Pasajero();
-                    ArrayList<Object> respuesta = pasajero1.solicitarReembolso(numId, numFactura, horaZero);
-                    System.out.println(respuesta.get(0));
-                    if (respuesta.size() > 1 && respuesta.get(1) instanceof Factura) {
-                        Factura factura1 = (Factura) respuesta.get(1);
-                        System.out.println(factura1.verificarBusAsociado());
-                        System.out.println(factura1.verificarRutaAsociada());
+                case 4: //Funcionalidad 3 Reembolso de Tiquete
+                
+                Pasajero pasajero1 = new Pasajero();
+                Scanner sc = new Scanner(System.in);
+                System.out.println("ingrese su numero de documento");
+                int numId = sc.nextInt();
+                System.out.println("ingrese el numero de la factura");
+                int numfactura = sc.nextInt();
+                System.out.println("La solicitud esta en proceso");
+                // Primero Solicitaremos El reembolso
+                ArrayList<Object> respuesta =pasajero1.solicitarReembolso(numId,numfactura, horaZero);
+                // Se Hacen las primeras Comprobaciones superficiales
+                String mensaje1 = (String) respuesta.get(0);
+                System.out.println(mensaje1);
+                // Si el Proceso sigue Se verificara si existe el Bus asociado
+                if (mensaje1.equals("Su solicitud sigue en proceso, valoramos su paciencia y gracias por escojernos")) {
+                    Factura factura1 =(Factura) respuesta.get(1);
+                    String mensaje2=factura1.verificarBusAsociado();
+                    System.out.println(mensaje2);
+                    // Si el proceso Sigue Se verificara si existe una Ruta asociada
+                    if (mensaje2.equals("Existe un Bus Asociado a la ruta de la factura, Su solicitud seguira en proceso")) {
+                        String mensaje3 = factura1.verificarRutaAsociada();
+                        System.out.println(mensaje3);
+                    if(mensaje3.equals("El asiento liberado puede ser reservado nuevamente, Su reembolso sigue en proceso")){
+                        //Sigue la ejecucion
                     }
+                }}
+                sc.close();
                     break;
                 case 5:
                     System.out.println("Gracias por usar el sistema. ¡Hasta luego!");
