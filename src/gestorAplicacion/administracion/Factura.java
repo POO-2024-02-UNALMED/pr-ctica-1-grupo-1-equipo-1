@@ -1,5 +1,10 @@
 package gestorAplicacion.administracion;
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import gestorAplicacion.operacion.logistica.Asiento;
+import gestorAplicacion.administracion.Ruta;
+import gestorAplicacion.operacion.logistica.Bus;
 public class Factura{
     // Atributos
     public enum MetodoPago {Efectivo, TarjetadeCredito,TarjetadeDebito,Transferencia}
@@ -8,7 +13,8 @@ public class Factura{
     private String usuarioNombre;
     private int idUsuario;
     private int valor;
-    private int asientosAsignados;
+    private int numAsientosAsignados;
+    private ArrayList<Asiento> asientosAsignados;
     private LocalDateTime fecha;
     private int cantidadMaletas;
     private Ruta rutaElegida;
@@ -37,12 +43,12 @@ public class Factura{
         this.idUsuario = idUsuario;
     }
 
-    public int getAsientosAsignados(){
-        return asientosAsignados;
+    public int getnumAsientosAsignados(){
+        return numAsientosAsignados;
     }
 
-    public void setAsientosAsignados(int asientosAsignados){
-        this.asientosAsignados = asientosAsignados;
+    public void setnumAsientosAsignados(int numAsientosAsignados){
+        this.numAsientosAsignados = numAsientosAsignados;
     }
 
     public int getCantidadMaletas(){
@@ -110,6 +116,40 @@ public class Factura{
     }
 
     //Metodos de clase//
+
+    // Funcionalidad 3
+    public String verificarBusAsociado(){
+        Bus bus = this.rutaElegida.getBusAsociado();
+        String mensaje;
+        if(bus != null){
+            mensaje = "Existe un Bus Asociado a la ruta de la factura, Su solicitud seguira en proceso";
+        }else{
+            mensaje = "Lo sentimos pero no existe bus Asociado a la ruta de dicha factura, por lo cual el reembolso no puede ser efectivo";
+        } return mensaje;
+    }
+
+    public String verificarRutaAsociada(){
+     // Obtener el bus asociado a la ruta
+        Bus bus = this.rutaElegida.getBusAsociado();
+        String mensaje = "";
+
+            ArrayList<Asiento> asientosBus = bus.getAsientos();
+            for (Asiento asiento : asientosBus) {
+                if (asiento.getUsuario().getNombre().equals(this.usuarioNombre)) {
+                    mensaje = "El usuario ya tiene una reserva asociada a esta ruta";
+                    Ruta rutaElegida = getRutaElegida();
+                    LocalDateTime fechaSalida = rutaElegida.getFechaSalidaDatetime();
+                    if (LocalDateTime.now().isBefore(fechaSalida)) {
+                        System.out.println("El asiento liberado puede ser reservado nuevamente, Su reembolso sigue en proceso");
+                    } else {
+                        System.out.println("Es demasiado tarde Para Hacer la reservacion, Proximamente el Bus saldra a su debida Ruta.");
+                    }
+                }else{
+                    mensaje = "Lo sentimo El usuario no tiene una reserva asociada a esta ruta";
+                }
+            } 
+        return mensaje;
+    }
 
     //Metodos de Instancia//
 

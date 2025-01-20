@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.time.LocalDateTime;
+import java.lang.reflect.Array;
 import java.time.Duration;
 
 public class Pasajero extends Persona {
@@ -64,7 +65,8 @@ public class Pasajero extends Persona {
     // Metodos de Clase//
 
     // Metodos Funcionalidad 3
-    public String solicitarReembolso( int idPasajeroUser, int idFacturaUser,LocalDateTime horaZero){
+    public ArrayList<Object> solicitarReembolso( int idPasajeroUser, int idFacturaUser,LocalDateTime horaZero){
+        ArrayList<Object> respuesta = new ArrayList<>();
         //Calculo la diferencia con la fecha de inicio del programa
         LocalDateTime nowTime = LocalDateTime.now(); //Obtengo el tiempo exacto de solicitud
         Duration diferenciaZero = Duration.between(horaZero, nowTime);
@@ -75,7 +77,9 @@ public class Pasajero extends Persona {
         if (diferenciaZero.getSeconds() > secondsInOneYear) {
             numReembolsoDispUser = 2;
         } else if (numReembolsoDispUser == 0) {
-            mensaje= "El Pasajero no tiene mas reembolsos por este ano, segun los terminos y condiciones";}
+            mensaje= "El Pasajero no tiene mas reembolsos por este ano, segun los terminos y condiciones";
+            respuesta.add(mensaje);
+        }
 
 
         ArrayList<Factura> facturas = Contabilidad.getVentas();
@@ -89,22 +93,30 @@ public class Pasajero extends Persona {
 
                     
                     LocalDateTime timecreation = factura.getFecha();
+                    
                     // Calcular la diferencia entre las fechas
                     Duration diferencia = Duration.between(timecreation, nowTime);
 
                     if (diferencia.toHours() < 24) {
                         mensaje= "El reembolso no puede hacerse efectivo, La diferencia no es mayor a 24 horas segun lo establecido por terminos y condiciones.";
+                        respuesta.add(mensaje);
                     } else if (factura.getMetodoPago().toString().equals("Efectivo")) {
-                        mensaje= "El reembolso no es posible, el metodo de pago utilizado fue en efectivo, un metodo de pago invalido para un reembolso";}
+                        mensaje= "El reembolso no es posible, el metodo de pago utilizado fue en efectivo, un metodo de pago invalido para un reembolso";
+                        respuesta.add(mensaje);}
                         else{
-                            //Seguir Aca No terminado
+                            mensaje= "Su solicitud sigue en proceso, valoramos su paciencia y gracias por escojernos";
+                            // Actualizar el número de reembolsos disponibles
+                            // this.setNumReembolsoDisp(numReembolsoDispUser - 1);
+                            respuesta.add(mensaje);
+                            respuesta.add(factura);
                         }
                     }else { mensaje= "El documento no coincide con el del pasajero";}
                 }else{ mensaje = "No existe Factura asociada al numero de la factura";}
             }
-            return mensaje;
+            return respuesta;
+            
         }
-
+        
     // Metodos de Instancia//
 
     public void comprarTiquete(String origen, String destino) {

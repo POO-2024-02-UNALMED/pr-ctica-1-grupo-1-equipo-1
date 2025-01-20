@@ -1,6 +1,9 @@
 package uiMain;
 import java.time.LocalDateTime;
 import gestorAplicacion.*;
+import gestorAplicacion.administracion.Factura;
+
+import java.util.ArrayList;
 import java.util.Scanner;
 import gestorAplicacion.operacion.individuos.*;;
 
@@ -36,7 +39,8 @@ public class Main{
                     break;
                 case 3:
                     break;
-                case 4:
+                case 4: //Funcionalidad 3 Reembolso de Tiquete
+                
                 Pasajero pasajero1 = new Pasajero();
                 Scanner sc = new Scanner(System.in);
                 System.out.println("ingrese su numero de documento");
@@ -44,7 +48,24 @@ public class Main{
                 System.out.println("ingrese el numero de la factura");
                 int numfactura = sc.nextInt();
                 System.out.println("La solicitud esta en proceso");
-                System.out.println(pasajero1.solicitarReembolso(numId,numfactura, horaZero));
+                // Primero Solicitaremos El reembolso
+                ArrayList<Object> respuesta =pasajero1.solicitarReembolso(numId,numfactura, horaZero);
+                // Se Hacen las primeras Comprobaciones superficiales
+                String mensaje1 = (String) respuesta.get(0);
+                System.out.println(mensaje1);
+                // Si el Proceso sigue Se verificara si existe el Bus asociado
+                if (mensaje1.equals("Su solicitud sigue en proceso, valoramos su paciencia y gracias por escojernos")) {
+                    Factura factura1 =(Factura) respuesta.get(1);
+                    String mensaje2=factura1.verificarBusAsociado();
+                    System.out.println(mensaje2);
+                    // Si el proceso Sigue Se verificara si existe una Ruta asociada
+                    if (mensaje2.equals("Existe un Bus Asociado a la ruta de la factura, Su solicitud seguira en proceso")) {
+                        String mensaje3 = factura1.verificarRutaAsociada();
+                        System.out.println(mensaje3);
+                    if(mensaje3.equals("El asiento liberado puede ser reservado nuevamente, Su reembolso sigue en proceso")){
+                        //Sigue la ejecucion
+                    }
+                }}
                 sc.close();
                     break;
                 case 5:

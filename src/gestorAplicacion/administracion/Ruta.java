@@ -3,13 +3,17 @@ package gestorAplicacion.administracion;
 import gestorAplicacion.operacion.logistica.Bus;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.time.LocalDateTime;
+
 
 public class Ruta extends Red{
     private static int totalRutas;
     private int idRuta;
     private Bus busAsociado;
     private int fechaSalida; // Cambiar por objeto de tiempo
-    private int fechaLlegada; // Cambiar por objeto de tiempo
+    private int fechaLlegada;// Cambiar por objeto de tiempo
+    private LocalDateTime fechaSalidaDateTime;
+    private LocalDateTime fechaLlegadaDateTime;
     private Parada lugarInicio;
     private Parada lugarFinal;
     private Parada[] paradas;
@@ -64,7 +68,7 @@ public class Ruta extends Red{
     public void setBusAsociado(Bus nuevoBusAsociado) {
         busAsociado = nuevoBusAsociado;
     }
-
+    //TEMPORAL REEMPLAZAR POR LOCALDATETIME
     public int getFechaSalida() {
         return fechaSalida;
     }
@@ -72,7 +76,14 @@ public class Ruta extends Red{
     public void setFechaSalida(int nuevafechaSalida) {
         fechaSalida = nuevafechaSalida;
     }
+    public LocalDateTime getFechaSalidaDateTime() {
+        return fechaSalidaDateTime;
+    }
 
+    public void setFechaSalidaDateTime(LocalDateTime nuevafechaLlegada) {
+        fechaLlegadaDateTime = nuevafechaLlegada;
+    }
+    //TEMPORAL REEMPLAZAR POR LOCALDATETIME
     public int getFechaLlegada() {
         return fechaLlegada;
     }
@@ -80,7 +91,13 @@ public class Ruta extends Red{
     public void setFechaLlegada(int nuevafechaLlegada) {
         fechaLlegada = nuevafechaLlegada;
     }
+    public LocalDateTime getFechaLlegadaDateTime() {
+        return fechaLlegadaDateTime;
+    }
 
+    public void setFechaLlegadaDateTime(LocalDateTime nuevafechaLlegada) {
+        fechaLlegadaDateTime = nuevafechaLlegada;
+    }
     public Parada getLugarInicio() {
         return lugarInicio;
     }
@@ -206,7 +223,7 @@ public class Ruta extends Red{
         int contador = 0;
         for (Factura factura : Contabilidad.getVentas()) {
             if (factura.getRutaElegida().equals(this) && factura.getDestino().equals(parada)) {
-                contador += factura.getAsientosAsignados();
+                contador += factura.getnumAsientosAsignados();
             }
         }
         return contador;

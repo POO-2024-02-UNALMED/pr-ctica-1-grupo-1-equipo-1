@@ -200,7 +200,7 @@ public class Empresa {
 
             // Viendo si la ruta fue realizada por esta empresa.
             if (rutas.contains(rutaAsociada)) {
-                flujoDemanda[origen][destino] += factura.getAsientosAsignados();
+                flujoDemanda[origen][destino] += factura.getnumAsientosAsignados();
 
                 // Viendo si ya se tomó en cuenta esta ruta.
                 if (rutasCopia.contains(rutaAsociada)) {
@@ -284,7 +284,7 @@ public class Empresa {
 
             // Viendo si la ruta fue realizada por esta empresa.
             if (rutas.contains(rutaAsociada)) {
-                flujoDemanda[origen][destino] += factura.getAsientosAsignados();
+                flujoDemanda[origen][destino] += factura.getnumAsientosAsignados();
 
                 // Viendo si ya se tomó en cuenta esta ruta.
                 if (rutasCopia.contains(rutaAsociada)) {
