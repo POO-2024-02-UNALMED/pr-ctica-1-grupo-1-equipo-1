@@ -297,4 +297,45 @@ public class Ruta extends Red {
         return rutasAlternativas;
     }
 
+    //-
+    // Método para calcular la distancia total de la ruta
+public double calcularDistanciaRuta() {
+    double distanciaTotal = 0.0; 
+    // Inicializa la distancia total en 0.0
+    int[][] distancias = Empresa.distanciaMinima; 
+    // Obtiene la matriz de distancias mínimas desde la clase Empresa
+    for (int i = 0; i < paradas.length - 1; i++) { 
+        // Recorre el array de paradas, excepto la última parada
+        distanciaTotal += distancias[paradas[i].ordinal()][paradas[i + 1].ordinal()]; 
+        // Suma la distancia entre paradas consecutivas
+    }
+    return distanciaTotal; 
+    // Devuelve la distancia total calculada
+}
+
+// Método para calcular el tiempo estimado de viaje
+public int calcularTiempoEstimado() {
+    int duracion = 0; // Inicializa la duración del viaje en 0 minutos
+    // Aquí se debe agregar el código para calcular la duración del viaje según la lógica de negocio
+    return duracion; 
+    // Devuelve la duración del viaje calculada
+}
+
+// Método para evaluar la complejidad de la ruta
+public double evaluarComplejidad() {
+    double complejidad = 0.0; 
+    // Inicializa la complejidad en 0.0
+    for (Parada parada : paradas) { 
+        // Recorre todas las paradas en la ruta
+        complejidad += 1.0; 
+        // Suma un valor fijo por cada parada para evaluar la complejidad
+        // Aquí se podría agregar una lógica más compleja para evaluar la complejidad de cada parada
+    }
+    return complejidad; // Devuelve la complejidad total calculada
+}
+
+
+    
+    //-
+
 }
