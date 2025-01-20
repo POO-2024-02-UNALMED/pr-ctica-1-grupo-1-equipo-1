@@ -63,7 +63,13 @@ public class Main{
                         String mensaje3 = factura1.verificarRutaAsociada();
                         System.out.println(mensaje3);
                     if(mensaje3.equals("El asiento liberado puede ser reservado nuevamente, Su reembolso sigue en proceso")){
-                        //Sigue la ejecucion
+                        String mensaje4 =pasajero1.EliminarPasajes();
+                        System.out.println(mensaje4);
+                    if(mensaje4.equals("Asiento quitado a " + pasajero1.getNombre() + " en el bus " + pasajero1.getFactura().getRutaElegida().getBusAsociado().getPlaca())){}
+                    
+                }
+                    else{// Esto es en caso que Ocurra un Error
+                        pasajero1.RevertirPasajes();
                     }
                 }}
                 sc.close();

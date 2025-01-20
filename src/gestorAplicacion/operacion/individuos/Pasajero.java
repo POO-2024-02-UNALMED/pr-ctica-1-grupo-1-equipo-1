@@ -65,6 +65,16 @@ public class Pasajero extends Persona {
     // Metodos de Clase//
 
     // Metodos Funcionalidad 3
+
+    //Este Metodo Hace conexion con metodo eliminarPasajero de bus
+    public String  EliminarPasajes(){
+        Bus bus = this.getFactura().getRutaElegida().getBusAsociado();
+        String mensaje = bus.eliminarPasajero(this);
+    }
+    public void  RevertirPasajes(){
+        Bus bus = this.getFactura().getRutaElegida().getBusAsociado();
+        bus.asignarPasajero(this);
+    }
     public ArrayList<Object> solicitarReembolso( int idPasajeroUser, int idFacturaUser,LocalDateTime horaZero){
         ArrayList<Object> respuesta = new ArrayList<>();
         //Calculo la diferencia con la fecha de inicio del programa
@@ -93,7 +103,7 @@ public class Pasajero extends Persona {
 
                     
                     LocalDateTime timecreation = factura.getFecha();
-                    
+
                     // Calcular la diferencia entre las fechas
                     Duration diferencia = Duration.between(timecreation, nowTime);
 
