@@ -4,6 +4,8 @@ import gestorAplicacion.operacion.logistica.Asiento;
 import gestorAplicacion.operacion.logistica.Bus;
 import gestorAplicacion.operacion.logistica.Maleta;
 import gestorAplicacion.administracion.*;
+import gestorAplicacion.administracion.Red.Parada;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -75,6 +77,7 @@ public class Pasajero extends Persona {
         Bus bus = this.getFactura().getRutaElegida().getBusAsociado();
         bus.asignarPasajero(this);
     }
+
     public ArrayList<Object> solicitarReembolso( int idPasajeroUser, int idFacturaUser,LocalDateTime horaZero){
         ArrayList<Object> respuesta = new ArrayList<>();
         //Calculo la diferencia con la fecha de inicio del programa
@@ -103,7 +106,7 @@ public class Pasajero extends Persona {
 
                     
                     LocalDateTime timecreation = factura.getFecha();
-
+                    
                     // Calcular la diferencia entre las fechas
                     Duration diferencia = Duration.between(timecreation, nowTime);
 
@@ -129,93 +132,25 @@ public class Pasajero extends Persona {
         
     // Metodos de Instancia//
 
-    public void comprarTiquete(String origen, String destino) {
-        // Paso 1: Buscar las rutas disponibles para el origen y destino seleccionados
-        List<Ruta> rutasDisponibles = Ruta.filtrarRutas(origen, destino);
+    public void comprarTiquete(String lugarInicio, String lugarFinal) {
+        List<Ruta> rutasDisponibles = Ruta.filtrarRutas(lugarInicio, lugarFinal);
 
-        // Paso 2: Si no hay rutas disponibles, informamos al usuario
         if (rutasDisponibles.isEmpty()) {
-            System.out.println("No hay rutas disponibles entre " + origen + " y " + destino);
             return;
         }
 
-        // Paso 3: Mostrar las rutas disponibles al usuario
-        System.out.println("Rutas disponibles entre " + origen + " y " + destino + ":");
-        int i = 1;
-        for (Ruta ruta : rutasDisponibles) {
-            System.out.println(i + ". " + "Empresa: " + ruta.getBusAsociado().getEmpresa().getNombre() +
-                    ", Tipo de asiento: " + (ruta.getBusAsociado().getAsientos().equals("VIP") ? "VIP" : "Estándar") +
-                    ", Escalas: " + ruta.getParadas());
-            i++;
-        }
-
-        // Paso 4: Solicitar al pasajero elegir una ruta
-        System.out.print("Seleccione la opción de ruta (1-" + rutasDisponibles.size() + "): ");
-        int opcionRuta = new Scanner(System.in).nextInt();
-
-        // Validación de la opción seleccionada
-        if (opcionRuta < 1 || opcionRuta > rutasDisponibles.size()) {
-            System.out.println("Opción inválida");
-            return;
-        }
-
-        // Paso 5: Obtener la ruta seleccionada
-        Ruta rutaSeleccionada = rutasDisponibles.get(opcionRuta - 1);
-
-        // Paso 6: Mostrar detalles del bus asignado a la ruta seleccionada
+        Ruta rutaSeleccionada = rutasDisponibles.get(0);
         Bus busAsignado = rutaSeleccionada.getBusAsociado();
-        System.out.println("Bus asignado para la ruta: " + busAsignado.getPlaca() +
-                " con capacidad de " + busAsignado.getCantidadAsientos() + " asientos.");
 
-        // Paso 7: Selección del tipo de asiento (Estándar o VIP)
-        System.out.print("Seleccione el tipo de asiento (1 para Estándar, 2 para VIP): ");
-        int tipoAsiento = new Scanner(System.in).nextInt();
+        Parada[] paradas = rutaSeleccionada.getParadas();
+        Asiento[] asientosDisponibles = busAsignado.getAsientos().toArray(new Asiento[0]);
 
-        if (tipoAsiento != 1 && tipoAsiento != 2) {
-            System.out.println("Selección de tipo de asiento inválido.");
-            return;
-        }
-
-        // Paso 8: Mostrar los asientos disponibles en el bus
-        ArrayList<Asiento> asientosDisponiblesList = busAsignado.getAsientos(); // Obtener el ArrayList
-        Asiento[] asientosDisponibles = asientosDisponiblesList.toArray(new Asiento[0]); // Convertir a un arreglo
-
-        System.out.println("Asientos disponibles:");
-        i = 1;
-        for (Asiento asiento : asientosDisponibles) {
-            if (asiento.isEstado()) { // Verificamos si el asiento está disponible
-                System.out.println(i + ". Asiento ID: " + asiento.getIdAsiento());
-            }
-            i++;
-        }
-
-        // Paso 9: Solicitar al pasajero seleccionar un asiento
-        System.out.print("Seleccione el número de asiento: ");
-        int opcionAsiento = new Scanner(System.in).nextInt();
-
-        // Validación de la opción seleccionada
-        if (opcionAsiento < 1 || opcionAsiento > asientosDisponibles.length
-                || !asientosDisponibles[opcionAsiento - 1].isEstado()) {
-            System.out.println("Opción de asiento inválida o asiento no disponible.");
-            return;
-        }
-
-        // Paso 10: Asignar el asiento seleccionado al pasajero
-        Asiento asientoSeleccionado = asientosDisponibles[opcionAsiento - 1];
+        Asiento asientoSeleccionado = asientosDisponibles[0];
         this.setAsiento(asientoSeleccionado);
         asientoSeleccionado.setUsuario(this);
-        asientoSeleccionado.setEstado(false); // El asiento ya no está disponible
-
-        // Paso 11: Confirmación de la compra
-        System.out.println("Tiquete comprado exitosamente!");
-        System.out.println("Ruta: " + rutaSeleccionada.getLugarInicio() + " - " + rutaSeleccionada.getLugarFinal());
-        System.out.println("Asiento asignado: " + asientoSeleccionado.getIdAsiento());
-        System.out.println("Bus: " + busAsignado.getPlaca() + " | Tipo de asiento: " +
-                (tipoAsiento == 1 ? "Estándar" : "VIP"));
-
-        // Paso 12: Proseguir con la gestión del equipaje y la generación de la factura
-        // (esto lo continuamos después)
+        asientoSeleccionado.setEstado(false);
     }
+}
 
     public boolean aceptarCambio() {
         Scanner scanner = new Scanner(System.in);
