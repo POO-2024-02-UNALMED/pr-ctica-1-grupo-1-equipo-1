@@ -170,113 +170,159 @@ public class Chofer extends Persona{
         
     }
     
-    //Interacción 1 de 5: Evaluación de Rendimiento de los Conductores esta 
+//Interacción 1 de 5: Evaluación de Rendimiento de los Conductores esta 
 //falta por relacionar a la demas clases solo ta el codigo esta 
 //semana hago la interaccion de las clases correspondiente 
 
-    private int tiempoEstimadoViaje;
-    private int tiempoRealViaje;
-    private double distanciaRecorrida;
-    private double consumoReportado;
-    private int puntajeSatisfaccionPasajeros;
-    private int puntajeEficienciaTiempos;
-    private int puntajeConsumoCombustible;
-    private double puntajeDefinitivo;
+// Declaración de variables de instancia para el tiempo estimado y real del viaje, distancia recorrida, consumo de combustible reportado y puntajes.
+private int tiempoEstimadoViaje; 
+// Tiempo estimado para completar el viaje.
+private int tiempoRealViaje; 
+// Tiempo real que tomó completar el viaje.
+private double distanciaRecorrida; 
+// Distancia total recorrida durante el viaje.
+private double consumoReportado; 
+// Cantidad de combustible reportado como consumido durante el viaje.
+private int puntajeSatisfaccionPasajeros; 
+// Puntaje de satisfacción de los pasajeros.
+private int puntajeEficienciaTiempos; 
+// Puntaje de eficiencia en tiempos.
+private int puntajeConsumoCombustible; 
+// Puntaje de eficiencia en el consumo de combustible.
+private double puntajeDefinitivo; 
+// Puntaje final basado en varios factores.
 
-    public Chofer(int tiempoEstimadoViaje, int tiempoRealViaje, double distanciaRecorrida, double consumoReportado) {
-        this.tiempoEstimadoViaje = tiempoEstimadoViaje;
-        this.tiempoRealViaje = tiempoRealViaje;
-        this.distanciaRecorrida = distanciaRecorrida;
-        this.consumoReportado = consumoReportado;
-        this.puntajeSatisfaccionPasajeros = generarNumeroAleatorio(); // Se genera aleatoriamente para simular encuestas.
+// Constructor de la clase Chofer
+public Chofer(int tiempoEstimadoViaje, int tiempoRealViaje, double distanciaRecorrida, double consumoReportado) {
+    this.tiempoEstimadoViaje = tiempoEstimadoViaje; 
+    // Asigna el tiempo estimado de viaje.
+    this.tiempoRealViaje = tiempoRealViaje; 
+    // Asigna el tiempo real de viaje.
+    this.distanciaRecorrida = distanciaRecorrida; 
+    // Asigna la distancia recorrida.
+    this.consumoReportado = consumoReportado; 
+    // Asigna el consumo de combustible reportado.
+    this.puntajeSatisfaccionPasajeros = generarNumeroAleatorio(); 
+    // Genera un puntaje aleatorio para la satisfacción de los pasajeros.
+}
+
+// Método estático para generar un número aleatorio entre 1 y 5
+public static int generarNumeroAleatorio() {
+    Random random = new Random(); 
+    // Crea una instancia de la clase Random para generar números aleatorios.
+    return random.nextInt(5) + 1; 
+    
+    // Devuelve un número aleatorio entre 1 y 5.
+}
+
+// Método para calcular la eficiencia en tiempos
+public void calcularEficienciaTiempos() {
+    int diferenciaTiempo = tiempoRealViaje - tiempoEstimadoViaje; 
+    // Calcula la diferencia entre el tiempo real y el estimado.
+    if (diferenciaTiempo < 10) { 
+        // Si la diferencia es menor a 10 minutos...
+        puntajeEficienciaTiempos = 5; 
+        // Asigna puntaje de eficiencia en tiempos de 5.
+    } else if (diferenciaTiempo < 20) { 
+        // Si la diferencia es menor a 20 minutos...
+        puntajeEficienciaTiempos = 4; 
+        // Asigna puntaje de eficiencia en tiempos de 4.
+    } else if (diferenciaTiempo < 30) { 
+        // Si la diferencia es menor a 30 minutos...
+        puntajeEficienciaTiempos = 3; 
+        // Asigna puntaje de eficiencia en tiempos de 3.
+    } else if (diferenciaTiempo < 40) { 
+        // Si la diferencia es menor a 40 minutos...
+        puntajeEficienciaTiempos = 2; 
+        // Asigna puntaje de eficiencia en tiempos de 2.
+    } else { // Si la diferencia es mayor o igual a 40 minutos...
+        puntajeEficienciaTiempos = 1; 
+        // Asigna puntaje de eficiencia en tiempos de 1.
+    }
+}
+
+// Método para calcular el consumo de combustible
+public void calcularConsumoCombustible() {
+    double eficienciaCombustible = distanciaRecorrida / consumoReportado; 
+    // Calcula la eficiencia de combustible.
+    if (eficienciaCombustible >= 5) { 
+        // Si la eficiencia es mayor o igual a 5...
+        puntajeConsumoCombustible = 5; 
+        // Asigna puntaje de consumo de combustible de 5.
+    } else if (eficienciaCombustible >= 4) { 
+        // Si la eficiencia es mayor o igual a 4...
+        puntajeConsumoCombustible = 4; 
+        // Asigna puntaje de consumo de combustible de 4.
+    } else if (eficienciaCombustible >= 3) {
+         // Si la eficiencia es mayor o igual a 3...
+        puntajeConsumoCombustible = 3; 
+        // Asigna puntaje de consumo de combustible de 3.
+    } else if (eficienciaCombustible >= 2) { 
+        // Si la eficiencia es mayor o igual a 2...
+        puntajeConsumoCombustible = 2; 
+        // Asigna puntaje de consumo de combustible de 2.
+    } else { // Si la eficiencia es menor a 2...
+        puntajeConsumoCombustible = 1; 
+        // Asigna puntaje de consumo de combustible de 1.
+    }
+}
+
+// Método para calcular el puntaje definitivo
+public void calcularPuntajeDefinitivo() {
+    calcularEficienciaTiempos(); 
+    // Calcula la eficiencia en tiempos.
+    calcularConsumoCombustible();
+     // Calcula el consumo de combustible.
+    // Calcula el puntaje definitivo ponderando los puntajes según su importancia (40% tiempos, 40% combustible, 20% satisfacción).
+    puntajeDefinitivo = (puntajeEficienciaTiempos * 0.4) + (puntajeConsumoCombustible * 0.4) + (puntajeSatisfaccionPasajeros * 0.2); 
+    puntajeDefinitivo = (puntajeDefinitivo / 5) * 100; 
+    // Convierte el puntaje a base 100.
+}
+
+// Método para generar el informe de rendimiento
+public void generarInformeRendimiento() {
+    // Imprime el informe de rendimiento del conductor.
+    System.out.println("Informe de Rendimiento del Conductor");
+    System.out.println("====================================");
+    System.out.println("Eficiencia en tiempos: " + puntajeEficienciaTiempos + "/5");
+    System.out.println("Consumo de combustible: " + puntajeConsumoCombustible + "/5");
+    System.out.println("Satisfacción de pasajeros: " + puntajeSatisfaccionPasajeros + "/5");
+    System.out.println("Puntaje definitivo: " + puntajeDefinitivo + "%"); 
+    // Representado en porcentaje
+
+    if (puntajeDefinitivo < 70) { 
+        // Si el puntaje definitivo es menor a 70...
+        System.out.println("\n¡Atención! El conductor ha obtenido un puntaje por debajo del umbral establecido (70%).");
+        System.out.println("Se recomienda una revisión más detallada de su desempeño.");
     }
 
-    // Método estático para generar un número aleatorio entre 1 y 5 
-    public static int generarNumeroAleatorio() {
-        Random random = new Random();
-        return random.nextInt(5) + 1;
+    // Imprime las fortalezas del conductor.
+    System.out.println("\nFortalezas:");
+    if (puntajeEficienciaTiempos >= 4) {
+        System.out.println("- Buen desempeño en la eficiencia de tiempos");
+    }
+    if (puntajeConsumoCombustible >= 4) {
+        System.out.println("- Eficiencia destacada en el consumo de combustible");
+    }
+    if (puntajeSatisfaccionPasajeros >= 4) {
+        System.out.println("- Alta satisfacción de los pasajeros");
     }
 
-    // Métodos para calcular la eficiencia en tiempos
-    public void calcularEficienciaTiempos() {
-        int diferenciaTiempo = tiempoRealViaje - tiempoEstimadoViaje;
-        if (diferenciaTiempo < 10) {
-            puntajeEficienciaTiempos = 5;
-        } else if (diferenciaTiempo < 20) {
-            puntajeEficienciaTiempos = 4;
-        } else if (diferenciaTiempo < 30) {
-            puntajeEficienciaTiempos = 3;
-        } else if (diferenciaTiempo < 40) {
-            puntajeEficienciaTiempos = 2;
-        } else {
-            puntajeEficienciaTiempos = 1;
-        }
+    // Imprime las áreas de mejora del conductor.
+    System.out.println("\nÁreas de mejora:");
+    if (puntajeEficienciaTiempos < 4) {
+        System.out.println("- Mejorar la eficiencia de tiempos");
     }
-
-    // Métodos para calcular el consumo de combustible
-    public void calcularConsumoCombustible() {
-        double eficienciaCombustible = distanciaRecorrida / consumoReportado;
-        if (eficienciaCombustible >= 5) {
-            puntajeConsumoCombustible = 5;
-        } else if (eficienciaCombustible >= 4) {
-            puntajeConsumoCombustible = 4;
-        } else if (eficienciaCombustible >= 3) {
-            puntajeConsumoCombustible = 3;
-        } else if (eficienciaCombustible >= 2) {
-            puntajeConsumoCombustible = 2;
-        } else {
-            puntajeConsumoCombustible = 1;
-        }
+    if (puntajeConsumoCombustible < 4) {
+        System.out.println("- Reducir el consumo de combustible");
     }
-
-    // Método para calcular el puntaje definitivo
-    public void calcularPuntajeDefinitivo() {
-        calcularEficienciaTiempos();
-        calcularConsumoCombustible();
-        // Se ponderan los puntajes según su importancia (40% tiempos, 40% combustible, 20% satisfacción)
-        puntajeDefinitivo = (puntajeEficienciaTiempos * 0.4) + (puntajeConsumoCombustible * 0.4) + (puntajeSatisfaccionPasajeros * 0.2);
-        // Convertir puntaje a base 100
-        puntajeDefinitivo = (puntajeDefinitivo / 5) * 100;
+    if (puntajeSatisfaccionPasajeros < 4) {
+        System.out.println("- Aumentar la satisfacción de los pasajeros");
     }
+}
 
-    // Método para generar el informe de rendimiento
-    public void generarInformeRendimiento() {
-        System.out.println("Informe de Rendimiento del Conductor");
-        System.out.println("====================================");
-        System.out.println("Eficiencia en tiempos: " + puntajeEficienciaTiempos + "/5");
-        System.out.println("Consumo de combustible: " + puntajeConsumoCombustible + "/5");
-        System.out.println("Satisfacción de pasajeros: " + puntajeSatisfaccionPasajeros + "/5");
-        System.out.println("Puntaje definitivo: " + puntajeDefinitivo + "%"); // Representado en porcentaje
-
-        if (puntajeDefinitivo < 70) {
-            System.out.println("\n¡Atención! El conductor ha obtenido un puntaje por debajo del umbral establecido (70%).");
-            System.out.println("Se recomienda una revisión más detallada de su desempeño.");
-        }
-
-        System.out.println("\nFortalezas:");
-        if (puntajeEficienciaTiempos >= 4) {
-            System.out.println("- Buen desempeño en la eficiencia de tiempos");
-        }
-        if (puntajeConsumoCombustible >= 4) {
-            System.out.println("- Eficiencia destacada en el consumo de combustible");
-        }
-        if (puntajeSatisfaccionPasajeros >= 4) {
-            System.out.println("- Alta satisfacción de los pasajeros");
-        }
-
-        System.out.println("\nÁreas de mejora:");
-        if (puntajeEficienciaTiempos < 4) {
-            System.out.println("- Mejorar la eficiencia de tiempos");
-        }
-        if (puntajeConsumoCombustible < 4) {
-            System.out.println("- Reducir el consumo de combustible");
-        }
-        if (puntajeSatisfaccionPasajeros < 4) {
-            System.out.println("- Aumentar la satisfacción de los pasajeros");
-        }
-    }
-
-    public double getPuntajeDefinitivo() {
-        return puntajeDefinitivo;
-    }
+// Método para obtener el puntaje definitivo.
+public double getPuntajeDefinitivo() {
+    return puntajeDefinitivo; // Devuelve el puntaje definitivo.
+}
 }
