@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.time.LocalDateTime;
 
-
-public class Ruta extends Red{
+public class Ruta extends Red {
     private static int totalRutas;
+    private static ArrayList<Ruta> totalRutasLista = new ArrayList<>();
     private int idRuta;
     private Bus busAsociado;
     private int fechaSalida; // Cambiar por objeto de tiempo
@@ -39,12 +39,18 @@ public class Ruta extends Red{
     public Ruta(int ordinalLugarInicio, int ordinalLugarFinal, int[] ordinalesParadas) {
         // Cambiar por objetos de tiempo
         this(null, 0, 0,
-             Parada(ordinalLugarInicio),
-             Parada(ordinalLugarFinal),
-             Red.enteroAParada(ordinalesParadas));
+                Parada(ordinalLugarInicio),
+                Parada(ordinalLugarFinal),
+                Red.enteroAParada(ordinalesParadas));
     }
 
     // Métodos get-set
+    static public ArrayList<Ruta> getTotalRutasLista(){
+        return totalRutasLista;
+    }
+    static public void setTotalRutasLista(ArrayList<Ruta> nuevosTotalRutasLista) {
+        totalRutasLista = nuevosTotalRutasLista;
+    }
     public static int getTotalRutas() {
         return totalRutas;
     }
@@ -68,7 +74,8 @@ public class Ruta extends Red{
     public void setBusAsociado(Bus nuevoBusAsociado) {
         busAsociado = nuevoBusAsociado;
     }
-    //TEMPORAL REEMPLAZAR POR LOCALDATETIME
+
+    // TEMPORAL REEMPLAZAR POR LOCALDATETIME
     public int getFechaSalida() {
         return fechaSalida;
     }
@@ -76,6 +83,7 @@ public class Ruta extends Red{
     public void setFechaSalida(int nuevafechaSalida) {
         fechaSalida = nuevafechaSalida;
     }
+
     public LocalDateTime getFechaSalidaDateTime() {
         return fechaSalidaDateTime;
     }
@@ -83,7 +91,8 @@ public class Ruta extends Red{
     public void setFechaSalidaDateTime(LocalDateTime nuevafechaLlegada) {
         fechaLlegadaDateTime = nuevafechaLlegada;
     }
-    //TEMPORAL REEMPLAZAR POR LOCALDATETIME
+
+    // TEMPORAL REEMPLAZAR POR LOCALDATETIME
     public int getFechaLlegada() {
         return fechaLlegada;
     }
@@ -91,6 +100,7 @@ public class Ruta extends Red{
     public void setFechaLlegada(int nuevafechaLlegada) {
         fechaLlegada = nuevafechaLlegada;
     }
+
     public LocalDateTime getFechaLlegadaDateTime() {
         return fechaLlegadaDateTime;
     }
@@ -98,6 +108,7 @@ public class Ruta extends Red{
     public void setFechaLlegadaDateTime(LocalDateTime nuevafechaLlegada) {
         fechaLlegadaDateTime = nuevafechaLlegada;
     }
+
     public Parada getLugarInicio() {
         return lugarInicio;
     }
@@ -138,8 +149,29 @@ public class Ruta extends Red{
 
     }
 
-    public ArrayList<Ruta> filtrarRutas(){
-        return null;
+    static public ArrayList<Ruta> filtrarRutas(String origen, String destino) {
+        /*
+         * Filtra las rutas que cumplan con ciertas condiciones.
+         * 
+         * Parámetros:
+         * - condiciones: Condiciones de filtrado.
+         * Condiciones para filtrar rutas.
+         * 
+         * Retorna:
+         * - ArrayList<Ruta>: Lista de rutas que cumplen con las condiciones.
+         */
+        
+        // Implementación aquí.
+        ArrayList<Ruta> rutasFiltradas = new ArrayList<>();
+
+        // Iterar sobre todas las rutas disponibles en la red o sistema
+        for (Ruta ruta : getTotalRutasLista()) { // Método que devuelve todas las rutas disponibles
+            if (ruta.getLugarInicio().equals(origen) && ruta.getLugarFinal().equals(destino)) {
+                rutasFiltradas.add(ruta);
+            }
+        }
+
+        return rutasFiltradas;
     }
 
     public void agregarParada(Parada nuevaParada) {
@@ -155,14 +187,15 @@ public class Ruta extends Red{
         int nParadas = paradas.length;
 
         // Caso donde solo exista una parada.
-        if(nParadas < 2){
+        if (nParadas < 2) {
             // Debe generar error.
         }
 
         int[] posicion = Red.posicion(paradas, nuevaParada);
         int posicionDistanciaMinima = posicion[0] + 1;
 
-        // Reorganizando el array de paradas para que la nueva parada quede en la posición indicada.
+        // Reorganizando el array de paradas para que la nueva parada quede en la
+        // posición indicada.
         Parada[] temp = new Parada[nParadas + 1];
         temp[posicionDistanciaMinima] = nuevaParada;
         for (int i = 0; i < nParadas; i++) {
@@ -181,17 +214,17 @@ public class Ruta extends Red{
         paradas = temp;
     }
 
-    public void eliminarParada(Parada parada){
+    public void eliminarParada(Parada parada) {
         /*
          * Añade la nueva parada haciendo minimizando su efecto en la ruta.
          * 
          * Parámetros:
          * - nuevaParada: Parada.
-         *      Parada a eliminar
+         * Parada a eliminar
          */
 
         // Caso donde no existan paradas.
-        if(paradas == null){
+        if (paradas == null) {
             paradas = new Parada[0];
             return;
         }
@@ -202,16 +235,19 @@ public class Ruta extends Red{
         // Creando un array donde se quitó la parada.
         Parada[] temp = new Parada[nParadas - 1];
         Boolean estaEnElArray = false;
-        for(int i = 0; i < nParadas - 1; i++){
-            if(paradas[i] == parada){estaEnElArray = true;}       // Viendo si está la parada.
-            else{temp[i] = paradas[i - (estaEnElArray ? 1 : 0)];} // Desplazando lo adecuado.
+        for (int i = 0; i < nParadas - 1; i++) {
+            if (paradas[i] == parada) {
+                estaEnElArray = true;
+            } // Viendo si está la parada.
+            else {
+                temp[i] = paradas[i - (estaEnElArray ? 1 : 0)];
+            } // Desplazando lo adecuado.
         }
 
         // Preguntando si la parada se encontraba en el array.
-        if(!estaEnElArray && paradas[nParadas - 1] != parada){
+        if (!estaEnElArray && paradas[nParadas - 1] != parada) {
             return;
-        }
-        else if(!estaEnElArray && paradas[nParadas - 1] == parada){
+        } else if (!estaEnElArray && paradas[nParadas - 1] == parada) {
             temp[nParadas - 2] = paradas[nParadas - 1];
         }
 
@@ -238,7 +274,7 @@ public class Ruta extends Red{
         Empresa empresa = this.getBusAsociado().getEmpresa();
         // Iterar sobre las rutas de la empresa
         for (Ruta ruta : empresa.getRutas()) {
-            
+
             if (ruta.getLugarFinal().equals(this.lugarFinal) && ruta.getLugarInicio() != this.lugarInicio) {
                 // Verificar si la ruta esta activa y si el bus esta disponible tambien
                 if (ruta.getBusAsociado() != null

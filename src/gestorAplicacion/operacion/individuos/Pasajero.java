@@ -21,11 +21,19 @@ public class Pasajero extends Persona {
     private double wallet;
     private Factura factura;
     private int numReembolsoDisp;
-
+    private Asiento asiento;
     // Getters y Setters//
 
     public Factura getFactura() {
         return factura;
+    }
+
+    public void setAsiento(Asiento asiento) {
+        this.asiento = asiento;
+    }
+
+    public Asiento getAsiento() {
+        return asiento;
     }
 
     public void setFactura(Factura factura) {
@@ -68,82 +76,79 @@ public class Pasajero extends Persona {
 
     // Metodos Funcionalidad 3
 
-    //Este Metodo Hace conexion con metodo eliminarPasajero de bus
-    public String EliminarPasajes(){
+    // Este Metodo Hace conexion con metodo eliminarPasajero de bus
+    public String EliminarPasajes() {
         Bus bus = this.getFactura().getRutaElegida().getBusAsociado();
         String mensaje = bus.eliminarPasajero(this);
         return mensaje;
     }
-    public void  RevertirPasajes(){
+
+    public void RevertirPasajes() {
         Bus bus = this.getFactura().getRutaElegida().getBusAsociado();
         bus.asignarPasajero(this);
     }
 
-    public ArrayList<Object> solicitarReembolso( int idPasajeroUser, int idFacturaUser,LocalDateTime horaZero){
+    public ArrayList<Object> solicitarReembolso(int idPasajeroUser, int idFacturaUser, LocalDateTime horaZero) {
         ArrayList<Object> respuesta = new ArrayList<>();
-        //Calculo la diferencia con la fecha de inicio del programa
-        LocalDateTime nowTime = LocalDateTime.now(); //Obtengo el tiempo exacto de solicitud
+        // Calculo la diferencia con la fecha de inicio del programa
+        LocalDateTime nowTime = LocalDateTime.now(); // Obtengo el tiempo exacto de solicitud
         Duration diferenciaZero = Duration.between(horaZero, nowTime);
-        String mensaje="";
+        String mensaje = "";
         int numReembolsoDispUser = this.getNumReembolsoDisp();
         // Verificar si la diferencia es mayor a un año (en segundos)
         long secondsInOneYear = 365L * 24 * 60 * 60; // 365 días en segundos
         if (diferenciaZero.getSeconds() > secondsInOneYear) {
             numReembolsoDispUser = 2;
         } else if (numReembolsoDispUser == 0) {
-            mensaje= "El Pasajero no tiene mas reembolsos por este ano, segun los terminos y condiciones";
+            mensaje = "El Pasajero no tiene mas reembolsos por este ano, segun los terminos y condiciones";
             respuesta.add(mensaje);
         }
 
-
         ArrayList<Factura> facturas = Contabilidad.getVentas();
-        for (Factura factura : facturas) {// Se obtiene el array de las facturas y se itera hasta encontrar una que coincida con la recibida
-            int idFactura= factura.getIdFactura();
+        for (Factura factura : facturas) {// Se obtiene el array de las facturas y se itera hasta encontrar una que
+                                          // coincida con la recibida
+            int idFactura = factura.getIdFactura();
 
-            if (idFactura == idFacturaUser){
+            if (idFactura == idFacturaUser) {
                 int idPasajero = factura.getIdUsuario();
 
-                if (idPasajeroUser == idPasajero){
+                if (idPasajeroUser == idPasajero) {
 
-                    
                     LocalDateTime timecreation = factura.getFecha();
-                    
+
                     // Calcular la diferencia entre las fechas
                     Duration diferencia = Duration.between(timecreation, nowTime);
 
                     if (diferencia.toHours() < 24) {
-                        mensaje= "El reembolso no puede hacerse efectivo, La diferencia no es mayor a 24 horas segun lo establecido por terminos y condiciones.";
+                        mensaje = "El reembolso no puede hacerse efectivo, La diferencia no es mayor a 24 horas segun lo establecido por terminos y condiciones.";
                         respuesta.add(mensaje);
                     } else if (factura.getMetodoPago().toString().equals("Efectivo")) {
-                        mensaje= "El reembolso no es posible, el metodo de pago utilizado fue en efectivo, un metodo de pago invalido para un reembolso";
-                        respuesta.add(mensaje);}
-                        else{
-                            mensaje= "Su solicitud sigue en proceso, valoramos su paciencia y gracias por escojernos";
-                            // Actualizar el número de reembolsos disponibles
-                            // this.setNumReembolsoDisp(numReembolsoDispUser - 1);
-                            respuesta.add(mensaje);
-                            respuesta.add(factura);
-                        }
-                    }else { mensaje= "El documento no coincide con el del pasajero";}
-                }else{ mensaje = "No existe Factura asociada al numero de la factura";}
+                        mensaje = "El reembolso no es posible, el metodo de pago utilizado fue en efectivo, un metodo de pago invalido para un reembolso";
+                        respuesta.add(mensaje);
+                    } else {
+                        mensaje = "Su solicitud sigue en proceso, valoramos su paciencia y gracias por escojernos";
+                        // Actualizar el número de reembolsos disponibles
+                        // this.setNumReembolsoDisp(numReembolsoDispUser - 1);
+                        respuesta.add(mensaje);
+                        respuesta.add(factura);
+                    }
+                } else {
+                    mensaje = "El documento no coincide con el del pasajero";
+                }
+            } else {
+                mensaje = "No existe Factura asociada al numero de la factura";
             }
-            return respuesta;
-            
         }
-        
+        return respuesta;
+
+    }
+
     // Metodos de Instancia//
 
-    public void comprarTiquete(String lugarInicio, String lugarFinal) {
-        List<Ruta> rutasDisponibles = Ruta.filtrarRutas(lugarInicio, lugarFinal);
+    public void comprarTiquete(Ruta rutaSeleccionada, int asiento, ArrayList<Ruta> rutasDisponibles) {
 
-        if (rutasDisponibles.isEmpty()) {
-            return;
-        }
-
-        Ruta rutaSeleccionada = rutasDisponibles.get(0);
         Bus busAsignado = rutaSeleccionada.getBusAsociado();
 
-        Parada[] paradas = rutaSeleccionada.getParadas();
         Asiento[] asientosDisponibles = busAsignado.getAsientos().toArray(new Asiento[0]);
 
         Asiento asientoSeleccionado = asientosDisponibles[0];
@@ -151,7 +156,6 @@ public class Pasajero extends Persona {
         asientoSeleccionado.setUsuario(this);
         asientoSeleccionado.setEstado(false);
     }
-}
 
     public boolean aceptarCambio() {
         Scanner scanner = new Scanner(System.in);
@@ -162,6 +166,7 @@ public class Pasajero extends Persona {
             System.out.println("Respuesta no valida. Por favor, escriba 'Si' o 'No'.");
             respuesta = scanner.nextLine().trim().toLowerCase();
         }
+        scanner.close();
         return respuesta.equals("si") ? true : false;
     }
 

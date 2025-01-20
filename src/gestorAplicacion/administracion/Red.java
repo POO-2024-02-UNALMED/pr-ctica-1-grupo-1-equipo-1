@@ -381,4 +381,5 @@ public abstract class Red{
     public abstract void agregarParada(Parada nuevaParada);
 
     public abstract void eliminarParada(Parada nuevaParada);
+
 }

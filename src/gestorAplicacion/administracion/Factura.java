@@ -137,7 +137,7 @@ public class Factura{
                 if (asiento.getUsuario().getNombre().equals(this.usuarioNombre)) {
                     mensaje = "El usuario ya tiene una reserva asociada a esta ruta";
                     Ruta rutaElegida = getRutaElegida();
-                    LocalDateTime fechaSalida = rutaElegida.getFechaSalidaDatetime();
+                    LocalDateTime fechaSalida = rutaElegida.getFechaSalidaDateTime();
                     if (LocalDateTime.now().isBefore(fechaSalida)) {
                         System.out.println("El asiento liberado puede ser reservado nuevamente, Su reembolso sigue en proceso");
                     } else {
