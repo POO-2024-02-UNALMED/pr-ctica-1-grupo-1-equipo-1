@@ -482,7 +482,6 @@ public class Empresa {
                     rutaANoRuta[i] += promedios[enRuta[j]][noEnRuta[i]];
                 }
             }
-            
         }
         else{paradasReales = paradasOptimas;}
 

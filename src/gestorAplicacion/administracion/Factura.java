@@ -94,7 +94,7 @@ public class Factura{
     }
 
     public Red.Parada getOrigen(){
-        return Red.Parada.values()[origen];
+        return Red.Parada(origen);
     }
 
     public void setOrigen(int origen){
@@ -102,7 +102,7 @@ public class Factura{
     }
 
     public Red.Parada getDestino(){
-        return Red.Parada.values()[destino];
+        return Red.Parada(destino);
     }
 
     public void setDestino(int destino){

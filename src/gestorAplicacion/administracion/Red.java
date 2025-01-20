@@ -76,6 +76,11 @@ public abstract class Red{
         }
     }
 
+    public static Parada Parada(int i){
+        // Devuelve la parada con ordinal i.
+        return Parada.values()[i];
+    }
+
     private static int w(int distancia, int tiempo) {
         /*
          * Devuelve el peso asociado a la arista de la red de carreteras.
@@ -203,23 +208,21 @@ public abstract class Red{
          */
 
         // Se establece un predecesor (Padres) para cada vértice en la ruta óptima.
-        // Se establece la distancia asociada óptima desde el vértice de origen a cada
-        // vértice.
-        int numeroVertices = Parada.values().length;
-        int[] padres = new int[numeroVertices];
-        int[] recorrido = new int[numeroVertices];
+        // Se establece la distancia asociada óptima desde el vértice de origen a cada vértice.
+        int[] padres = new int[totalParadas];
+        int[] recorrido = new int[totalParadas];
         recorrido[verticeInicial] = 0;
 
         // Estableciendo la distancia infinita y que el padre es null (Un padre
         // inexistente será tomado como -1).
-        for (int i = 0; i < numeroVertices; i++) {
+        for (int i = 0; i < totalParadas; i++) {
             padres[i] = -1;
             recorrido[i] = 100000; // Distancia infinita.
         }
 
         // Implementación del algoritmo de Bell-Forman para hallar el predecesor y
         // distancia asociada óptima
-        for (int i = 1; i < numeroVertices; i++) {
+        for (int i = 1; i < totalParadas; i++) {
             for (int[][] arista : carreteras) {
                 int vertice1 = arista[0][0];
                 int vertice2 = arista[0][1];
@@ -244,17 +247,17 @@ public abstract class Red{
         // Construcción de las paradas intermedias.
         ArrayList<Parada> paradas = new ArrayList<Parada>();
         int parada = verticeFinal;
-        paradas.add(Parada.values()[parada]);
+        paradas.add(Parada(parada));
         while (padres[parada] > -1) {
             // Añadiendo al padre a la lista.
-            paradas.add(0, Parada.values()[padres[parada]]);
+            paradas.add(0, Parada(padres[parada]));
 
             // Haciendo inducción.
             parada = padres[parada];
         }
 
         // Añadiendo el vértice de origen a la parada.
-        paradas.add(0, Parada.values()[verticeInicial]);
+        paradas.add(0, Parada(verticeInicial));
 
         // Retorno de las paradas.
         int[] ordinalesRutaOptima = new int[paradas.size()];
@@ -263,6 +266,94 @@ public abstract class Red{
         }
 
         return ordinalesRutaOptima;
+    }
+
+    public static int[] ordenarParadas(int[] ordinales){
+        /*
+         * Ordena las paradas de tal manera que el orden represente un recorrido que
+         * optimiza la distancia total.
+         * 
+         * Parámetros:
+         *      - ordinales: int[],
+         *          Conjunto original de paradas (ordinales).
+         * 
+         * Retorna:
+         *      - paradasOrdenadas: int[],
+         *          Paradas (ordinales) organizadas para minimizar el orden.
+         */
+
+        // Creando el array que contendrá las apradas ordenadas.
+        int[] paradasOrdenadas = new int[1];
+        paradasOrdenadas[0] = ordinales[0];
+
+        // Ordenando el array.
+        int[] temp;
+        for(int i = 1; i < ordinales.length; i++){
+            // Viendo la posición del elemento i-ésimo.
+            int[] posiciones = posicion(enteroAParada(paradasOrdenadas), Parada(ordinales[i]));
+
+            // Añadiéndolo a la lista si es distinto.
+            if(posiciones != null){
+                temp = new int[i + 1];
+                temp[posiciones[0] + 2] = ordinales[i];
+                for(int j = 0; j < i + 1; j++){
+                    if(j < posiciones[0] + 1){
+                        temp[i] = paradasOrdenadas[i];
+                    }
+                    else if(j > posiciones[0] + 1){
+                        temp[i] = paradasOrdenadas[i - 1];
+                    }
+                }
+
+                paradasOrdenadas = temp;
+            }
+        }
+
+        return paradasOrdenadas;
+    }
+
+    public static Parada[] ordenarParadas(Parada[] paradas){
+        /*
+         * Ordena las paradas de tal manera que el orden represente un recorrido que
+         * optimiza la distancia total.
+         * 
+         * Parámetros:
+         *      - paradas: Parada[],
+         *          Conjunto original de paradas.
+         * 
+         * Retorna:
+         *      - paradasOrdenadas: Parada[],
+         *          Paradas organizadas para minimizar el orden.
+         */
+
+        // Creando el array que contendrá las apradas ordenadas.
+        Parada[] paradasOrdenadas = new Parada[1];
+        paradasOrdenadas[0] = paradas[0];
+
+        // Ordenando el array.
+        Parada[] temp;
+        for(int i = 1; i < paradas.length; i++){
+            // Viendo la posición del elemento i-ésimo.
+            int[] posiciones = posicion(paradasOrdenadas, paradas[i]);
+
+            // Añadiéndolo a la lista si es distinto.
+            if(posiciones != null){
+                temp = new Parada[i + 1];
+                temp[posiciones[0] + 2] = paradas[i];
+                for(int j = 0; j < i + 1; j++){
+                    if(j < posiciones[0] + 1){
+                        temp[i] = paradasOrdenadas[i];
+                    }
+                    else if(j > posiciones[0] + 1){
+                        temp[i] = paradasOrdenadas[i - 1];
+                    }
+                }
+
+                paradasOrdenadas = temp;
+            }
+        }
+
+        return paradasOrdenadas;
     }
 
     public static Parada[] enteroAParada(int[] ordinales){
@@ -281,7 +372,7 @@ public abstract class Red{
     
         Parada[] paradas = new Parada[ordinales.length];
         for(int i = 0; i < ordinales.length; i++){
-            paradas[i] = Parada.values()[ordinales[i]];
+            paradas[i] = Parada(ordinales[i]);
         }
 
         return paradas;

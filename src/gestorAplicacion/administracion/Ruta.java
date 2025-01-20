@@ -35,8 +35,8 @@ public class Ruta extends Red{
     public Ruta(int ordinalLugarInicio, int ordinalLugarFinal, int[] ordinalesParadas) {
         // Cambiar por objetos de tiempo
         this(null, 0, 0,
-             Parada.values()[ordinalLugarInicio],
-             Parada.values()[ordinalLugarFinal],
+             Parada(ordinalLugarInicio),
+             Parada(ordinalLugarFinal),
              Red.enteroAParada(ordinalesParadas));
     }
 
