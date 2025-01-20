@@ -67,9 +67,10 @@ public class Pasajero extends Persona {
     // Metodos Funcionalidad 3
 
     //Este Metodo Hace conexion con metodo eliminarPasajero de bus
-    public String  EliminarPasajes(){
+    public String EliminarPasajes(){
         Bus bus = this.getFactura().getRutaElegida().getBusAsociado();
         String mensaje = bus.eliminarPasajero(this);
+        return mensaje;
     }
     public void  RevertirPasajes(){
         Bus bus = this.getFactura().getRutaElegida().getBusAsociado();
