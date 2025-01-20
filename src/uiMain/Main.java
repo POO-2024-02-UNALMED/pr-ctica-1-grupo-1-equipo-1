@@ -71,7 +71,6 @@ public class Main {
                     // Lógica para ver pasajes comprados (pendiente de implementar)
                     break;
                 case 4: //Funcionalidad 3 Reembolso de Tiquete
-                
                 Pasajero pasajero1 = new Pasajero();
                 Scanner sc = new Scanner(System.in);
                 System.out.println("ingrese su numero de documento");
@@ -95,10 +94,6 @@ public class Main {
                         System.out.println(mensaje3);
                     if(mensaje3.equals("El asiento liberado puede ser reservado nuevamente, Su reembolso sigue en proceso")){
                         //Sigue la ejecucion
-                    }
-                }}
-                sc.close();
-                    break;
                 case 5:
                     System.out.println("Gracias por usar el sistema. ¡Hasta luego!");
                     scanner.close();
