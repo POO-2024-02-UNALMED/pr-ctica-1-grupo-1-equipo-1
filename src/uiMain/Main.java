@@ -17,6 +17,7 @@ public class Main {
         System.out.println("        Terminal de Buses - Bienvenido       ");
         System.out.println("=============================================");
 
+
         while (true) {
             System.out.println("\nOpciones disponibles:");
             System.out.println("1. Consultar Rutas");
@@ -33,11 +34,32 @@ public class Main {
                     // Lógica para consultar rutas (pendiente de implementar)
                     break;
                 case 2:
+                   System.out.println("Bienvenido al sistema de compra de tiquetes");
+                   System.out.print("Nombre: ");
+                   String nombre = scanner.nextLine();
+                   System.out.print("ID: ");
+                   String id = scanner.nextLine();
+                   System.out.print("Edad: ");
+                   int edad = scanner.nextInt();
+                   scanner.nextLine();
+
+                    if (edad < 18) {
+                      System.out.println("Debe registrar un acompañante adulto.");
+                      System.out.print("Nombre acompañante: ");
+                      String nombreAcomp = scanner.nextLine();
+                      System.out.print("ID acompañante: ");
+                      String idAcomp = scanner.nextLine();
+                      System.out.print("Edad acompañante: ");
+                      int edadAcomp = scanner.nextInt();
+                      scanner.nextLine();
+                      pasajero.registrarAcompanante(nombreAcomp, idAcomp, edadAcomp);
+                    }
+
                     Pasajero pasajero = new Pasajero();
                     System.out.print("Ingrese ciudad de origen: ");
-                    String origen = scanner.nextLine();
+                    String lugarInicio = scanner.nextLine();
                     System.out.print("Ingrese ciudad de destino: ");
-                    String destino = scanner.nextLine();
+                    String lugarFinal = scanner.nextLine();
 
                     List<Ruta> rutasDisponibles = Ruta.filtrarRutas(lugarInicio, lugarFinal);
                     if (rutasDisponibles.isEmpty()) {
