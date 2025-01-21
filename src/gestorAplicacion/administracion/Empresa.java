@@ -7,9 +7,11 @@ import gestorAplicacion.operacion.logistica.Bus;
 import java.util.ArrayList; // Para crear la red de carreteras que tiene el terminal.
 import java.util.Arrays; // Para ordenar arrays.
 import java.util.Comparator;
+
+import java.io.Serializable;
 //import java.util.List;
 
-public class Empresa {
+public class Empresa implements Serializable{
     private String nombre;
     private Chofer[] empleados;
     private Bus[] busesTotales;

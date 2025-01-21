@@ -4,8 +4,9 @@ import gestorAplicacion.administracion.Ruta;
 import gestorAplicacion.administracion.Empresa;
 import gestorAplicacion.operacion.individuos.*;
 import java.util.ArrayList;
+import java.io.Serializable;
 
-public class Bus {
+public class Bus implements Serializable {
     private String placa;
     private int cantidadAsientos;
     private ArrayList<Asiento> asientos;
@@ -13,6 +14,8 @@ public class Bus {
     private int kilometrosRecorridos = 0;
     private ArrayList<Ruta> rutasFuturas = new ArrayList<Ruta>();
     private Empresa empresa;
+    
+
 
     // Constructores
     public Bus(String placa, int cantidadAsientos, int capacidadMaletas) {

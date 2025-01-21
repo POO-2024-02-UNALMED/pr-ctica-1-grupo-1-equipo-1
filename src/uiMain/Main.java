@@ -7,8 +7,9 @@ import java.util.Scanner;
 import gestorAplicacion.administracion.Factura;
 import gestorAplicacion.operacion.individuos.Pasajero;
 import gestorAplicacion.administracion.Ruta;
+import java.io.Serializable;
 
-public class Main {
+public class Main implements Serializable {
     public static void main(String[] args) {
         LocalDateTime horaZero = LocalDateTime.now(); // Captura el tiempo al ejecutarse el programa
         Scanner scanner = new Scanner(System.in);
@@ -78,17 +79,21 @@ public class Main {
                     System.out.println("ingrese el numero de la factura");
                     int numfactura = sc.nextInt();
                     System.out.println("La solicitud esta en proceso");
+
                     // Primero Solicitaremos El reembolso
                     ArrayList<Object> respuesta = pasajero1.solicitarReembolso(numId, numfactura, horaZero);
+
                     // Se Hacen las primeras Comprobaciones superficiales
                     String mensaje1 = (String) respuesta.get(0);
                     System.out.println(mensaje1);
+
                     // Si el Proceso sigue Se verificara si existe el Bus asociado
                     if (mensaje1
                             .equals("Su solicitud sigue en proceso, valoramos su paciencia y gracias por escojernos")) {
                         Factura factura1 = (Factura) respuesta.get(1);
                         String mensaje2 = factura1.verificarBusAsociado();
                         System.out.println(mensaje2);
+                        
                         // Si el proceso Sigue Se verificara si existe una Ruta asociada
                         if (mensaje2.equals(
                                 "Existe un Bus Asociado a la ruta de la factura, Su solicitud seguira en proceso")) {

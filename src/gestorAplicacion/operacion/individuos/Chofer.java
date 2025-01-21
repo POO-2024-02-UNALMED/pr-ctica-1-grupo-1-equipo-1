@@ -1,8 +1,9 @@
 package gestorAplicacion.operacion.individuos;
 import gestorAplicacion.administracion.Empresa;
 import java.util.ArrayList;
+import java.io.Serializable;
 
-public class Chofer extends Persona{
+public class Chofer extends Persona implements Serializable{
     private int sueldo;
     private int cantidadHorasConducidas = 0;
     private Empresa empresa;

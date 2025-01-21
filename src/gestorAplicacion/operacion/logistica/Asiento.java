@@ -1,7 +1,8 @@
 package gestorAplicacion.operacion.logistica;
-import gestorAplicacion.operacion.individuos.Pasajero;
 
-public class Asiento{
+import gestorAplicacion.operacion.individuos.Pasajero;
+import java.io.Serializable;
+public class Asiento implements Serializable{
 
     //Atributos//
 

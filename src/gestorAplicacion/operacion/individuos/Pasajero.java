@@ -12,8 +12,9 @@ import java.util.Scanner;
 import java.time.LocalDateTime;
 import java.lang.reflect.Array;
 import java.time.Duration;
+import java.io.Serializable;
 
-public class Pasajero extends Persona {
+public class Pasajero extends Persona implements Serializable{
 
     // Atributos //
 
@@ -83,6 +84,8 @@ public class Pasajero extends Persona {
         return mensaje;
     }
 
+    //Este Metodo Es utilizado cuando el reembolo no es efectivo y 
+    // Hay que revertir los pasos
     public void RevertirPasajes() {
         Bus bus = this.getFactura().getRutaElegida().getBusAsociado();
         bus.asignarPasajero(this);

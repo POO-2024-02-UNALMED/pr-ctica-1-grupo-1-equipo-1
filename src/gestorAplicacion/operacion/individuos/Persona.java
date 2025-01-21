@@ -1,6 +1,8 @@
 package gestorAplicacion.operacion.individuos;
 
-public abstract class Persona{
+import java.io.Serializable;
+
+public abstract class Persona implements Serializable{
     protected String nombre;
     protected int edad;
     protected int id;

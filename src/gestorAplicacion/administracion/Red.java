@@ -1,7 +1,8 @@
 package gestorAplicacion.administracion;
 import java.util.ArrayList;
+import java.io.Serializable;
 
-public abstract class Red{
+public abstract class Red implements Serializable{
     public static enum Parada{
         CIUDAD1, CIUDAD2, CIUDAD3, CIUDAD4, CIUDAD5, CIUDAD6;
     }

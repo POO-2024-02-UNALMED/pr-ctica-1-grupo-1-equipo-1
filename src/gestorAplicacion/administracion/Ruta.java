@@ -4,8 +4,10 @@ import gestorAplicacion.operacion.logistica.Bus;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.time.LocalDateTime;
+import java.io.Serializable;
 
-public class Ruta extends Red {
+
+public class Ruta extends Red  { // Ya Esta Serializada pues hereda la interfaz de RED
     private static int totalRutas;
     private static ArrayList<Ruta> totalRutasLista = new ArrayList<>();
     private int idRuta;

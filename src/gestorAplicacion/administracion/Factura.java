@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import gestorAplicacion.operacion.logistica.Asiento;
 import gestorAplicacion.administracion.Ruta;
 import gestorAplicacion.operacion.logistica.Bus;
-public class Factura{
+import java.io.Serializable;
+
+public class Factura implements Serializable{
     // Atributos
     public enum MetodoPago {Efectivo, TarjetadeCredito,TarjetadeDebito,Transferencia}
 

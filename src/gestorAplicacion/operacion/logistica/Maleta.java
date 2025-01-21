@@ -1,7 +1,7 @@
 package gestorAplicacion.operacion.logistica;
 import gestorAplicacion.operacion.individuos.Pasajero;
-
-public class Maleta{
+import java.io.Serializable;
+public class Maleta implements Serializable{
 
     //Atributos//
 
