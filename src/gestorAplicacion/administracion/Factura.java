@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import gestorAplicacion.operacion.logistica.Asiento;
 import gestorAplicacion.administracion.Ruta;
 import gestorAplicacion.operacion.logistica.Bus;
-public class Factura{
+import java.io.Serializable;
+
+public class Factura implements Serializable{
     // Atributos
     public enum MetodoPago {Efectivo, TarjetadeCredito,TarjetadeDebito,Transferencia}
 
@@ -137,7 +139,7 @@ public class Factura{
                 if (asiento.getUsuario().getNombre().equals(this.usuarioNombre)) {
                     mensaje = "El usuario ya tiene una reserva asociada a esta ruta";
                     Ruta rutaElegida = getRutaElegida();
-                    LocalDateTime fechaSalida = rutaElegida.getFechaSalidaDatetime();
+                    LocalDateTime fechaSalida = rutaElegida.getFechaSalidaDateTime();
                     if (LocalDateTime.now().isBefore(fechaSalida)) {
                         System.out.println("El asiento liberado puede ser reservado nuevamente, Su reembolso sigue en proceso");
                     } else {
