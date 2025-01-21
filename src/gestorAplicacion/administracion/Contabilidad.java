@@ -2,8 +2,8 @@ package gestorAplicacion.administracion;
 
 import java.util.ArrayList;
 import java.util.List;
-
-public class Contabilidad {
+import java.io.Serializable;
+public class Contabilidad implements Serializable {
     // Atributos//
     static double costoCompensacion = 10.0;
     private double ingresos;
