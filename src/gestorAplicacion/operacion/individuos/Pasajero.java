@@ -21,8 +21,17 @@ public class Pasajero extends Persona {
     private double wallet;
     private Factura factura;
     private int numReembolsoDisp;
+    private Pasajero acompanante;
 
     // Getters y Setters//
+
+    public Pasajero getacompanamte() {
+        return acompanante;
+    }
+
+    public void setPasajero(Pasajero acompanate) {
+        this.acompanante = acompanante;
+    }
 
     public Factura getFactura() {
         return factura;
@@ -132,8 +141,16 @@ public class Pasajero extends Persona {
         
     // Metodos de Instancia//
 
+    public void registrarAcompanante(String nombre, String identificacion, int edad) {
+        if (edad >= 18) {
+            this.acompanante = new Pasajero(nombre, identificacion, edad);
+        } else {
+            throw new IllegalArgumentException("El acompañante debe ser mayor de edad.");
+        }
+    }
+
     public void comprarTiquete(String lugarInicio, String lugarFinal) {
-        List<Ruta> rutasDisponibles = Ruta.filtrarRutas(lugarInicio, lugarFinal);
+        List<Paradas> rutasDisponibles = Ruta.filtrarRutas(lugarInicio, lugarFinal);
 
         if (rutasDisponibles.isEmpty()) {
             return;
