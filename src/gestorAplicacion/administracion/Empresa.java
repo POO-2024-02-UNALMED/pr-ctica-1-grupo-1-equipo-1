@@ -3,6 +3,8 @@ package gestorAplicacion.administracion;
 import gestorAplicacion.operacion.individuos.Chofer;
 import gestorAplicacion.operacion.individuos.Pasajero;
 import gestorAplicacion.operacion.logistica.Bus;
+
+import java.text.spi.NumberFormatProvider;
 //import gestorAplicacion.operacion.individuos.*;
 import java.util.ArrayList; // Para crear la red de carreteras que tiene el terminal.
 import java.util.Arrays; // Para ordenar arrays.
@@ -200,7 +202,7 @@ public class Empresa {
 
             // Viendo si la ruta fue realizada por esta empresa.
             if (rutas.contains(rutaAsociada)) {
-                flujoDemanda[origen][destino] += factura.getnumAsientosAsignados();
+                flujoDemanda[origen][destino] += factura.getNumAsientosAsignados();
 
                 // Viendo si ya se tomó en cuenta esta ruta.
                 if (rutasCopia.contains(rutaAsociada)) {
@@ -284,7 +286,7 @@ public class Empresa {
 
             // Viendo si la ruta fue realizada por esta empresa.
             if (rutas.contains(rutaAsociada)) {
-                flujoDemanda[origen][destino] += factura.getnumAsientosAsignados();
+                flujoDemanda[origen][destino] += factura.getNumAsientosAsignados();
 
                 // Viendo si ya se tomó en cuenta esta ruta.
                 if (rutasCopia.contains(rutaAsociada)) {
@@ -308,7 +310,7 @@ public class Empresa {
         return promedios;
     }
 
-    public Integer[] ordenar(float[] valores, Boolean invertido){
+    public static Integer[] ordenar(float[] valores, Boolean invertido){
         /*
          * Se encuentra la posición en que los valores en el array deberían tener para que
          * esté ordenado. (Ejemplo: [0.5, 0.1, 0] devolvería [2, 1, 0], porque [0, 0.1, 0.5] está ordenado,
@@ -384,6 +386,31 @@ public class Empresa {
         }
 
         return ordenar(valores, invertido);
+    }
+
+    public static Integer[] ordenar(int[] valores, Boolean invertido){
+        /*
+         * Realiza lo mismo que el método ordenar, pero con valores en int[].
+         * 
+         * Parámetros:
+         *      - valores: int[],
+         *          Array a encontrar el orden.
+         *      - invertido: Boolean,
+         *          Pregunta si se escribe en orden ascendente (false) o descendente (true).
+         * 
+         * Retorna:
+         *      - posiciones: Integer[],
+         *          Array de posiciones que se deberían ocupar.
+         */
+
+        // Pasando los enteros a float.
+        float[] valoresFloat = new float[valores.length];
+        for(int i = 0; i < valores.length; i++){
+            valoresFloat[i] = (float) valores[i];
+        }
+
+        // Devolviendo las posiciones
+        return ordenar(valoresFloat, invertido);
     }
 
     public void funcionalidad4() {
@@ -482,6 +509,72 @@ public class Empresa {
                     rutaANoRuta[i] += promedios[enRuta[j]][noEnRuta[i]];
                 }
             }
+
+            // Visualizando la contribución individual en distancia de cada parada a añadir.
+            int[] contribucionIndividual = new int[noEnRuta.length];
+            int[] posicion; // Para ver la posición que debería ocupar.
+            int contribucion; // Distancia que contribuye.
+            int paradaAnterior, paradaPosterior; // Paradas donde se encuentra ensandwichado.
+            for(int i = 0; i < noEnRuta.length; i++){
+                posicion = Red.posicion(paradasOptimas, noEnRuta[i]);
+                paradaAnterior = paradasOptimas[posicion[0] + 1];
+                paradaPosterior = paradasOptimas[posicion[1]];
+                contribucion = Red.distancias[paradaAnterior][noEnRuta[i]] +
+                               Red.distancias[paradaPosterior][noEnRuta[i]] -
+                               Red.distancias[paradaAnterior][paradaPosterior];
+                contribucionIndividual[i] = contribucion;
+            }
+
+            // Añadiendo las rutas faltates en orden de flujo y viendo su aporte de distancia.
+            int cantidadFaltante = numeroParadas - numeroParadasCreadas;
+            Integer[] paradasEnOrden = ordenar(rutaANoRuta, true);
+            int nuevaParada = 0;
+            int[] nuevoTrayecto = new int[0];
+            int[] aporte = new int[cantidadFaltante];
+            for(int i = 0; i < cantidadFaltante; i++){
+                nuevaParada = noEnRuta[paradasEnOrden[i]];
+                nuevoTrayecto = Red.agregarParada(paradasOptimas, nuevaParada);
+                aporte[i] = contribucionIndividual[nuevaParada];
+            }
+
+            // Viendo si se cumple que no se sobrepasa la longitud máxima deseada.
+            int nuevoRecorridoTotal = Red.longitud(nuevoTrayecto);
+            int desfase = 0;
+            Integer[] ordenDeAporte = new Integer[0];
+            int paradaAEliminar; // Parada a eliminar en el siguiente paso.
+            while((nuevoRecorridoTotal > (recorridoTotal * factor)) &&
+                  (desfase < paradasEnOrden.length - cantidadFaltante)){
+                // Eliminando la parada que más distancia individual contribuye.
+                ordenDeAporte = ordenar(aporte, true);
+                paradaAEliminar = paradasEnOrden[desfase + ordenDeAporte[0]];
+                nuevoTrayecto = Red.eliminarParada(nuevoTrayecto, paradaAEliminar);
+
+                // Añadiendo la siguiente parada a analizar.
+                nuevaParada = noEnRuta[paradasEnOrden[cantidadFaltante + desfase]];
+                nuevoTrayecto = Red.agregarParada(nuevoTrayecto, nuevaParada);
+
+                // Viendo la siguiente iteración.
+                aporte[ordenDeAporte[0]] = contribucionIndividual[nuevaParada];
+                nuevoRecorridoTotal = Red.longitud(nuevoTrayecto);
+                desfase++;
+            }
+
+            if(desfase >= paradasEnOrden.length - cantidadFaltante){
+                int cuentaRegresiva = 0;
+                while((nuevoRecorridoTotal > (recorridoTotal * factor)) &&
+                      (cuentaRegresiva < cantidadFaltante)){
+                    // Eliminando progresivamente las paradas.
+                    paradaAEliminar = paradasEnOrden[desfase + ordenDeAporte[cuentaRegresiva]];
+                    nuevoTrayecto = Red.eliminarParada(nuevoTrayecto, paradaAEliminar);
+                    
+                    // Viendo la siguiente iteración.
+                    nuevoRecorridoTotal = Red.longitud(nuevoTrayecto);
+                    cuentaRegresiva++;
+                }
+            }
+
+            // Entregando el resultado final.
+            paradasReales = nuevoTrayecto;
         }
         else{paradasReales = paradasOptimas;}
 

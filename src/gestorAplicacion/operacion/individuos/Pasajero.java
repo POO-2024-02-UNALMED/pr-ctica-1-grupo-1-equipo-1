@@ -106,7 +106,7 @@ public class Pasajero extends Persona {
 
         ArrayList<Factura> facturas = Contabilidad.getVentas();
         for (Factura factura : facturas) {// Se obtiene el array de las facturas y se itera hasta encontrar una que coincida con la recibida
-            int idFactura= factura.getIdFactura();
+            int idFactura = factura.getIdFactura();
 
             if (idFactura == idFacturaUser){
                 int idPasajero = factura.getIdUsuario();
@@ -124,20 +124,20 @@ public class Pasajero extends Persona {
                         respuesta.add(mensaje);
                     } else if (factura.getMetodoPago().toString().equals("Efectivo")) {
                         mensaje= "El reembolso no es posible, el metodo de pago utilizado fue en efectivo, un metodo de pago invalido para un reembolso";
-                        respuesta.add(mensaje);}
-                        else{
+                        respuesta.add(mensaje);
+                    } else{
                             mensaje= "Su solicitud sigue en proceso, valoramos su paciencia y gracias por escojernos";
                             // Actualizar el número de reembolsos disponibles
                             // this.setNumReembolsoDisp(numReembolsoDispUser - 1);
                             respuesta.add(mensaje);
                             respuesta.add(factura);
-                        }
+                    }
                     }else { mensaje= "El documento no coincide con el del pasajero";}
                 }else{ mensaje = "No existe Factura asociada al numero de la factura";}
-            }
-            return respuesta;
-            
         }
+
+        return respuesta;
+    }
         
     // Metodos de Instancia//
 
@@ -150,7 +150,7 @@ public class Pasajero extends Persona {
     }
 
     public void comprarTiquete(String lugarInicio, String lugarFinal) {
-        List<Paradas> rutasDisponibles = Ruta.filtrarRutas(lugarInicio, lugarFinal);
+        List<Parada> rutasDisponibles = Ruta.filtrarRutas(lugarInicio, lugarFinal);
 
         if (rutasDisponibles.isEmpty()) {
             return;
@@ -167,7 +167,6 @@ public class Pasajero extends Persona {
         asientoSeleccionado.setUsuario(this);
         asientoSeleccionado.setEstado(false);
     }
-}
 
     public boolean aceptarCambio() {
         Scanner scanner = new Scanner(System.in);

@@ -160,6 +160,11 @@ public class Ruta extends Red{
         }
 
         int[] posicion = Red.posicion(paradas, nuevaParada);
+        if(posicion == null){
+            return;
+        }
+
+        // En caso de poderse agregar, se ve el puesto donde debe agregarse.
         int posicionDistanciaMinima = posicion[0] + 1;
 
         // Reorganizando el array de paradas para que la nueva parada quede en la posición indicada.
@@ -175,7 +180,7 @@ public class Ruta extends Red{
 
         // Cambiando los lugares de origen y destino.
         lugarInicio = temp[0];
-        lugarFinal = temp[nParadas - 1];
+        lugarFinal = temp[temp.length - 1];
 
         // Garantizando el cambio.
         paradas = temp;
@@ -183,16 +188,16 @@ public class Ruta extends Red{
 
     public void eliminarParada(Parada parada){
         /*
-         * Añade la nueva parada haciendo minimizando su efecto en la ruta.
+         * Elimina una parada existente.
          * 
          * Parámetros:
-         * - nuevaParada: Parada.
-         *      Parada a eliminar
+         * - parada: Parada,
+         *      Parada a eliminar.
          */
 
         // Caso donde no existan paradas.
         if(paradas == null){
-            paradas = new Parada[0];
+            paradas = new Parada[] {lugarInicio, lugarFinal};
             return;
         }
 
@@ -215,15 +220,20 @@ public class Ruta extends Red{
             temp[nParadas - 2] = paradas[nParadas - 1];
         }
 
-        // Guardando el cambio.
-        paradas = temp;
+        // Viendo que siempre existan al menos 2 paradas en la ruta.
+        if(temp.length >= 2){
+            // Guardando el cambio.
+            lugarInicio = temp[0];
+            lugarFinal = temp[temp.length - 1];
+            paradas = temp;
+        }
     }
 
     public int contarPasajerosEnParada(Parada parada) {
         int contador = 0;
         for (Factura factura : Contabilidad.getVentas()) {
             if (factura.getRutaElegida().equals(this) && factura.getDestino().equals(parada)) {
-                contador += factura.getnumAsientosAsignados();
+                contador += factura.getNumAsientosAsignados();
             }
         }
         return contador;

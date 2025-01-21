@@ -45,7 +45,7 @@ public class Factura implements Serializable{
         this.idUsuario = idUsuario;
     }
 
-    public int getnumAsientosAsignados(){
+    public int getNumAsientosAsignados(){
         return numAsientosAsignados;
     }
 

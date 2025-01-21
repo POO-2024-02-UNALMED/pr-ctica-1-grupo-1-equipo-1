@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 import gestorAplicacion.administracion.Factura;
 import gestorAplicacion.operacion.individuos.Pasajero;
-import gestorAplicacion.operacion.logistica.Ruta;
+import gestorAplicacion.administracion.Ruta;
 
 public class Main {
     public static void main(String[] args) {
@@ -16,7 +16,6 @@ public class Main {
         System.out.println("=============================================");
         System.out.println("        Terminal de Buses - Bienvenido       ");
         System.out.println("=============================================");
-
 
         while (true) {
             System.out.println("\nOpciones disponibles:");
@@ -114,15 +113,20 @@ public class Main {
                     if (mensaje2.equals("Existe un Bus Asociado a la ruta de la factura, Su solicitud seguira en proceso")) {
                         String mensaje3 = factura1.verificarRutaAsociada();
                         System.out.println(mensaje3);
+                    }
                     if(mensaje3.equals("El asiento liberado puede ser reservado nuevamente, Su reembolso sigue en proceso")){
                         //Sigue la ejecucion
+                    }
+                }
                 case 5:
                     System.out.println("Gracias por usar el sistema. ¡Hasta luego!");
                     scanner.close();
                     return;
                 default:
                     System.out.println("Opción no válida. Intente nuevamente.");
+                    break;
             }
         }
+            
     }
 }

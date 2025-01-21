@@ -100,6 +100,28 @@ public abstract class Red{
         return peso;
     }
 
+    public static int[] posicion(int[] ordinalTrayecto, int ordinal){
+        /*
+         * Dado un conjunto de trayecto y una parada extra (Ordinales), se mira dónde
+         * debería ir la parada extra en el conjunto de trayecto para así
+         * minimizar la distancia total en caso de añadir la parada extra.
+         * 
+         * Parámetros:
+         *      - trayecto: int[],
+         *          Conjunto de ordinales de las paradas en el trayecto.
+         *      - parada: int,
+         *          Ordinal de la parada a averiguar su posición óptima.
+         * 
+         * Retorna:
+         *      - posiciones, int[].
+         *          Las posiciones de la parada anterior y siguiente
+         *          en la ruta donde se optimiza la posición de la nueva parada.
+         */
+
+        // Haciendo el cambio adecuado.
+        return posicion(enteroAParada(ordinalTrayecto), Parada(ordinal));
+    }
+
     public static int[] posicion(Parada[] trayecto, Parada parada){
         /*
          * Dado un conjunto de trayecto y una parada extra, se mira dónde
@@ -121,12 +143,12 @@ public abstract class Red{
         // Tomando el número de trayecto
         int longitudTrayecto = trayecto.length;
 
-        if(trayecto.length == 0){
-            return new int[] {-1, 1};
+        // Trata de errores.
+        if(trayecto.length < 1){
+            // Mostrar error.
         }
-
-        if(trayecto.length == 1){
-            return new int[] {0, 2};
+        if(parada == null){
+            return null;
         }
 
         // Encontrando dónde se minimiza la distancia
@@ -189,7 +211,51 @@ public abstract class Red{
         return posiciones;
     }
 
-    // Algoritmo de Bellman-Ford para hacer la ruta más corta
+    public static int longitud(int[] ordinalesTrayecto){
+        /*
+         * Retorna la longitud de un trayecto.
+         * 
+         * Parámetros:
+         *      - ordinalesTrayecto: int[],
+         *          Conjunto de paradas (Ordinales) a calcular su longitud.
+         * 
+         * Retorna:
+         *      - longitud: int,
+         *          Longitud del trayecto.
+         */
+
+        // Calculando la longitud del trayecto.
+        int longitud = 0;
+        for(int i = 0; i < ordinalesTrayecto.length - 1; i++){
+            longitud += distancias[ordinalesTrayecto[i]][ordinalesTrayecto[i + 1]];
+        }
+
+        return longitud;
+    }
+    
+    public static int longitud(Parada[] trayecto){
+        /*
+         * Retorna la longitud de un trayecto.
+         * 
+         * Parámetros:
+         *      - trayecto: Parada[],
+         *          Conjunto de paradas (Trayecto) a calcular su longitud.
+         * 
+         * Retorna:
+         *      - longitud: int,
+         *          Longitud del trayecto.
+         */
+
+        // Pasando el conjunto de paradas a sus ordinales.
+        int[] ordinalesTrayecto = new int[trayecto.length];
+        for(int i = 0; i < trayecto.length; i++){
+            ordinalesTrayecto[i] = trayecto[i].ordinal();
+        }
+
+        return longitud(ordinalesTrayecto);
+    }
+
+    // Algoritmo de Bellman-Ford para hacer la ruta más corta.
     public static int[] algoritmoBellmanFord(int verticeInicial, int verticeFinal) {
         /*
          * Devuelve la ruta más corta dada la función de pesos entre los vértices de
@@ -376,6 +442,105 @@ public abstract class Red{
         }
 
         return paradas;
+    }
+
+    public static int[] agregarParada(int[] ordinalTrayecto, int ordinal){
+        /*
+         * Añade la nueva parada haciendo minimizando su efecto en la ruta.
+         * 
+         * Parámetros:
+         *      - trayecto: int[],
+         *          Conjunto de ordinales paradas en donde se va a añadir la nueva parada.
+         *      - nuevaParada: Parada,
+         *          Ordinal de la parada a añadir.
+         * 
+         * Retorna:
+         *      - nuevoTrayecto: int[],
+         *          El resultado de agregar la nueva parada.
+         */
+
+        // Tomando el número de paradas
+        int numeroParadas = ordinalTrayecto.length;
+
+        // Caso donde solo exista una parada.
+        if(numeroParadas < 2){
+            // Debe generar error.
+        }
+
+        int[] posicion = posicion(ordinalTrayecto, ordinal);
+        if(posicion == null){
+            return ordinalTrayecto;
+        }
+
+        // En caso de poderse agregar, se ve el puesto donde debe agregarse.
+        int posicionDistanciaMinima = posicion[0] + 1;
+
+        // Reorganizando el array de paradas para que la nueva parada quede en la posición indicada.
+        int[] nuevoTrayecto = new int[numeroParadas + 1];
+        nuevoTrayecto[posicionDistanciaMinima] = ordinal;
+        for (int i = 0; i < numeroParadas; i++) {
+            if (i < posicionDistanciaMinima) {
+                nuevoTrayecto[i] = ordinalTrayecto[i];
+            } else {
+                nuevoTrayecto[i + 1] = ordinalTrayecto[i];
+            }
+        }
+
+        if(nuevoTrayecto.length < 2){
+            return ordinalTrayecto;
+        }
+
+        return nuevoTrayecto;
+    }
+
+    public static int[] eliminarParada(int[] ordinalTrayecto, int ordinal){
+        /*
+         * Elimina una parada de un trayecto dado.
+         * 
+         * Parámetros:
+         *      - trayecto: int[],
+         *          Conjunto de ordinales paradas en donde se va a añadir la nueva parada.
+         *      - nuevaParada: Parada,
+         *          Ordinal de la parada a eliminar.
+         * 
+         * Retorna:
+         *      - nuevoTrayecto: int[],
+         *          El resultado de eliminar la parada.
+         */
+
+        // Tomando el número de paradas
+        int numeroParadas = ordinalTrayecto.length;
+
+        // Caso donde solo exista una parada.
+        if(numeroParadas < 2){
+            // Debe generar error.
+        }
+
+        // Viendo que el nuevo trayecto tenga al menos 2 paradas.
+        if(numeroParadas - 1 < 2){
+            return ordinalTrayecto;
+        }
+
+        // Creando un array donde se quitó la parada.
+        int[] nuevoTrayecto = new int[numeroParadas - 1];
+        Boolean estaEnElArray = false;
+        for(int i = 0; i < numeroParadas - 1; i++){
+            if(ordinalTrayecto[i] == ordinal){estaEnElArray = true;}       // Viendo si está la parada.
+            else{
+                // Desplazando lo adecuado.
+                nuevoTrayecto[i] = ordinalTrayecto[i - (estaEnElArray ? 1 : 0)];
+            }
+        }
+
+        // Preguntando si la parada se encontraba en el array.
+        if(!estaEnElArray && ordinalTrayecto[numeroParadas - 1] != ordinal){
+            return ordinalTrayecto;
+        }
+        else if(!estaEnElArray && ordinalTrayecto[numeroParadas - 1] == ordinal){
+            nuevoTrayecto[numeroParadas - 2] = ordinalTrayecto[numeroParadas - 1];
+        }
+
+        return nuevoTrayecto;
     }
 
     public abstract void agregarParada(Parada nuevaParada);
