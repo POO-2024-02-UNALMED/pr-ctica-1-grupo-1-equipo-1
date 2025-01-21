@@ -8,7 +8,7 @@ public abstract class Red{
 
     // Atributo donde se guardará el grafo de la red de carreteras y las distancias
     // mínimas entre trayecto.
-    static final int totalParadas = Parada.values().length;
+    public static final int totalParadas = Parada.values().length;
     public static final ArrayList<int[][]> carreteras = new ArrayList<int[][]>();
     public static final int[][] distancias = new int[totalParadas][totalParadas];
     static {
@@ -100,7 +100,7 @@ public abstract class Red{
         return peso;
     }
 
-    public static int[] posicion(int[] ordinalTrayecto, int ordinal){
+    static int[] posicion(int[] ordinalTrayecto, int ordinal){
         /*
          * Dado un conjunto de trayecto y una parada extra (Ordinales), se mira dónde
          * debería ir la parada extra en el conjunto de trayecto para así
@@ -122,7 +122,7 @@ public abstract class Red{
         return posicion(enteroAParada(ordinalTrayecto), Parada(ordinal));
     }
 
-    public static int[] posicion(Parada[] trayecto, Parada parada){
+    static int[] posicion(Parada[] trayecto, Parada parada){
         /*
          * Dado un conjunto de trayecto y una parada extra, se mira dónde
          * debería ir la parada extra en el conjunto de trayecto para así
@@ -233,7 +233,7 @@ public abstract class Red{
         return longitud;
     }
     
-    public static int longitud(Parada[] trayecto){
+    protected static int longitud(Parada[] trayecto){
         /*
          * Retorna la longitud de un trayecto.
          * 
@@ -256,7 +256,7 @@ public abstract class Red{
     }
 
     // Algoritmo de Bellman-Ford para hacer la ruta más corta.
-    public static int[] algoritmoBellmanFord(int verticeInicial, int verticeFinal) {
+    static int[] algoritmoBellmanFord(int verticeInicial, int verticeFinal) {
         /*
          * Devuelve la ruta más corta dada la función de pesos entre los vértices de
          * origen y llegada.
@@ -334,7 +334,7 @@ public abstract class Red{
         return ordinalesRutaOptima;
     }
 
-    public static int[] ordenarParadas(int[] ordinales){
+    static int[] ordenarParadas(int[] ordinales){
         /*
          * Ordena las paradas de tal manera que el orden represente un recorrido que
          * optimiza la distancia total.
@@ -378,7 +378,7 @@ public abstract class Red{
         return paradasOrdenadas;
     }
 
-    public static Parada[] ordenarParadas(Parada[] paradas){
+    protected static Parada[] ordenarParadas(Parada[] paradas){
         /*
          * Ordena las paradas de tal manera que el orden represente un recorrido que
          * optimiza la distancia total.
@@ -422,7 +422,7 @@ public abstract class Red{
         return paradasOrdenadas;
     }
 
-    public static Parada[] enteroAParada(int[] ordinales){
+    protected static Parada[] enteroAParada(int[] ordinales){
         /*
          * Se transforma un conjunto de ordinales en el conjunto de paradas que
          * poseen estos ordinales.
@@ -444,7 +444,7 @@ public abstract class Red{
         return paradas;
     }
 
-    public static int[] agregarParada(int[] ordinalTrayecto, int ordinal){
+    static int[] agregarParada(int[] ordinalTrayecto, int ordinal){
         /*
          * Añade la nueva parada haciendo minimizando su efecto en la ruta.
          * 
@@ -493,7 +493,7 @@ public abstract class Red{
         return nuevoTrayecto;
     }
 
-    public static int[] eliminarParada(int[] ordinalTrayecto, int ordinal){
+    static int[] eliminarParada(int[] ordinalTrayecto, int ordinal){
         /*
          * Elimina una parada de un trayecto dado.
          * 

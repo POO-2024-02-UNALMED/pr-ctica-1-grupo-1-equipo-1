@@ -413,11 +413,25 @@ public class Empresa {
         return ordenar(valoresFloat, invertido);
     }
 
-    public void funcionalidad4() {
-
-    }
-
     public Ruta funcionalidad4(int paradaOrigen, int paradaDestino, int numeroParadas, float factor) {
+        /*
+         * Crea una nueva ruta y busca una posible asignación dentro de la empresa (Escoger bus y chofer).
+         * 
+         * Parámetros:
+         *      - paradaOrigen: int,
+         *          Ordinal de la primera parada para la ruta.
+         *      - paradaDestino: int,
+         *          Ordinal de la última parada para la ruta.
+         *      - numeroParadas: int,
+         *          Cantidad de paradas que se quiere tenga la ruta.
+         *      - factor: float,
+         *          Indica la cantidad máxima de expansión permitida en la ruta
+         *          (En caso de tener que agregar paradas más allá de la ruta óptima).
+         * 
+         * Retorna:
+         *      - rutaOptima: Ruta,
+         *          Ruta que cumple con las especificaciones.
+         */
 
         // Verificación de errores.
         if(numeroParadas < 2){
