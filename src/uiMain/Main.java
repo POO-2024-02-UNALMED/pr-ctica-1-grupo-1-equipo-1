@@ -299,33 +299,138 @@ public class Main {
         System.out.println("¿Desea escoger las paradas de origen o destino de la nueva ruta?");
         System.out.println("1. Sí");
         System.out.println("2. No");
-        
+
+        // Paradas escogidas.
+        int[] ordinalesParadas = new int[2];
+
         // Ejecutando la opción elegida.
         int opcion = scanner.nextInt();
         scanner.nextLine();
-        switch (opcion) {
-            case 1:{
-                return escogerCiudades(scanner);
-            }
-            case 2:{
-                System.out.println("Entendido. Entonces se va a hacer la nueva ruta escogiendo"
-                + " el origen y destino que más demanda tiene.");
+        if(opcion == 1){
+            ordinalesParadas = escogerCiudades(scanner);
+        }
+        else if(opcion == 2){
+            System.out.println("Entendido. Entonces se va a hacer la nueva ruta escogiendo" +
+                               " el origen y destino que más demanda tiene.");
 
-                // Calculando la ruta más demandada.
-                empresa.flujoPromedio();
-                return new int[] {-1, -1};
-            }
-            default:{
-                System.out.println("Opción no válida. Intente nuevamente. >:(");
-                return quiereEscogerParadas(empresa, scanner);
+            ordinalesParadas = new int[] {-1, -1};
+        }
+        else{
+            System.out.println("Opción no válida. Intente nuevamente. >:(");
+            return quiereEscogerParadas(empresa, scanner);
+        }
+
+        // Calculando los flujos.
+        float[][] promedios = empresa.flujoPromedio();
+        float[][] promediosSesgados = empresa.promediosSesgados(promedios, ordinalesParadas[0], ordinalesParadas[1]);
+        Integer[] ordenados = Empresa.ordenar(promediosSesgados, true);
+
+        // Mostrando en orden los flujos obtenidos (Primeros 10).
+        int ubicacion, columna, fila;
+        for(int i = 0; i < 10; i++){
+            ubicacion = ordenados[i];
+            fila = ubicacion / Red.totalParadas;
+            columna = ubicacion % Red.totalParadas;
+            if(promediosSesgados[fila][columna] > 0){
+                System.out.println("Demada del trayecto con ciudad origen <" +
+                                    Red.Parada(fila).toString() +
+                                    "> y con ciudad destino <" +
+                                    Red.Parada(columna).toString() +
+                                    "> es: " + promediosSesgados[fila][columna]);
             }
         }
+
+        // Hallando las paradas más populares.
+        fila = ordenados[0] / Red.totalParadas;
+        columna = ordenados[0] % Red.totalParadas;
+        System.out.println("Más demandada: " + Red.Parada(fila).toString() +
+                           " --> " + Red.Parada(columna).toString());
+
+        return new int[] {fila, columna};
     }
+    
+    private static float[] ajustarParadas(Empresa empresa, int paradaOrigen, int paradaDestino, Scanner scanner){
+        /*
+         * Calcula el trayecto con parada origen -> parada destino, tal que
+         * se cumple (Si se puede) el número de paradas deseadas y un factor de crecimiento
+         * (Medido con base a la ruta óptima dada por el algoritmo de Bellman-Ford).
+         * 
+         * Parámetros:
+         *      - empresa: Empresa,
+         *          Empresa a la cual se le hallará la ruta.
+         *      - paradaOrigen: int,
+         *          Ordinal de la primera parada para la ruta.
+         *      - paradaDestino: int,
+         *          Ordinal de la última parada para la ruta.
+         *      - scanner: Scanner,
+         *          Scanner que muestra los objetos en pantalla.
+         * 
+         * Retorna:
+         *      - paradasReales: int[],
+         *          Ordinales de las paradas en el trayecto que cumplen
+         *          (En la medida de lo posible) los requisitos.
+         */
+
+        // Hallando la ruta óptima.
+        int[] ordinalesTrayecto = Red.algoritmoBellmanFord(paradaOrigen, paradaDestino);
+
+        // Mostrando la ruta óptima.
+        System.err.println("");
+        System.err.println("El trayecto dado por el algoritmo Bellman-Ford es:");
+        for(int i = 0; i < ordinalesTrayecto.length - 1; i++){
+            System.out.print(Red.Parada(ordinalesTrayecto[i]).toString() +  "-->");
+        }
+        System.err.println(Red.Parada(ordinalesTrayecto[ordinalesTrayecto.length - 1]).toString());
+
+        System.out.print("Número de paradas para la ruta (Mínimo 2): ");
+        int numeroParadas = scanner.nextInt();
+        scanner.nextLine();
+        System.out.print("Porcentaje máximo en lo cual puede aumentar respecto la ruta óptima: ");
+        float factor = 1 + scanner.nextInt() / 100;
+        scanner.nextLine();
+
+        // Verificación de errores.
+        if(factor < 1){
+            System.out.println("Con este factor, la ruta se va a quedar igual" +
+                               " en caso de tener que añadir paradas, ¿Desea continua?");
+            System.out.println("1. Sí");
+            System.out.println("2. No");
+            int continuar = scanner.nextInt();
+            scanner.nextLine();
+            if(continuar == 2){
+                return ajustarParadas(empresa, paradaOrigen, paradaDestino, scanner);
+            }
+            else if(continuar != 1){
+                System.out.println("Como castigo tiene que volver a escoger el porcentaje y número de paradas.");
+                return ajustarParadas(empresa, paradaOrigen, paradaDestino, scanner);
+            }
+        }
+        if(numeroParadas < 2){
+            System.out.println("Como castigo tiene que volver a escoger el porcentaje y número de paradas.");
+            return ajustarParadas(empresa, paradaOrigen, paradaDestino, scanner);
+        }
+
+        int[] paradasReales = empresa.ajustarParadas(paradaOrigen, paradaDestino, numeroParadas, factor);
+        if(numeroParadas > paradasReales.length){
+            System.out.println("Lo sentimos, pero el porcentaje no permitió alcanzar el número de paradas.");
+        }
+        if(numeroParadas < ordinalesTrayecto.length){
+            System.out.println("Como se necesita reducir el número de paradas, " +
+                               "se va a calcular cuántas personas se bajan en la " +
+                               "parada desde el origen, y se van a ir quitando en" +
+                               " orden descendente de estos valores.");
+        }
+        System.out.println("Con esto, se pudo ajustar ");
+
+        return new float[] {numeroParadas, factor};
+    }
+
     private static void funcionalidad4(Scanner scanner){
         System.out.println("Crear una nueva Ruta");
 
         // Tomando la elección
         Empresa empresaEscogida = escogerEmpresa(scanner);
-        int[] paradasEscogidas  = quiereEscogerParadas(empresaEscogida, scanner);
+        int[] paradasEscogidas = quiereEscogerParadas(empresaEscogida, scanner);
+        ajustarParadas(empresaEscogida, paradasEscogidas[0], paradasEscogidas[1], scanner);
     }
 }

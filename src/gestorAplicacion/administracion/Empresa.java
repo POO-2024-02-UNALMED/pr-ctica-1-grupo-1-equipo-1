@@ -4,7 +4,7 @@ import gestorAplicacion.operacion.individuos.Chofer;
 import gestorAplicacion.operacion.individuos.Pasajero;
 import gestorAplicacion.operacion.logistica.Bus;
 
-import java.text.spi.NumberFormatProvider;
+//import java.text.spi.NumberFormatProvider;
 //import gestorAplicacion.operacion.individuos.*;
 import java.util.ArrayList; // Para crear la red de carreteras que tiene el terminal.
 import java.util.Arrays; // Para ordenar arrays.
@@ -310,6 +310,7 @@ public class Empresa {
         return promedios;
     }
 
+    // Métodos para ordenar listas de manera adecuada.
     public static Integer[] ordenar(float[] valores, Boolean invertido){
         /*
          * Se encuentra la posición en que los valores en el array deberían tener para que
@@ -355,7 +356,7 @@ public class Empresa {
         return posiciones;
     }
 
-    public Integer[] ordenar(float[][] matrizValores, Boolean invertido){
+    public static Integer[] ordenar(float[][] matrizValores, Boolean invertido){
         /*
          * Dada una matriz del estilo {{a, b}, {c, d}}, aplica el mismo método de ordenar,
          * teniendo en cuenta que se va a ordenar como si se tratara del array {a, b, c, d}.
@@ -413,35 +414,26 @@ public class Empresa {
         return ordenar(valoresFloat, invertido);
     }
 
-    public Ruta funcionalidad4(int paradaOrigen, int paradaDestino, int numeroParadas, float factor) {
+    // Métodos de la funcionalidad 4.
+    public float[][] promediosSesgados(float[][] promedios, int paradaOrigen, int paradaDestino){
         /*
-         * Crea una nueva ruta y busca una posible asignación dentro de la empresa (Escoger bus y chofer).
+         * Dadas paradas de origen y destino (Que podrían estar no especificados,
+         * en cuyo caso se tomará -1), se calculan los flujos promedios.
          * 
          * Parámetros:
+         *      - promedios: float[][],
+         *          Promedios a analizar.
          *      - paradaOrigen: int,
          *          Ordinal de la primera parada para la ruta.
          *      - paradaDestino: int,
          *          Ordinal de la última parada para la ruta.
-         *      - numeroParadas: int,
-         *          Cantidad de paradas que se quiere tenga la ruta.
-         *      - factor: float,
-         *          Indica la cantidad máxima de expansión permitida en la ruta
-         *          (En caso de tener que agregar paradas más allá de la ruta óptima).
          * 
          * Retorna:
-         *      - rutaOptima: Ruta,
-         *          Ruta que cumple con las especificaciones.
+         *      - promediosSesgados: float[][],
+         *          Los promedios que se desean analizar.
          */
 
-        // Verificación de errores.
-        if(numeroParadas < 2){
-            // Presentar un error.
-        }
-
-        // Calculando el promedio de personas que hacen los trayectos.
-        float[][] promedios = flujoPromedio();
-
-        // Viendo solo los trayectos que se solicitan
+        // Viendo solo los trayectos que se solicitan.
         float[][] promediosSesgados = new float[Red.totalParadas][Red.totalParadas];
         for (int i = 0; i < Red.totalParadas; i++) {
             for (int j = 0; j < Red.totalParadas; j++) {
@@ -454,6 +446,35 @@ public class Empresa {
                 }
             }
         }
+
+        return promediosSesgados;
+    }
+
+    public int[] ajustarParadas(int paradaOrigen, int paradaDestino, int numeroParadas, float factor){
+        /*
+         * Calcula el trayecto con parada origen -> parada destino, tal que
+         * se cumple (Si se puede) el número de paradas deseadas y un factor de crecimiento
+         * (Medido con base a la ruta óptima dada por el algoritmo de Bellman-Ford).
+         * 
+         * Parámetros:
+         *      - paradaOrigen: int,
+         *          Ordinal de la primera parada para la ruta.
+         *      - paradaDestino: int,
+         *          Ordinal de la última parada para la ruta.
+         *      - numeroParadas: int,
+         *          Cantidad de paradas que se quiere tenga la ruta.
+         *      - factor: float,
+         *          Indica la cantidad máxima de expansión permitida en la ruta.
+         * 
+         * Retorna:
+         *      - paradasReales: int[],
+         *          Ordinales de las paradas en el trayecto que cumplen
+         *          (En la medida de lo posible) los requisitos.
+         */
+
+        // Iniciando las variables necesarias.
+        float[][] promedios = flujoPromedio();
+        float[][] promediosSesgados = promediosSesgados(promedios, paradaOrigen, paradaDestino);
 
         /* 
          * Contruyendo un array que involucre todos los trayectos posibles
@@ -498,6 +519,11 @@ public class Empresa {
         else if(numeroParadasCreadas < numeroParadas){
             // Viendo la distancia del trayecto.
             int recorridoTotal = Red.distancias[ordinalOrigen][ordinalDestino];
+
+            // Corrección de errores.
+            if(numeroParadas > Red.totalParadas){
+                numeroParadas = Red.totalParadas;
+            }
 
             // Viendo las paradas que están y las que no en la ruta.
             int[] enRuta = new int[numeroParadasCreadas];
@@ -591,6 +617,37 @@ public class Empresa {
             paradasReales = nuevoTrayecto;
         }
         else{paradasReales = paradasOptimas;}
+
+        return paradasReales;
+    }
+
+    public Ruta funcionalidad4(int paradaOrigen, int paradaDestino, int numeroParadas, float factor) {
+        /*
+         * Crea una nueva ruta y busca una posible asignación dentro de la empresa (Escoger bus y chofer).
+         * 
+         * Parámetros:
+         *      - paradaOrigen: int,
+         *          Ordinal de la primera parada para la ruta.
+         *      - paradaDestino: int,
+         *          Ordinal de la última parada para la ruta.
+         *      - numeroParadas: int,
+         *          Cantidad de paradas que se quiere tenga la ruta.
+         *      - factor: float,
+         *          Indica la cantidad máxima de expansión permitida en la ruta
+         *          (En caso de tener que agregar paradas más allá de la ruta óptima).
+         * 
+         * Retorna:
+         *      - rutaOptima: Ruta,
+         *          Ruta que cumple con las especificaciones.
+         */
+
+        // Verificación de errores.
+        if(numeroParadas < 2){
+            // Presentar un error.
+        }
+
+        // Calculando el trayecto con las especificaciones.
+        int[] paradasReales = ajustarParadas(paradaOrigen, paradaDestino, numeroParadas, factor);
 
         int paradaInicial = paradasReales[0];
         int paradaFinal = paradasReales[paradasReales.length];

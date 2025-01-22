@@ -256,7 +256,7 @@ public abstract class Red{
     }
 
     // Algoritmo de Bellman-Ford para hacer la ruta más corta.
-    static int[] algoritmoBellmanFord(int verticeInicial, int verticeFinal) {
+    public static int[] algoritmoBellmanFord(int verticeInicial, int verticeFinal) {
         /*
          * Devuelve la ruta más corta dada la función de pesos entre los vértices de
          * origen y llegada.
