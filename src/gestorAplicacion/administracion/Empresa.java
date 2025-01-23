@@ -512,9 +512,11 @@ public class Empresa {
             // Creando el array con las paradas adecuadas.
             paradasReales[0] = paradasOptimas[0];
             paradasReales[numeroParadas - 1] = paradasOptimas[numeroParadasCreadas - 1];
-            for(int i = 1; i < concurrencia.length - 1; i++){
-                paradasReales[i] = paradasOptimas[concurrencia[i]];
+            for(int i = 1; i < numeroParadas - 1; i++){
             }
+
+            // Ordenando las paradas.
+            paradasReales = Red.ordenarParadas(paradasReales);
         }
         else if(numeroParadasCreadas < numeroParadas){
             // Viendo la distancia del trayecto.
@@ -544,9 +546,19 @@ public class Empresa {
 
             // Viendo los flujos entrantes desde paradas en la ruta hasta paradas que no están en la ruta.
             float[] rutaANoRuta = new float[noEnRuta.length];
+            int[] separacion;
             for(int i = 0; i < noEnRuta.length; i++){
+                separacion = Red.posicion(paradasOptimas, noEnRuta[i]);
                 for(int j = 0; j < enRuta.length; j++){
-                    rutaANoRuta[i] += promedios[enRuta[j]][noEnRuta[i]];
+                    // Viendo si la parada en la ruta está antes o después de la parada que no está en la ruta.
+                    if(enRuta[j] <= separacion[0]){
+                        // Si está antes, importa es cuántos se bajan en la parada que no está en la ruta.
+                        rutaANoRuta[i] += promedios[enRuta[j]][noEnRuta[i]];
+                    }
+                    else if(enRuta[j] > separacion[0]){
+                        // Si está después, importa es cuántos se suben en la parada que no está en la ruta.
+                        rutaANoRuta[i] += promedios[noEnRuta[i]][enRuta[j]];
+                    }
                 }
             }
 

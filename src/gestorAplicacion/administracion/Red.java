@@ -100,7 +100,7 @@ public abstract class Red{
         return peso;
     }
 
-    static int[] posicion(int[] ordinalTrayecto, int ordinal){
+    public static int[] posicion(int[] ordinalTrayecto, int ordinal){
         /*
          * Dado un conjunto de trayecto y una parada extra (Ordinales), se mira dónde
          * debería ir la parada extra en el conjunto de trayecto para así
@@ -444,7 +444,7 @@ public abstract class Red{
         return paradas;
     }
 
-    static int[] agregarParada(int[] ordinalTrayecto, int ordinal){
+    public static int[] agregarParada(int[] ordinalTrayecto, int ordinal){
         /*
          * Añade la nueva parada haciendo minimizando su efecto en la ruta.
          * 
@@ -493,7 +493,7 @@ public abstract class Red{
         return nuevoTrayecto;
     }
 
-    static int[] eliminarParada(int[] ordinalTrayecto, int ordinal){
+    public static int[] eliminarParada(int[] ordinalTrayecto, int ordinal){
         /*
          * Elimina una parada de un trayecto dado.
          * 
