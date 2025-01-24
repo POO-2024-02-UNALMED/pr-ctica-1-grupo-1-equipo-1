@@ -7,29 +7,46 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Bus {
+    private enum PesoMaxEquipaje { // Esto nos dira cual es el maximo que soporta el bus
+        LIGERO(500), // Peso máximo en kilogramos
+        MEDIO(750),
+        PESADO(1000),
+        EXTRA_PESADO(1250);
+        private final int PESOMAXIMO;
+        // Constructor del enum
+        PesoMaxEquipaje(int PESOMAXIMO) {
+            this.PESOMAXIMO = PESOMAXIMO;
+        }
+        // Método para obtener el peso máximo
+        public int getPESOMAXIMO() {
+            return PESOMAXIMO;
+        }
+    }
     private String placa;
     private int cantidadAsientos;
     private ArrayList<Asiento> asientos;
-    private int capacidadMaletas;
     private int kilometrosRecorridos = 0;
     private ArrayList<Ruta> rutasFuturas = new ArrayList<Ruta>();
     private Empresa empresa;
-
+    private ArrayList<Maleta> equipaje;// Equipaje de los pasajeros
     // Constructores
-    public Bus(String placa, int cantidadAsientos, int capacidadMaletas) {
-        this(placa, cantidadAsientos, capacidadMaletas, null);
+    public Bus(String placa, int cantidadAsientos,  PesoMaxEquipaje pesoMaxEquipaje) {
+        this(placa, cantidadAsientos, pesoMaxEquipaje, null);
     }
 
-    public Bus(String placa, int cantidadAsientos, int capacidadMaletas, ArrayList<Ruta> rutasFuturas) {
+    public Bus(String placa, int cantidadAsientos,  PesoMaxEquipaje pesoMaxEquipaje, ArrayList<Ruta> rutasFuturas) {
         this.placa = placa;
         this.cantidadAsientos = cantidadAsientos;
-        this.capacidadMaletas = capacidadMaletas;
+        this.cantidadAsientos = cantidadAsientos;
         if (rutasFuturas != null) {
             this.setRutasFuturas(rutasFuturas);
         }
     }
 
     // Métodos get-set
+    public  ArrayList<Maleta> getEquipaje(){
+        return equipaje;
+    }
     public String getPlaca() {
         return placa;
     }
@@ -52,14 +69,6 @@ public class Bus {
 
     public void setAsientos(ArrayList<Asiento> nuevosAsientos) {
         asientos = nuevosAsientos;
-    }
-
-    public int getCapacidadMaletas() {
-        return capacidadMaletas;
-    }
-
-    public void setCapacidadMaletas(int nuevaCapacidadMaletas) {
-        capacidadMaletas = nuevaCapacidadMaletas;
     }
 
     public int getKilometrosRecorridos() {
@@ -266,7 +275,6 @@ public class Bus {
         
         return rutasFuturas.getLast().getFechaLlegada().plusHours(1);
     }
-
     public void reparar() {
 
     }

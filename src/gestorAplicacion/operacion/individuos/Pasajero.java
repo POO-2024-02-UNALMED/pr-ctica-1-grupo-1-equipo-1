@@ -177,6 +177,7 @@ public class Pasajero extends Persona {
             System.out.println("Respuesta no valida. Por favor, escriba 'Si' o 'No'.");
             respuesta = scanner.nextLine().trim().toLowerCase();
         }
+        scanner.close();
         return respuesta.equals("si") ? true : false;
     }
 

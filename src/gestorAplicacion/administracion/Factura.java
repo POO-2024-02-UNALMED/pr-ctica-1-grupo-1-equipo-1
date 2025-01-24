@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import gestorAplicacion.operacion.logistica.Asiento;
 import gestorAplicacion.administracion.Ruta;
 import gestorAplicacion.operacion.logistica.Bus;
+import gestorAplicacion.operacion.logistica.Maleta;
+
 import java.io.Serializable;
 
 public class Factura implements Serializable{
@@ -151,6 +153,40 @@ public class Factura implements Serializable{
                     mensaje = "Lo sentimo El usuario no tiene una reserva asociada a esta ruta";
                 }
             } 
+        return mensaje;
+    }
+
+    public boolean verificarMaletaBusAsociado(Integer numsMaleta){
+        Bus bus = this.rutaElegida.getBusAsociado();
+        boolean verificacion = false;
+            for (Maleta maleta : bus.getEquipaje()) {
+                if(maleta.getIdMaleta() == numsMaleta){
+                    verificacion = true;
+                    break; 
+                } 
+            }
+            if (!verificacion){
+                return false;
+            }
+        return true;
+
+    }
+
+    public String EliminarMaletaBusAsociado(ArrayList<Integer> numsMaletas){
+        Bus bus = this.rutaElegida.getBusAsociado();
+        String mensaje = "";
+        // Vamos a recorrer la Array de el equipaje y si el id de la maleta coincide con alguna del Array entonces sera eliminada
+        for (Integer integer : numsMaletas) {
+            for (Maleta maleta : bus.getEquipaje()) {
+                if(maleta.getIdMaleta() == integer){
+                    bus.getEquipaje().remove(maleta);
+                    mensaje = "La maleta con el numero de identificacion " + integer + " ha sido eliminada del equipaje del bus";
+                } else{
+                    //Esta es una segunda verificacion pero realmente es solo para verificar
+                    mensaje = "No se pudo hacer el reembolso, La maleta con el numero de identificacion " + integer + " no existe en el bus asociado a la factura";
+                }
+            }
+        }
         return mensaje;
     }
 

@@ -81,7 +81,7 @@ public class Main {
                     System.out.println((i + 1) + ". " + rutasDisponibles.get(i));
                 }
 
-                System.out.print("Seleccione la opción de ruta (1-" + rutasDisponibles.size() + "): ");
+                System.out.print("Seleccione la opción de ruta (1-" + rutasDisponibles.size() + "): "));
                 int opcionRuta = scanner.nextInt();
                 scanner.nextLine();
 
@@ -123,11 +123,57 @@ public class Main {
                     if (mensaje2.equals("Existe un Bus Asociado a la ruta de la factura, Su solicitud seguira en proceso")) {
                         String mensaje3 = factura1.verificarRutaAsociada();
                         System.out.println(mensaje3);
-                    }
+                    
                     if(mensaje3.equals("El asiento liberado puede ser reservado nuevamente, Su reembolso sigue en proceso")){
-                        //Sigue la ejecucion
+                        
+                        System.out.println("Ingrese el Numero de Maletas del Pasajero");
+                        int cantidadMaletas =sc.nextInt();
+                        // Creamos una array para poder rectificar si dichos identificadores si son correctos
+                        ArrayList<Integer> nums_maletas;
+                        for (int index = 0; index <cantidadMaletas; index++) {
+                            System.out.println( "Ingrese el identificador de la maleta");
+                            Integer numMaleta = sc.nextInt();
+                            // Verificamos que la maleta si existe en el bus asociado a la factura
+                            boolean verificacion = factura1.verificarMaletaBusAsociado(numMaleta);
+                            if(verificacion){
+                                nums_maletas.add(numMaleta);// Pasa de int a Integer
+                                System.out.println("La maleta con numero identificador"+ numMaleta+" Esta en el bus de la factura");
+                            }
+                            else{
+                                System.out.println("La maleta no existe en el bus asociado a la factura");
+                                System.out.println("Desea volver a ingresar otra vez el numero de la maleta");
+                                System.out.println("1. Sí");
+                                System.out.println("2. No");
+                                int respuestaMaleta = sc.nextInt();
+                                if(respuestaMaleta==1){
+                                    index--;
+                                    }
+                                    else{
+                                        //Devolverse al menu
+                            }
+                        }
                     }
-                }
+                        String mensaje4 =factura1.EliminarMaletaBusAsociado(nums_maletas);
+                        // Si la ejecucion fue correcta entonces las maletas fueron eliminadas
+                        System.out.println(mensaje4);
+                    if(mensaje4.contains(" ha sido eliminada del equipaje del bus")){
+
+                        pasajero1.setFactura(null);//Eliminamos la factura respecto al pasajero 
+                        // En este Punto Ya se hicieron Todas las verificaciones correspondientes
+                        
+                        System.out.println("Todo a salido Correctamente, Su factura fue invalidada");
+                    }else{
+                        // Al haber algo mal con la ejecucion del cuarto condicional
+                    }
+                    }else{
+                        // Al haber algo mal con la ejecucion del tercer condicional
+                        pasajero1.RevertirPasajes();
+                    }
+                }else{// Al haber algo mal con la ejecucion del primer condicional
+                    }
+                }else{
+                    // al haber algo mal con la ejecucion del segundo condicional
+                } // TEmPoral
             case 5:
                 System.out.println("Gracias por usar el sistema. ¡Hasta luego!");
                 scanner.close();
