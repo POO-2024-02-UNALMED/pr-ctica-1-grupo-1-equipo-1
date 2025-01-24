@@ -1,5 +1,6 @@
 package gestorAplicacion.administracion;
 import gestorAplicacion.operacion.logistica.Bus;
+import gestorAplicacion.operacion.individuos.Chofer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.time.LocalDateTime;
@@ -8,6 +9,7 @@ public class Ruta extends Red{
     private static int totalRutas;
     private int idRuta;
     private Bus busAsociado;
+    private Chofer choferAsociado;
     private LocalDateTime fechaSalida;
     private LocalDateTime fechaLlegada;
     private Parada lugarInicio;
@@ -63,6 +65,14 @@ public class Ruta extends Red{
 
     public void setBusAsociado(Bus nuevoBusAsociado) {
         busAsociado = nuevoBusAsociado;
+    }
+
+    public Chofer getChoferAsociado() {
+        return choferAsociado;
+    }
+
+    public void setChoferAsociado(Chofer nuevoChoferAsociado) {
+        choferAsociado = nuevoChoferAsociado;
     }
 
     public LocalDateTime getFechaSalida() {

@@ -275,6 +275,11 @@ public class Bus {
         
         return rutasFuturas.getLast().getFechaLlegada().plusHours(1);
     }
+
+    public String toString(){
+        return "Soy el bus con placa " + placa;
+    }
+
     public void reparar() {
 
     }

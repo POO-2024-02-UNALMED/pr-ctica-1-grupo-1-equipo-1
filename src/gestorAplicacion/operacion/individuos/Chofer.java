@@ -1,20 +1,22 @@
 package gestorAplicacion.operacion.individuos;
 import gestorAplicacion.administracion.Empresa;
 import java.util.ArrayList;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class Chofer extends Persona{
     private int sueldo;
     private int cantidadHorasConducidas = 0;
     private Empresa empresa;
     // El horario va a ser un ArrayList de arrays con 2 elementos {Fecha inicio, Fecha fin}.
-    private ArrayList<int[]> horario = new ArrayList<int[]>(); // Cambiar int por fechas
+    private ArrayList<LocalDateTime[]> horario = new ArrayList<LocalDateTime[]>(); // Cambiar int por fechas
 
     // Constructores
     public Chofer(int sueldo){
         this(sueldo, null);
     }
 
-    public Chofer(int sueldo, ArrayList<int[]> horario){
+    public Chofer(int sueldo, ArrayList<LocalDateTime[]> horario){
         this.sueldo = sueldo;
         if(horario != null){this.setHorario(horario);}
     }
@@ -45,15 +47,15 @@ public class Chofer extends Persona{
         empresa = nuevaEmpresa;
     }
 
-    public ArrayList<int[]> getHorario(){
+    public ArrayList<LocalDateTime[]> getHorario(){
         return horario;
     }
 
-    public void setHorario(ArrayList<int[]> nuevoHorario){
+    public void setHorario(ArrayList<LocalDateTime[]> nuevoHorario){
         // Se añadirán todas los lapsos en forma ascendente sin repeticiones,
         // mostrando error si existen cruces de horarios.
-        horario = new ArrayList<int[]>();
-        for(int[] lapso: nuevoHorario){
+        horario = new ArrayList<LocalDateTime[]>();
+        for(LocalDateTime[] lapso: nuevoHorario){
             this.anadirRuta(lapso);
         }
     }
@@ -64,15 +66,15 @@ public class Chofer extends Persona{
     }
 
     // Métodos de instancia
-    public Boolean isDisponible(int fechaInicial, int fechaFinal){// Cambiar a objeto de tiempo
+    public Boolean isDisponible(LocalDateTime fechaInicial, LocalDateTime fechaFinal){// Cambiar a objeto de tiempo
         /*
          * Determina si el rango [fecha inicial, fecha final] se cruza con los horarios
          * de los lapsos en que el chofer estpa comprometido.
          * 
          * Parámetros:
-         *      - fechaInicial: int,
+         *      - fechaInicial: LocalDateTime,
          *          Comienzo del rango horario
-         *      - fechaFinal: int,
+         *      - fechaFinal: LocalDateTime,
          *          Conclusión del rango horario
          * 
          * Retorna:
@@ -81,7 +83,7 @@ public class Chofer extends Persona{
          */
 
         // Verificación de errores.
-        if(fechaInicial > fechaFinal){
+        if(Duration.between(fechaInicial, fechaFinal).toHours() > 0){
             return false;
         }
 
@@ -90,10 +92,9 @@ public class Chofer extends Persona{
         int numeroLapsos = horario.size();
         int contador = 0; // (#Lapsos)-contador representa la cantidad de intervalos entre [fecha Inicial, fecha Final]
         for(int i = 0; i < numeroLapsos; i++){
-            // Cambiar +- 1 por +- 1 hora.
             // Viendo si el final del intervalo [fecha Inicial, fecha Final] está a la izqueirda o derecha.
-            if((fechaFinal < horario.get(numeroLapsos - i - 1)[0] - 1) ||
-               (fechaInicial > horario.get(i)[1] + 1)){
+            if(Duration.between(fechaFinal, horario.get(numeroLapsos - i - 1)[0]).toHours() > 1 ||
+               Duration.between(horario.get(i)[1], fechaInicial).toHours() > 1){
                 contador++;
             }
         }
@@ -104,58 +105,66 @@ public class Chofer extends Persona{
         return disponibilidad;
     }
 
-    public void anadirRuta(int[] nuevoLapso){
+    public LocalDateTime[] anadirRuta(LocalDateTime[] nuevoLapso){
         /*
          * Busca si se puede agregar el lapso en las ya establecidas para el chofer,
          * mostrando una advertencia si no puede ser añadido.
          * 
          * Parámetros:
-         *      - nuevoLapso: int[],
+         *      - nuevoLapso: LocalDateTime[],
          *          {Fecha inicio, Fecha fin} a ser agregado.
+         * 
+         * Retorna:
+         *      - lapsoNoAsignado.
+         *      Devuelve el nuevoLapso si este no puede ser asignado.
          */
 
         // Verificación de errores
         if(nuevoLapso.length != 2){
-            // Hacer un error.
+            return nuevoLapso;
         }
 
         // Se busca dónde debería ir el nuevo lapso.
         int posicion = 0;
-        for(int[] lapso: horario){
+        for(LocalDateTime[] lapso: horario){
             // Primero se mira si el intervalo del nuevo lapso se encuentra
             // a la derecha de los intervalos las rutas existentes.
-            if(nuevoLapso[0] > lapso[0]){
-                // Cambiar +1 por +1 hora
+            if(Duration.between(lapso[0], nuevoLapso[0]).toHours() > 0){
                 // Se encuentra en un margen aceptable.
-                if(nuevoLapso[0] > lapso[1] + 1){posicion++;}
+                if(Duration.between(lapso[1], nuevoLapso[0]).toHours() > 1){posicion++;}
                 // Ambos intervalos se intersectan o no dejan el margen aceptable.
                 else{posicion = -1; break;}
             }
 
             // Ahora se mira si se encuentra a la izquierda
             else{
-                // Cambiar -1 por -1 hora.
                 // Se intersecan o no dejan el margen aceptable.
-                if(nuevoLapso[1] < lapso[0] - 1){posicion = -1; break;}
+                if(Duration.between(nuevoLapso[1], lapso[0]).toHours() > 1){
+                    posicion = -1;
+                    break;
+                }
             }
         }
 
         // Si no se intersecta con ningún horario, se añade correctamente.
-        if(posicion != -1){horario.add(posicion, nuevoLapso);}
-
-        // Añadir advertencia por si no se puede añadir.
+        if(posicion != -1){horario.add(posicion, nuevoLapso); return null;}
+        else{return nuevoLapso;}
     }
 
-    public void quitarRuta(int[] lapso){
+    public void quitarRuta(LocalDateTime[] lapso){
         /*
          * Remueve el lapso especificada en caso de estar presente en el horario del chofer.
          * 
          * Parámetros:
-         *      - lapso: int[],
-         *          Lapso a ser añadido.
+         *      - lapso: LocalDateTime[],
+         *          Lapso a ser removido.
          */
 
         horario.remove(lapso);
+    }
+
+    public String toString(){
+        return "Soy el chofer " + nombre;
     }
 
     public void calcularSalario(){

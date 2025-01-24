@@ -646,5 +646,13 @@ public class Main {
         int[] paradasEscogidas = quiereEscogerParadas(empresaEscogida, scanner);
         float[] condiciones = ajustarParadas(empresaEscogida, paradasEscogidas[0], paradasEscogidas[1], scanner);
 
+        // Asignando la ruta a un bus y un chofer.
+        Ruta rutaCreada = empresaEscogida.funcionalidad4(paradasEscogidas[0], paradasEscogidas[1],
+                                                         (int) condiciones[0], condiciones[1]);
+        
+        // Imprimiendo el resultado
+        System.out.println("Se asignó la ruta " + rutaCreada.toString() + " al bus " +
+                           rutaCreada.getBusAsociado().toString() + " con chofer " +
+                           rutaCreada.getChoferAsociado().toString());
     }
 }

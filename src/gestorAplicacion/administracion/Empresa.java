@@ -141,7 +141,7 @@ public class Empresa {
         contratar(new Chofer(sueldo), sueldo, null);
     }
 
-    void contratar(int sueldo, ArrayList<int[]> horario) {
+    void contratar(int sueldo, ArrayList<LocalDateTime[]> horario) {
         contratar(new Chofer(sueldo), sueldo, horario);
     }
 
@@ -149,7 +149,7 @@ public class Empresa {
         contratar(chofer, sueldo, null);
     }
 
-    void contratar(Chofer chofer, int sueldo, ArrayList<int[]> horario) {
+    void contratar(Chofer chofer, int sueldo, ArrayList<LocalDateTime[]> horario) {
         /*
          * Agrega un chofer a la nómina.
          * 
@@ -158,7 +158,7 @@ public class Empresa {
          * Persona a contratar.
          * - sueldo: int,
          * Sueldo ofrecido para contratar.
-         * - horario: ArrayList<int[]>,
+         * - horario: ArrayList<LocalDateTime[]>,
          * Horario con el que va a iniciar.
          */
 
@@ -178,6 +178,7 @@ public class Empresa {
                     empleados[i] = chofer;
                     chofer.setEmpresa(this);
                     hayPuesto = true;
+                    chofer.setHorario(horario);
                 }
 
                 break;
@@ -231,17 +232,17 @@ public class Empresa {
     void comprarBus(int valor){
         comprarBus(valor, null);
     }
-    void comprarBus(int valor, ArrayList<int[]> horario){
+    void comprarBus(int valor, ArrayList<Ruta> rutasFuturas){
         // Generar un bus aleatorio.
         Bus busAleatorio = new Bus("A", 50, Bus.PesoMaxEquipaje.LIGERO);
-        comprarBus(busAleatorio, valor, null);
+        comprarBus(busAleatorio, valor, rutasFuturas);
     }
 
     void comprarBus(Bus bus, int valor){;
         comprarBus(bus, valor, null);
     }
 
-    void comprarBus(Bus bus, int valor, ArrayList<int[]> horario){
+    void comprarBus(Bus bus, int valor, ArrayList<Ruta> rutasFuturas){
         /*
          * Agrega un bus a las utilidades.
          * 
@@ -250,8 +251,8 @@ public class Empresa {
          * Bus a comprar.
          * - valor: int,
          * Costo del bus.
-         * - horario: ArrayList<int[]>,
-         * Horario con el que va a iniciar.
+         * - rutasFuturas: ArrayList<Ruta>,
+         * Rutas con el que va a iniciar.
          */
 
         // Como los buses se almacenan en un array, se busca si está disponible un
@@ -267,8 +268,8 @@ public class Empresa {
                 // Se incluye al nuevo bus en las utilidades
                 busesTotales[i] = bus;
                 bus.setEmpresa(this);
+                bus.setRutasFuturas(rutasFuturas);
                 hayPuesto = true;
-
                 break;
             }
         }
@@ -307,6 +308,12 @@ public class Empresa {
         // con el mismo.
         for (int i = 0; i < busesTotales.length; i++) {
             if (busesTotales[i] == bus) {
+                // Haciendo que las rutas no tengan el bus que se eliminó.
+                for(Ruta ruta: bus.getRutasFuturas()){
+                    ruta.setBusAsociado(null);
+                }
+
+                // Desvinculando el bus con la empresa.
                 bus.setRutasFuturas(null);
                 bus.setEmpresa(null);
                 busesTotales[i] = null;
@@ -316,7 +323,7 @@ public class Empresa {
 
     // Estaba muy básica anteriormente, se modificó para que
     // busque el bus con disponibilidad de horario con fecha más cercana.
-    Bus asignarRuta(Ruta ruta){
+    void asignarRuta(Ruta ruta){
         /*
          * Dado una ruta establecida, se busca el bus que tiene un horario disponible
          * que cumpla las horas establecidas por la ruta. Dentro de esto, se escoge el que
@@ -333,7 +340,7 @@ public class Empresa {
 
         // Viendo que haya buses.
         if(busesTotales.length == 0){
-            // Generar número aleatorio.
+            // Generar precio aleatorio para comprar bus.
             int precioAleatorio = (int) (Math.random() * 1000) + 17000;
             this.comprarBus(precioAleatorio);
         }
@@ -342,24 +349,50 @@ public class Empresa {
         int lapso = ruta.duracion();
 
         // Estableciendo una cota a la fecha.
-        LocalDateTime horarioBase = busesTotales[0].hallarHueco(lapso);
+        LocalDateTime horarioBusBase = busesTotales[0].hallarHueco(lapso);
         Bus busEncontrado = busesTotales[0];
 
         // Buscando la fecha más cercana entre los buses.
-        LocalDateTime horario = LocalDateTime.now();
+        LocalDateTime horarioBus = LocalDateTime.now();
         for(Bus bus : busesTotales){
-            horario = bus.hallarHueco(lapso);
-            if(Duration.between(horarioBase, horario).toHours() < 0){
-                horarioBase = horario;
+            horarioBus = bus.hallarHueco(lapso);
+            if(Duration.between(horarioBusBase, horarioBus).toHours() < 0){
+                horarioBusBase = horarioBus;
                 busEncontrado = bus;
             }
         }
 
         // Asignando la ruta al bus.
-        ruta.setFechaSalida(horario);
+        ruta.setFechaSalida(horarioBus);
+        ruta.setFechaLlegada(horarioBus.plusHours(lapso));
         busEncontrado.anadirRuta(ruta);
 
-        return busEncontrado;
+        // Buscando un chofer para que la conduzca
+        if(ruta.getChoferAsociado() != null){return;}
+        Boolean existeChambeador = false;
+        for(Chofer empleado: empleados){
+            if(empleado.isDisponible(ruta.getFechaSalida(), ruta.getFechaLlegada())){
+                existeChambeador = true;
+                LocalDateTime[] retornada = empleado.anadirRuta(new LocalDateTime[]
+                 {ruta.getFechaSalida(), ruta.getFechaLlegada()});
+                if(retornada == null){
+                    ruta.setChoferAsociado(empleado);
+                    break;
+                }
+            }
+        }
+
+        // Viendo qué pasa si no existe el chofer.
+        if(!existeChambeador){
+            // Generar sueldo aleatorio.
+            int sueldoAleatorio = (int) (Math.random() * 100) + 400;
+            ArrayList<LocalDateTime[]> horarioChofer = new ArrayList<LocalDateTime[]>();
+            horarioChofer.add(new LocalDateTime[] {ruta.getFechaSalida(), ruta.getFechaLlegada()});
+
+            // Contratando al nuevo chofer.
+            contratar(sueldoAleatorio, horarioChofer);
+            ruta.setChoferAsociado(empleados[empleados.length - 1]);
+        }
     }
 
     public void reportarFinanzas() {
