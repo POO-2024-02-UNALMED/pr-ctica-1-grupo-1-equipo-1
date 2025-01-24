@@ -1,5 +1,6 @@
 package gestorAplicacion.administracion;
-
+import java.time.LocalDateTime;
+import java.time.Duration;
 import gestorAplicacion.operacion.individuos.Chofer;
 import gestorAplicacion.operacion.individuos.Pasajero;
 import gestorAplicacion.operacion.logistica.Bus;
@@ -18,7 +19,20 @@ public class Empresa {
     private ArrayList<Ruta> rutas;
     private int caja;
 
-    // Métodos get-set
+    // Constructores.
+    public Empresa(String nombre){
+        this(nombre, new Chofer[0], new Bus[0], new ArrayList<Ruta>(), 0);
+    }
+
+    public Empresa(String nombre, Chofer[] empleados, Bus[] busestotales, ArrayList<Ruta> rutas, int caja){
+        this.nombre = nombre;
+        setEmpleados(empleados);
+        setBusesTotales(busestotales);
+        setRutas(rutas);
+        this.caja = caja;
+    }
+
+    // Métodos get-set.
     public String getNombre() {
         return nombre;
     }
@@ -32,7 +46,28 @@ public class Empresa {
     }
 
     public void setEmpleados(Chofer[] nuevosEmpleados) {
-        empleados = nuevosEmpleados;
+        Chofer[] empleadosUnicos = new Chofer[nuevosEmpleados.length];
+        Boolean esUnico;
+        int contandoUnicos = 0;
+
+        // Viendo cuántos buses existen y son únicos.
+        for(Chofer empleado: nuevosEmpleados){
+            if(empleado != null){
+                // Viendo si el bus ya había sido incluido.
+                esUnico = true;
+                for(Chofer empleadoUnico: empleadosUnicos){
+                    if(empleadoUnico == empleado){esUnico = false; break;}
+                }
+    
+                if(esUnico){
+                    empleadosUnicos[contandoUnicos] = empleado;
+                    contandoUnicos++;
+                }
+            }
+        }
+
+        // Dejando solo los únicos
+        empleados = Arrays.copyOfRange(empleadosUnicos, 0, contandoUnicos);
     }
 
     public Bus[] getBusesTotales() {
@@ -40,15 +75,55 @@ public class Empresa {
     }
 
     public void setBusesTotales(Bus[] nuevosBusesTotales) {
-        busesTotales = nuevosBusesTotales;
+        Bus[] busesUnicos = new Bus[nuevosBusesTotales.length];
+        Boolean esUnico;
+        int contandoUnicos = 0;
+
+        // Viendo cuántos buses existen y son únicos.
+        for(Bus bus: nuevosBusesTotales){
+            if(bus != null){
+                // Viendo si el bus ya había sido incluido.
+                esUnico = true;
+                for(Bus busUnico: busesUnicos){
+                    if(busUnico == bus){esUnico = false; break;}
+                }
+    
+                if(esUnico){
+                    busesUnicos[contandoUnicos] = bus;
+                    contandoUnicos++;
+                }
+            }
+        }
+
+        // Dejando solo los únicos
+        busesTotales = Arrays.copyOfRange(busesUnicos, 0, contandoUnicos);
     }
 
     public ArrayList<Ruta> getRutas() {
-        return rutas;
+        return this.rutas;
     }
 
     public void setRutas(ArrayList<Ruta> nuevasRutas) {
-        rutas = nuevasRutas;
+        ArrayList<Ruta> rutasUnicas = new ArrayList<Ruta>();
+        Boolean esUnico;
+
+        // Viendo cuántos buses existen y son únicos.
+        for(Ruta ruta: nuevasRutas){
+            if(ruta != null){
+                // Viendo si el bus ya había sido incluido.
+                esUnico = true;
+                for(Ruta rutaUnica: rutasUnicas){
+                    if(rutaUnica == ruta){esUnico = false; break;}
+                }
+    
+                if(esUnico){
+                    rutasUnicas.add(ruta);
+                }
+            }
+        }
+
+        // Dejando solo los únicos
+        rutas = rutasUnicas;
     }
 
     public int getCaja() {
@@ -62,21 +137,21 @@ public class Empresa {
     // Métodos de instancia
 
     // Todas las formas de contratar un chofer.
-    public void contratar(int sueldo) {
+    void contratar(int sueldo) {
         contratar(new Chofer(sueldo), sueldo, null);
     }
 
-    public void contratar(int sueldo, ArrayList<int[]> horario) {
+    void contratar(int sueldo, ArrayList<int[]> horario) {
         contratar(new Chofer(sueldo), sueldo, horario);
     }
 
-    public void contratar(Chofer chofer, int sueldo) {
+    void contratar(Chofer chofer, int sueldo) {
         contratar(chofer, sueldo, null);
     }
 
-    public void contratar(Chofer chofer, int sueldo, ArrayList<int[]> horario) {
+    void contratar(Chofer chofer, int sueldo, ArrayList<int[]> horario) {
         /*
-         * Agrega a un chofer a la nómina.
+         * Agrega un chofer a la nómina.
          * 
          * Parámetros:
          * - chofer: Chofer,
@@ -128,7 +203,7 @@ public class Empresa {
     }
 
     // Despedir un chofer.
-    public void despedir(Chofer chofer) {
+    void despedir(Chofer chofer) {
         /*
          * Quita al chofer indicado de la nómina.
          * 
@@ -148,12 +223,143 @@ public class Empresa {
                 empleados[i] = null;
             }
         }
+
+        setEmpleados(empleados);
     }
 
-    // Estaba muy básica anteriormente, así que decidí modificarlo para que
-    // a una ruta le halle un bus que pueda incluirla.
-    public void asignarRuta(Bus bus, Ruta ruta) {
-        bus.anadirRuta(ruta);
+    // Todas las formas de comprar un bus.
+    void comprarBus(int valor){
+        comprarBus(valor, null);
+    }
+    void comprarBus(int valor, ArrayList<int[]> horario){
+        // Generar un bus aleatorio.
+        Bus busAleatorio = new Bus("A", 50, Bus.PesoMaxEquipaje.LIGERO);
+        comprarBus(busAleatorio, valor, null);
+    }
+
+    void comprarBus(Bus bus, int valor){;
+        comprarBus(bus, valor, null);
+    }
+
+    void comprarBus(Bus bus, int valor, ArrayList<int[]> horario){
+        /*
+         * Agrega un bus a las utilidades.
+         * 
+         * Parámetros:
+         * - bus: Bus,
+         * Bus a comprar.
+         * - valor: int,
+         * Costo del bus.
+         * - horario: ArrayList<int[]>,
+         * Horario con el que va a iniciar.
+         */
+
+        // Como los buses se almacenan en un array, se busca si está disponible un
+        // espacio para incluirlo.
+        Boolean hayPuesto = false;
+        for (int i = 0; i < empleados.length; i++) {
+            if (busesTotales[i] == null) {
+                // En caso de estar vinculado a una empresa existente, se le pide la desvinculaciín.
+                if (bus.getEmpresa() != null) {
+                    bus.getEmpresa().desvincularBus(bus);
+                }
+
+                // Se incluye al nuevo bus en las utilidades
+                busesTotales[i] = bus;
+                bus.setEmpresa(this);
+                hayPuesto = true;
+
+                break;
+            }
+        }
+
+        // En caso de no haber espacio en el array, se crea uno nuevo con un espacio
+        // extra.
+        if (!hayPuesto) {
+            // Se crea un array temporal para almacenar a todos los buses.
+            Bus[] temp = new Bus[busesTotales.length + 1];
+            for (int i = 0; i < busesTotales.length; i++) {
+                temp[i] = busesTotales[i];
+            }
+
+            // Se incluye el nuevo empleado.
+            temp[busesTotales.length] = bus;
+            bus.setEmpresa(this);
+
+            // Se cambia el array anterior por el nuevo.
+            busesTotales = temp;
+        }
+
+        setBusesTotales(busesTotales);
+    }
+
+    // Desvincular un bus de la empresa.
+    void desvincularBus(Bus bus){
+        /*
+         * Quita al bus vinculado a la empresa.
+         * 
+         * Parámetros:
+         * - bus: Bus,
+         * Bus a desvincular.
+         */
+
+        // Buscando si el bus está vinculado a la empresa y limpiando toda relación
+        // con el mismo.
+        for (int i = 0; i < busesTotales.length; i++) {
+            if (busesTotales[i] == bus) {
+                bus.setRutasFuturas(null);
+                bus.setEmpresa(null);
+                busesTotales[i] = null;
+            }
+        }
+    }
+
+    // Estaba muy básica anteriormente, se modificó para que
+    // busque el bus con disponibilidad de horario con fecha más cercana.
+    Bus asignarRuta(Ruta ruta){
+        /*
+         * Dado una ruta establecida, se busca el bus que tiene un horario disponible
+         * que cumpla las horas establecidas por la ruta. Dentro de esto, se escoge el que
+         * su horario de disponibilidad esté más cercano.
+         * 
+         * Parámetros:
+         *      - lapso: int,
+         *          Cantidad de tiempo que debe estar libre el bus.
+         * 
+         * Retorna:
+         *      - busEncontrado: Bus,
+         *          Bus que va a tener esa ruta.
+         */
+
+        // Viendo que haya buses.
+        if(busesTotales.length == 0){
+            // Generar número aleatorio.
+            int precioAleatorio = (int) (Math.random() * 1000) + 17000;
+            this.comprarBus(precioAleatorio);
+        }
+
+        // Viendo la duración de la ruta.
+        int lapso = ruta.duracion();
+
+        // Estableciendo una cota a la fecha.
+        LocalDateTime horarioBase = busesTotales[0].hallarHueco(lapso);
+        Bus busEncontrado = busesTotales[0];
+
+        // Buscando la fecha más cercana entre los buses.
+        LocalDateTime horario = LocalDateTime.now();
+        for(Bus bus : busesTotales){
+            horario = bus.hallarHueco(lapso);
+            if(Duration.between(horarioBase, horario).toHours() < 0){
+                horarioBase = horario;
+                busEncontrado = bus;
+            }
+        }
+
+        // Asignando la ruta al bus.
+        ruta.setFechaSalida(horario);
+        busEncontrado.anadirRuta(ruta);
+
+        return busEncontrado;
     }
 
     public void reportarFinanzas() {
@@ -665,6 +871,8 @@ public class Empresa {
         int paradaInicial = paradasReales[0];
         int paradaFinal = paradasReales[paradasReales.length];
         Ruta rutaFinal = new Ruta(paradaInicial, paradaFinal, paradasReales);
+        asignarRuta(rutaFinal);
+
         return rutaFinal;
     }
 

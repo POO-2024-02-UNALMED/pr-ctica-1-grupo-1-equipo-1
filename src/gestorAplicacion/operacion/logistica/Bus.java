@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Bus {
-    private enum PesoMaxEquipaje { // Esto nos dira cual es el maximo que soporta el bus
+    public enum PesoMaxEquipaje { // Esto nos dira cual es el maximo que soporta el bus
         LIGERO(500), // Peso máximo en kilogramos
         MEDIO(750),
         PESADO(1000),

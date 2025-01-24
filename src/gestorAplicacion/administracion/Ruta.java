@@ -125,6 +125,18 @@ public class Ruta extends Red{
         return null;
     }
 
+    int duracion(){
+        /*
+         * Calcula la duración de la ruta.
+         * 
+         * Retorna:
+         *      - duracion: int,
+         *          duracion de la ruta.
+         */
+
+        return Ruta.duracion(this.paradas);
+    }
+
     public void agregarParada(Parada nuevaParada) {
         /*
          * Añade la nueva parada haciendo minimizando su efecto en la ruta.
