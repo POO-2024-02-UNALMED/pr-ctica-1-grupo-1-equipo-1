@@ -127,7 +127,9 @@ public class Factura implements Serializable{
             mensaje = "Existe un Bus Asociado a la ruta de la factura, Su solicitud seguira en proceso";
         }else{
             mensaje = "Lo sentimos pero no existe bus Asociado a la ruta de dicha factura, por lo cual el reembolso no puede ser efectivo";
-        } return mensaje;
+        }
+
+        return mensaje;
     }
     public String verificarRutaAsociada(){
      // Obtener el bus asociado a la ruta
@@ -139,7 +141,7 @@ public class Factura implements Serializable{
                 if (asiento.getUsuario().getNombre().equals(this.usuarioNombre)) {
                     mensaje = "El usuario ya tiene una reserva asociada a esta ruta";
                     Ruta rutaElegida = getRutaElegida();
-                    LocalDateTime fechaSalida = rutaElegida.getFechaSalidaDateTime();
+                    LocalDateTime fechaSalida = rutaElegida.getFechaSalida();
                     if (LocalDateTime.now().isBefore(fechaSalida)) {
                         System.out.println("El asiento liberado puede ser reservado nuevamente, Su reembolso sigue en proceso");
                     } else {

@@ -1,25 +1,21 @@
 package gestorAplicacion.administracion;
-
 import gestorAplicacion.operacion.logistica.Bus;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.time.LocalDateTime;
 
-
 public class Ruta extends Red{
     private static int totalRutas;
     private int idRuta;
     private Bus busAsociado;
-    private int fechaSalida; // Cambiar por objeto de tiempo
-    private int fechaLlegada;// Cambiar por objeto de tiempo
-    private LocalDateTime fechaSalidaDateTime;
-    private LocalDateTime fechaLlegadaDateTime;
+    private LocalDateTime fechaSalida;
+    private LocalDateTime fechaLlegada;
     private Parada lugarInicio;
     private Parada lugarFinal;
     private Parada[] paradas;
 
     // Constructores
-    public Ruta(Bus busAsociado, int fechaSalida, int fechaLlegada, // Cambiar por objetos de tiempo
+    public Ruta(Bus busAsociado, LocalDateTime fechaSalida, LocalDateTime fechaLlegada, // Cambiar por objetos de tiempo
             Parada lugarInicio, Parada lugarFinal, Parada[] paradas) {
         totalRutas++;
         this.idRuta = totalRutas;
@@ -33,12 +29,12 @@ public class Ruta extends Red{
 
     public Ruta(Parada lugarInicio, Parada lugarFinal, Parada[] paradas) {
         // Cambiar por objetos de tiempo
-        this(null, 0, 0, lugarInicio, lugarFinal, paradas);
+        this(null, LocalDateTime.now(), LocalDateTime.now(), lugarInicio, lugarFinal, paradas);
     }
 
     public Ruta(int ordinalLugarInicio, int ordinalLugarFinal, int[] ordinalesParadas) {
         // Cambiar por objetos de tiempo
-        this(null, 0, 0,
+        this(null, LocalDateTime.now(), LocalDateTime.now(),
              Parada(ordinalLugarInicio),
              Parada(ordinalLugarFinal),
              Red.enteroAParada(ordinalesParadas));
@@ -68,36 +64,23 @@ public class Ruta extends Red{
     public void setBusAsociado(Bus nuevoBusAsociado) {
         busAsociado = nuevoBusAsociado;
     }
-    //TEMPORAL REEMPLAZAR POR LOCALDATETIME
-    public int getFechaSalida() {
+
+    public LocalDateTime getFechaSalida() {
         return fechaSalida;
     }
 
-    public void setFechaSalida(int nuevafechaSalida) {
+    public void setFechaSalida(LocalDateTime nuevafechaSalida) {
         fechaSalida = nuevafechaSalida;
     }
-    public LocalDateTime getFechaSalidaDateTime() {
-        return fechaSalidaDateTime;
-    }
 
-    public void setFechaSalidaDateTime(LocalDateTime nuevafechaLlegada) {
-        fechaLlegadaDateTime = nuevafechaLlegada;
-    }
-    //TEMPORAL REEMPLAZAR POR LOCALDATETIME
-    public int getFechaLlegada() {
+    public LocalDateTime getFechaLlegada() {
         return fechaLlegada;
     }
 
-    public void setFechaLlegada(int nuevafechaLlegada) {
+    public void setFechaLlegada(LocalDateTime nuevafechaLlegada) {
         fechaLlegada = nuevafechaLlegada;
     }
-    public LocalDateTime getFechaLlegadaDateTime() {
-        return fechaLlegadaDateTime;
-    }
 
-    public void setFechaLlegadaDateTime(LocalDateTime nuevafechaLlegada) {
-        fechaLlegadaDateTime = nuevafechaLlegada;
-    }
     public Parada getLugarInicio() {
         return lugarInicio;
     }

@@ -213,7 +213,7 @@ public abstract class Red{
 
     public static int longitud(int[] ordinalesTrayecto){
         /*
-         * Retorna la longitud de un trayecto.
+         * Retorna la longitud (Según la función de peso w) de un trayecto.
          * 
          * Parámetros:
          *      - ordinalesTrayecto: int[],
@@ -224,6 +224,9 @@ public abstract class Red{
          *          Longitud del trayecto.
          */
 
+        // Ordenando la lista.
+        ordinalesTrayecto = ordenarParadas(ordinalesTrayecto);
+
         // Calculando la longitud del trayecto.
         int longitud = 0;
         for(int i = 0; i < ordinalesTrayecto.length - 1; i++){
@@ -232,10 +235,10 @@ public abstract class Red{
 
         return longitud;
     }
-    
+
     protected static int longitud(Parada[] trayecto){
         /*
-         * Retorna la longitud de un trayecto.
+         * Retorna la longitud (Según la función de peso w) de un trayecto.
          * 
          * Parámetros:
          *      - trayecto: Parada[],
@@ -253,6 +256,63 @@ public abstract class Red{
         }
 
         return longitud(ordinalesTrayecto);
+    }
+
+    public static int duracion(int[] ordinalesTrayecto){
+        /*
+         * Retorna la duración temporal de un trayecto.
+         * 
+         * Parámetros:
+         *      - ordinalesTrayecto: int[],
+         *          Conjunto de paradas (Ordinales) a calcular su longitud.
+         * 
+         * Retorna:
+         *      - tiempo: int,
+         *          Duración del trayecto.
+         */
+
+        // Ordenando la lista.
+        ordinalesTrayecto = ordenarParadas(ordinalesTrayecto);
+
+        // Calculando la duración del trayecto.
+        int tiempo = 0;
+        int[] segmento;
+        for(int i = 0; i < ordinalesTrayecto.length - 1; i++){
+            segmento = algoritmoBellmanFord(ordinalesTrayecto[i], ordinalesTrayecto[i + 1]);
+            for(int j = 0; j < segmento.length - 1; j++){
+                for (int[][] arista : carreteras) {
+                    if((arista[0][0] == segmento[j] && arista[0][1] == segmento[j + 1]) ||
+                       (arista[0][0] == segmento[j + 1] && arista[0][1] == segmento[j])){
+                        tiempo += arista[1][1];
+                        break;
+                    }
+                }
+            }
+        }
+
+        return tiempo;
+    }
+
+    protected static int duracion(Parada[] trayecto){
+        /*
+         * Retorna la duración temporal de un trayecto.
+         * 
+         * Parámetros:
+         *      - trayecto: Parada[],
+         *          Conjunto de paradas (Trayecto) a calcular su longitud.
+         * 
+         * Retorna:
+         *      - tiempo: int,
+         *          Duración del trayecto.
+         */
+
+        // Pasando el conjunto de paradas a sus ordinales.
+        int[] ordinalesTrayecto = new int[trayecto.length];
+        for(int i = 0; i < trayecto.length; i++){
+            ordinalesTrayecto[i] = trayecto[i].ordinal();
+        }
+
+        return duracion(ordinalesTrayecto);
     }
 
     // Algoritmo de Bellman-Ford para hacer la ruta más corta.

@@ -1,8 +1,9 @@
 package gestorAplicacion.operacion.logistica;
-
 import gestorAplicacion.administracion.Ruta;
 import gestorAplicacion.administracion.Empresa;
 import gestorAplicacion.operacion.individuos.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Bus {
@@ -101,15 +102,15 @@ public class Bus {
     }
 
     // Métodos de instancia
-    public Boolean isDisponible(int fechaInicial, int fechaFinal) {// Cambiar a objeto de tiempo
+    public Boolean isDisponible(LocalDateTime fechaInicial, LocalDateTime fechaFinal) {
         /*
          * Determina si el rango [fecha inicial, fecha final] se cruza con los horarios
          * de las rutas que el bus debe cumplir.
          * 
          * Parámetros:
-         * - fechaInicial: int,
+         * - fechaInicial: LocalDateTime,
          * Comienzo del rango horario
-         * - fechaFinal: int,
+         * - fechaFinal: LocalDateTime,
          * Conclusión del rango horario
          * 
          * Retorna:
@@ -118,7 +119,7 @@ public class Bus {
          */
 
         // Verificación de errores.
-        if (fechaInicial > fechaFinal) {
+        if (Duration.between(fechaInicial, fechaFinal).toHours() > 0) {
             return false;
         }
 
@@ -128,11 +129,10 @@ public class Bus {
         int contador = 0; // (#Rutas)-contador representa la cantidad de intervalos entre [fecha Inicial,
                           // fecha Final]
         for (int i = 0; i < numeroRutas; i++) {
-            // Cambiar +- 1 por +- 1 hora.
             // Viendo si el final del intervalo [fecha Inicial, fecha Final] está a la
             // izqueirda o derecha.
-            if ((fechaFinal < rutasFuturas.get(numeroRutas - i - 1).getFechaSalida() - 1) ||
-                    (fechaInicial > rutasFuturas.get(i).getFechaLlegada() + 1)) {
+            if((Duration.between(fechaFinal, rutasFuturas.get(numeroRutas - i - 1).getFechaSalida()).toHours() > 1) ||
+               (Duration.between(rutasFuturas.get(i).getFechaLlegada(), fechaInicial).toHours() > 1)){
                 contador++;
             }
         }
@@ -164,10 +164,9 @@ public class Bus {
         for (Ruta ruta : rutasFuturas) {
             // Primero se mira si el intervalo de la nueva ruta se encuentra
             // a la derecha de los intervalos las rutas existentes.
-            if (nuevaRuta.getFechaSalida() > ruta.getFechaSalida()) {
-                // Cambiar +1 por +1 hora
+            if (Duration.between(ruta.getFechaSalida(), nuevaRuta.getFechaSalida()).toHours() > 0) {
                 // Se encuentra en un margen aceptable.
-                if (nuevaRuta.getFechaSalida() > ruta.getFechaLlegada() + 1) {
+                if (Duration.between(ruta.getFechaLlegada(), nuevaRuta.getFechaSalida()).toHours() > 1) {
                     posicion++;
                 }
                 // Ambos intervalos se intersectan o no dejan el margen aceptable.
@@ -179,9 +178,8 @@ public class Bus {
 
             // Ahora se mira si se encuentra a la izquierda
             else {
-                // Cambiar -1 por -1 hora.
                 // Se intersecan o no dejan el margen aceptable.
-                if (nuevaRuta.getFechaLlegada() < ruta.getFechaSalida() - 1) {
+                if (Duration.between(nuevaRuta.getFechaLlegada(), ruta.getFechaSalida()).toHours() > 1) {
                     posicion = -1;
                     break;
                 }
@@ -238,6 +236,35 @@ public class Bus {
 
         }
         return "No se ha encontrad al pasajero " + pasajero.getNombre() + " en el bus " + this.placa;
+    }
+
+    public LocalDateTime hallarHueco(int lapso){
+        /*
+         * Mira en el horario del bus a ver si encuentra un hueco de la duración especificada.
+         * 
+         * Parámetros:
+         *      - lapso: int,
+         *          Tiempo que se necesita al bus.
+         * 
+         * Retorna:
+         *      - fecha: LocalDateTime,
+         *          Hora en la cual puede iniciar la actividad a reclutarlo.
+         */
+
+        // Viendo si está disponible en una hora con ese lapso.
+        if(Duration.between(LocalDateTime.now(), rutasFuturas.getFirst().getFechaSalida()).toHours() > lapso + 2){
+                return rutasFuturas.getFirst().getFechaSalida().minusHours(lapso + 2);
+            }
+
+        // Viendo si existe una franja entre los horarios de las rutas que tiene el bus.
+        for(int i = 0; i < rutasFuturas.size() - 1; i++){
+            if(Duration.between(rutasFuturas.get(i).getFechaLlegada(),
+               rutasFuturas.get(i).getFechaSalida()).toHours() > lapso + 2){
+                return rutasFuturas.get(i).getFechaLlegada().plusHours(1);
+            }
+        }
+        
+        return rutasFuturas.getLast().getFechaLlegada().plusHours(1);
     }
 
     public void reparar() {

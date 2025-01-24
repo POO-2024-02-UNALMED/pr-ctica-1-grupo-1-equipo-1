@@ -513,6 +513,7 @@ public class Empresa {
             paradasReales[0] = paradasOptimas[0];
             paradasReales[numeroParadas - 1] = paradasOptimas[numeroParadasCreadas - 1];
             for(int i = 1; i < numeroParadas - 1; i++){
+                paradasReales[i] = paradasOptimas[concurrencia[i - 1]];
             }
 
             // Ordenando las paradas.
@@ -618,7 +619,7 @@ public class Empresa {
                     // Eliminando progresivamente las paradas.
                     paradaAEliminar = paradasEnOrden[desfase + ordenDeAporte[cuentaRegresiva]];
                     nuevoTrayecto = Red.eliminarParada(nuevoTrayecto, paradaAEliminar);
-                    
+
                     // Viendo la siguiente iteración.
                     nuevoRecorridoTotal = Red.longitud(nuevoTrayecto);
                     cuentaRegresiva++;

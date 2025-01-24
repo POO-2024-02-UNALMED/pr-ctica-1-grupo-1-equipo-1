@@ -411,8 +411,6 @@ public class Main {
             return ajustarParadas(empresa, paradaOrigen, paradaDestino, scanner);
         }
 
-        //int[] paradasReales = empresa.ajustarParadas(paradaOrigen, paradaDestino, numeroParadas, factor);
-
         // Ajuste de la cantidad de paradas.
         float[][] promedios = empresa.flujoPromedio();
         if(numeroParadas < ordinalesTrayecto.length){
@@ -441,7 +439,7 @@ public class Main {
                                    " tiene " + salientes[i] +
                                    " personas saliendo en promedio desde " +
                                    Red.Parada(ordinalesTrayecto[0]).toString());
-            }
+            }System.out.println("");
         }
         else if(numeroParadas > ordinalesTrayecto.length){
             System.out.println("Como se necesita aumentar el número de paradas, " +
@@ -451,6 +449,7 @@ public class Main {
                                "las paradas pedidas. Y por último se irán quitando o añadiendo " +
                                "si el conjunto de paradas añadidas aumenta más del porcentaje " +
                                "especificado.");
+            System.out.println("");
             int longitud = ordinalesTrayecto.length;
             int primeraParada = ordinalesTrayecto[0];
             int ultimaParada = ordinalesTrayecto[longitud - 1];
@@ -499,7 +498,7 @@ public class Main {
 
                 System.out.println(Red.Parada(noEnRuta[i]).toString() + " es pedido por " +
                                    rutaANoRuta[i] + " personas en promedio.");
-            }
+            }System.out.println("");
 
             // Visualizando la contribución individual en distancia de cada parada a añadir.
             int[] contribucionIndividual = new int[noEnRuta.length];
@@ -519,7 +518,7 @@ public class Main {
                                    " entre las ciudades " + Red.Parada(paradaAnterior).toString() +
                                    "-" + Red.Parada(paradaPosterior).toString() +
                                    " esta añade una distancia de " + contribucion);
-            }
+            }System.out.println("");
 
             // Añadiendo las rutas faltates en orden de flujo y viendo su aporte de distancia.
             int cantidadFaltante = numeroParadas - longitud;
@@ -531,7 +530,9 @@ public class Main {
                 nuevaParada = noEnRuta[paradasEnOrden[i]];
                 nuevoTrayecto = Red.agregarParada(ordinalesTrayecto, nuevaParada);
                 aporte[i] = contribucionIndividual[nuevaParada];
-            }
+                System.out.println("Añadiendo a " + Red.Parada(nuevaParada).toString() +
+                                   " con " + aporte[i] + " distancia adicional");
+            }System.out.println("");
 
             // Viendo si se cumple que no se sobrepasa la longitud máxima deseada.
             int nuevoRecorridoTotal = Red.longitud(nuevoTrayecto);
@@ -540,6 +541,10 @@ public class Main {
             int paradaAEliminar; // Parada a eliminar en el siguiente paso.
             while((nuevoRecorridoTotal > (recorridoTotal * factor)) &&
                   (desfase < paradasEnOrden.length - cantidadFaltante)){
+                System.out.println("Como la distancia total al añadir las paradas es " +
+                                   nuevoRecorridoTotal + " se va a reemplazar la " +
+                                   "parada que más distancia aporta.");
+
                 // Eliminando la parada que más distancia individual contribuye.
                 ordenDeAporte = Empresa.ordenar(aporte, true);
                 paradaAEliminar = paradasEnOrden[desfase + ordenDeAporte[0]];
@@ -549,6 +554,11 @@ public class Main {
                 nuevaParada = noEnRuta[paradasEnOrden[cantidadFaltante + desfase]];
                 nuevoTrayecto = Red.agregarParada(nuevoTrayecto, nuevaParada);
 
+                System.out.println("");
+                System.out.println("Cambiando " + Red.Parada(paradaAEliminar).toString() +
+                                   " por " + Red.Parada(nuevaParada).toString());
+                System.out.println("");
+
                 // Viendo la siguiente iteración.
                 aporte[ordenDeAporte[0]] = contribucionIndividual[nuevaParada];
                 nuevoRecorridoTotal = Red.longitud(nuevoTrayecto);
@@ -557,12 +567,17 @@ public class Main {
 
             if(desfase >= paradasEnOrden.length - cantidadFaltante){
                 int cuentaRegresiva = 0;
+                System.out.println("Como la distancia total no ha disminuido al valor " +
+                                   "deseado, se van a ir eliminando paradas.");
+                System.out.println("");
                 while((nuevoRecorridoTotal > (recorridoTotal * factor)) &&
                       (cuentaRegresiva < cantidadFaltante)){
                     // Eliminando progresivamente las paradas.
                     paradaAEliminar = paradasEnOrden[desfase + ordenDeAporte[cuentaRegresiva]];
                     nuevoTrayecto = Red.eliminarParada(nuevoTrayecto, paradaAEliminar);
-                    
+
+                    System.out.println("Eliminando " + Red.Parada(paradaAEliminar).toString());
+
                     // Viendo la siguiente iteración.
                     nuevoRecorridoTotal = Red.longitud(nuevoTrayecto);
                     cuentaRegresiva++;
@@ -574,9 +589,6 @@ public class Main {
             }
         }
 
-        System.out.println("Con esto, se pudo ajustar ");
-        
-
         return new float[] {numeroParadas, factor};
     }
 
@@ -586,6 +598,7 @@ public class Main {
         // Tomando la elección
         Empresa empresaEscogida = escogerEmpresa(scanner);
         int[] paradasEscogidas = quiereEscogerParadas(empresaEscogida, scanner);
-        float[] a = ajustarParadas(empresaEscogida, paradasEscogidas[0], paradasEscogidas[1], scanner);
+        float[] condiciones = ajustarParadas(empresaEscogida, paradasEscogidas[0], paradasEscogidas[1], scanner);
+
     }
 }
