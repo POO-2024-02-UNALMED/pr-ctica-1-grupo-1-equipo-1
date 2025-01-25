@@ -102,13 +102,37 @@ public class Main {
                 // Lógica para ver pasajes comprados (pendiente de implementar)
                 break;
             case 4: //Funcionalidad 3 Reembolso de Tiquete
-                Pasajero pasajero1 = new Pasajero();
+                System.out.print("Para hacerse efectivo el reembolso se le pediran una serie de datos"+
+                "\nAntes de esto tenga en cuenta que el dinero reembolsado"+
+                "\nSera ingresado a su monedero virtual,"+ 
+                "\nQuiere seguir el proceso?");
+                System.out.println("1. Sí");
+                System.out.println("2. No");
                 Scanner sc = new Scanner(System.in);
+                int respuestaIngreso = sc.nextInt();
+                if (respuestaIngreso==2 ) {
+                //Devolverse al menu
+                int opcion1 = mostrarMenuPrincipal(scanner);
+                ejecutarCaso(scanner, opcion1);
+                break;
+                }
+                System.out.println("ingrese su nombre exactamente como esta en la factura");
+                String nombrePasajero = sc.nextLine();
                 System.out.println("ingrese su numero de documento");
                 int numId = sc.nextInt();
                 System.out.println("ingrese el numero de la factura");
                 int numfactura = sc.nextInt();
+
+                //Buscamos que el pasajero este en el sistema
+                Pasajero pasajero1 = Pasajero.BuscarPasajero(nombrePasajero, numId);
                 System.out.println("La solicitud esta en proceso");
+                if(pasajero1 == null) {
+                    System.out.println("El pasajero no existe en el sistema");
+                    //Devolverse al menu
+                    int opcion1 = mostrarMenuPrincipal(scanner);
+                    ejecutarCaso(scanner, opcion1);
+                    break;
+                }
                 // Primero Solicitaremos El reembolso
                 ArrayList<Object> respuesta =pasajero1.solicitarReembolso(numId,numfactura, horaZero);
                 // Se Hacen las primeras Comprobaciones superficiales
@@ -150,6 +174,9 @@ public class Main {
                                     }
                                     else{
                                         //Devolverse al menu
+                                        int opcion1 = mostrarMenuPrincipal(scanner);
+                                        ejecutarCaso(scanner, opcion1);
+                                        break;
                             }
                         }
                     }
@@ -162,18 +189,39 @@ public class Main {
                         // En este Punto Ya se hicieron Todas las verificaciones correspondientes
                         
                         System.out.println("Todo a salido Correctamente, Su factura fue invalidada");
+
+                        System.out.println(Contabilidad.generarDesglose(factura1));
+                        pasajero1.AgregarWallet(Contabilidad.montoReembolso(factura1));
+                        System.out.println("Su reembolso ha sido agregado a su wallet");
+                        System.out.println("Su wallet actual es: "+pasajero1.getWallet());
+                        //Ejecucion Correcta 
+                        break;
+    
+
                     }else{
                         // Al haber algo mal con la ejecucion del cuarto condicional
+                        int opcion1 = mostrarMenuPrincipal(scanner);
+                        ejecutarCaso(scanner, opcion1);
+                        break;
                     }
                     }else{
                         // Al haber algo mal con la ejecucion del tercer condicional
                         pasajero1.RevertirPasajes();
+                        int opcion1 = mostrarMenuPrincipal(scanner);
+                        ejecutarCaso(scanner, opcion1);
+                        break;
                     }
                 }else{// Al haber algo mal con la ejecucion del primer condicional
+                    int opcion1 = mostrarMenuPrincipal(scanner);
+                    ejecutarCaso(scanner, opcion1);
+                    break;
                     }
                 }else{
                     // al haber algo mal con la ejecucion del segundo condicional
-                } // TEmPoral
+                    int opcion1 = mostrarMenuPrincipal(scanner);
+                    ejecutarCaso(scanner, opcion1);
+                    break;
+                }
             case 5:
                 System.out.println("Gracias por usar el sistema. ¡Hasta luego!");
                 scanner.close();

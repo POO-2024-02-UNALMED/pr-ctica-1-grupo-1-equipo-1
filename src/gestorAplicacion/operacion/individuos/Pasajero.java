@@ -16,7 +16,7 @@ import java.time.Duration;
 public class Pasajero extends Persona {
 
     // Atributos //
-
+    private static ArrayList<Pasajero> pasajerosEnSistema;
     private Maleta[] maletas;
     private double wallet;
     private Factura factura;
@@ -29,10 +29,24 @@ public class Pasajero extends Persona {
         return acompanante;
     }
 
-    public void setPasajero(Pasajero acompanate) {
+    public void setPasajero(Pasajero acompanante) {
         this.acompanante = acompanante;
     }
+    static public ArrayList<Pasajero> getPasajerosEnSistema() {
+        return pasajerosEnSistema;
+    }
 
+    public int getId(){
+        return this.id;
+    }
+
+    public void setId(int id){
+        this.id = id;
+    }
+
+    public void setPasajerosEnSistema(ArrayList<Pasajero> pasajerosEnSistema) {
+        this.pasajerosEnSistema = pasajerosEnSistema;
+    }
     public Factura getFactura() {
         return factura;
     }
@@ -56,6 +70,17 @@ public class Pasajero extends Persona {
     public void setWallet(double wallet) {
         this.wallet = wallet;
     }
+    // Ingresar y Sacar dinero
+    public void AgregarWallet(double monto){
+        this.wallet += monto;
+    }
+    public void SacarWallet(double monto){
+        if (this.wallet >= monto) {
+            this.wallet -= monto;
+            }else {
+                System.out.println("No tienes suficiente dinero en tu billetera");
+            }
+        }
 
     public int getNumReembolsoDisp() {
         return numReembolsoDisp;
@@ -81,6 +106,7 @@ public class Pasajero extends Persona {
     public String  EliminarPasajes(){
         Bus bus = this.getFactura().getRutaElegida().getBusAsociado();
         String mensaje = bus.eliminarPasajero(this);
+        return mensaje;
     }
     public void  RevertirPasajes(){
         Bus bus = this.getFactura().getRutaElegida().getBusAsociado();
@@ -138,7 +164,18 @@ public class Pasajero extends Persona {
 
         return respuesta;
     }
-        
+        // Metodo de clase
+        public static Pasajero BuscarPasajero(String nombre, int id){
+            // Buscar el pasajero 
+            ArrayList<Pasajero> pasajeros = Pasajero.getPasajerosEnSistema();
+            for (Pasajero pasajero : pasajeros) {
+                if (pasajero.getNombre().equals(nombre) && pasajero.getId() == id
+                || pasajero.getNombre().equals(nombre) && pasajero.getId() == id)
+                return pasajero;
+                }
+                return null;
+
+        }   
     // Metodos de Instancia//
 
     public void registrarAcompanante(String nombre, String identificacion, int edad) {
