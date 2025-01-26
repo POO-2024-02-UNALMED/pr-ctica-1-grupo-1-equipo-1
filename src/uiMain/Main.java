@@ -122,13 +122,42 @@ public class Main {
                 }
 
                 Ruta rutaSeleccionada = rutasDisponibles.get(opcionRuta - 1);
+                Factura factura = pasajero.comprarTiquete(String.valueOf(rutaSeleccionada.getLugarInicio()),
+                    String.valueOf(rutaSeleccionada.getLugarFinal()), "Tarjeta", horaZero, scanner);
 
-                System.out.print("Seleccione el tipo de asiento (1 para Estándar, 2 para VIP): ");
-                int tipoAsiento = scanner.nextInt();
-                scanner.nextLine();
-                pasajero.comprarTiquete(String.valueOf(rutaSeleccionada.getLugarInicio()),
-                        String.valueOf(rutaSeleccionada.getLugarFinal()), "Tarjeta", horaZero, scanner);
+                Asiento[] asientos = factura.getAsientosAsignados().toArray(new Asiento[0]);
+
+                System.out.println("Asientos disponibles en el bus " + factura.getBusAsignado().getPlaca() + ": ");
+
+                for (int i = 0; i < asientos.length; i++) {
+                    if (asientos[i].isEstado()) {
+                       System.out.print((i + 1) + " ");
+                    } else {
+                       System.out.print("X ");
+                    }
+                    if ((i + 1) % 4 == 0) {
+                       System.out.println();
+                    }
+                }
+
+                int opcionAsiento;
+                do {
+                   System.out.print("Seleccione un asiento: ");
+                   opcionAsiento = scanner.nextInt();
+    
+
+                   if (opcionAsiento > 0 && opcionAsiento <= asientos.length && !asientos[opcionAsiento - 1].isEstado()) {
+                       System.out.println("El asiento seleccionado ya está ocupado. Por favor, seleccione otro asiento.");
+                    }
+                } while (opcionAsiento < 1 || opcionAsiento > asientos.length || !asientos[opcionAsiento - 1].isEstado());
+    
+                Asiento asientoSeleccionado = asientos[opcionAsiento - 1];
+                asientoSeleccionado.setEstado(false);
+                asientoSeleccionado.setUsuario(pasajero);
+                pasajero.setAsiento(asientoSeleccionado);
+
                 break;
+
             case 3:
                 // Lógica para ver pasajes comprados (pendiente de implementar)
                 break;
