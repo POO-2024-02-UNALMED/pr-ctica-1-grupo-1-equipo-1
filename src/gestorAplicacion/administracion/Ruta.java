@@ -135,7 +135,7 @@ public class Ruta extends Red{
         return null;
     }
 
-    int duracion(){
+    public int duracion(){
         /*
          * Calcula la duración de la ruta.
          * 

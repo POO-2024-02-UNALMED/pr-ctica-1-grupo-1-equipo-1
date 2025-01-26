@@ -70,6 +70,12 @@ public class Pasajero extends Persona {
     public void setWallet(double wallet) {
         this.wallet = wallet;
     }
+
+    // Generar puntaje aleatorio.
+    public int getPuntajeSatisfaccionPasajeros() {
+        return (int) (Math.random() * 5);
+    }
+
     // Ingresar y Sacar dinero
     public void AgregarWallet(double monto){
         this.wallet += monto;

@@ -29,6 +29,8 @@ public class Bus {
     private ArrayList<Ruta> rutasFuturas = new ArrayList<Ruta>();
     private Empresa empresa;
     private ArrayList<Maleta> equipaje;// Equipaje de los pasajeros
+    private double consumoReportado;
+
     // Constructores
     public Bus(String placa, int cantidadAsientos,  PesoMaxEquipaje pesoMaxEquipaje) {
         this(placa, cantidadAsientos, pesoMaxEquipaje, null);
@@ -108,6 +110,14 @@ public class Bus {
 
     public void setEmpresa(Empresa nuevaEmpresa) {
         empresa = nuevaEmpresa;
+    }
+
+    public double getConsumoReportado() {
+        return consumoReportado;
+    }
+
+    public void setConsumoReportado(double nuevoConsumoreportado) {
+        consumoReportado = nuevoConsumoreportado;
     }
 
     // Métodos de instancia
