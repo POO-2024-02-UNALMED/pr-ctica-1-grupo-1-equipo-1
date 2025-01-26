@@ -1,4 +1,5 @@
 package gestorAplicacion.administracion;
+
 import java.time.LocalDateTime;
 import java.time.Duration;
 import gestorAplicacion.operacion.individuos.Chofer;
@@ -20,11 +21,11 @@ public class Empresa {
     private int caja;
 
     // Constructores.
-    public Empresa(String nombre){
+    public Empresa(String nombre) {
         this(nombre, new Chofer[0], new Bus[0], new ArrayList<Ruta>(), 0);
     }
 
-    public Empresa(String nombre, Chofer[] empleados, Bus[] busestotales, ArrayList<Ruta> rutas, int caja){
+    public Empresa(String nombre, Chofer[] empleados, Bus[] busestotales, ArrayList<Ruta> rutas, int caja) {
         this.nombre = nombre;
         setEmpleados(empleados);
         setBusesTotales(busestotales);
@@ -51,15 +52,18 @@ public class Empresa {
         int contandoUnicos = 0;
 
         // Viendo cuántos buses existen y son únicos.
-        for(Chofer empleado: nuevosEmpleados){
-            if(empleado != null){
+        for (Chofer empleado : nuevosEmpleados) {
+            if (empleado != null) {
                 // Viendo si el bus ya había sido incluido.
                 esUnico = true;
-                for(Chofer empleadoUnico: empleadosUnicos){
-                    if(empleadoUnico == empleado){esUnico = false; break;}
+                for (Chofer empleadoUnico : empleadosUnicos) {
+                    if (empleadoUnico == empleado) {
+                        esUnico = false;
+                        break;
+                    }
                 }
-    
-                if(esUnico){
+
+                if (esUnico) {
                     empleadosUnicos[contandoUnicos] = empleado;
                     contandoUnicos++;
                 }
@@ -80,15 +84,18 @@ public class Empresa {
         int contandoUnicos = 0;
 
         // Viendo cuántos buses existen y son únicos.
-        for(Bus bus: nuevosBusesTotales){
-            if(bus != null){
+        for (Bus bus : nuevosBusesTotales) {
+            if (bus != null) {
                 // Viendo si el bus ya había sido incluido.
                 esUnico = true;
-                for(Bus busUnico: busesUnicos){
-                    if(busUnico == bus){esUnico = false; break;}
+                for (Bus busUnico : busesUnicos) {
+                    if (busUnico == bus) {
+                        esUnico = false;
+                        break;
+                    }
                 }
-    
-                if(esUnico){
+
+                if (esUnico) {
                     busesUnicos[contandoUnicos] = bus;
                     contandoUnicos++;
                 }
@@ -108,15 +115,18 @@ public class Empresa {
         Boolean esUnico;
 
         // Viendo cuántos buses existen y son únicos.
-        for(Ruta ruta: nuevasRutas){
-            if(ruta != null){
+        for (Ruta ruta : nuevasRutas) {
+            if (ruta != null) {
                 // Viendo si el bus ya había sido incluido.
                 esUnico = true;
-                for(Ruta rutaUnica: rutasUnicas){
-                    if(rutaUnica == ruta){esUnico = false; break;}
+                for (Ruta rutaUnica : rutasUnicas) {
+                    if (rutaUnica == ruta) {
+                        esUnico = false;
+                        break;
+                    }
                 }
-    
-                if(esUnico){
+
+                if (esUnico) {
                     rutasUnicas.add(ruta);
                 }
             }
@@ -137,7 +147,7 @@ public class Empresa {
     // Métodos de instancia
 
     // Todas las formas de contratar un chofer.
-    void contratar(int sueldo) {
+    void contratar(String nombre, int edad,int sueldo) {
         contratar(new Chofer(sueldo), sueldo, null);
     }
 
@@ -229,20 +239,22 @@ public class Empresa {
     }
 
     // Todas las formas de comprar un bus.
-    void comprarBus(int valor){
+    void comprarBus(int valor) {
         comprarBus(valor, null);
     }
-    void comprarBus(int valor, ArrayList<Ruta> rutasFuturas){
+
+    void comprarBus(int valor, ArrayList<Ruta> rutasFuturas) {
         // Generar un bus aleatorio.
         Bus busAleatorio = new Bus("A", 50, Bus.PesoMaxEquipaje.LIGERO);
         comprarBus(busAleatorio, valor, rutasFuturas);
     }
 
-    void comprarBus(Bus bus, int valor){;
+    void comprarBus(Bus bus, int valor) {
+        ;
         comprarBus(bus, valor, null);
     }
 
-    void comprarBus(Bus bus, int valor, ArrayList<Ruta> rutasFuturas){
+    void comprarBus(Bus bus, int valor, ArrayList<Ruta> rutasFuturas) {
         /*
          * Agrega un bus a las utilidades.
          * 
@@ -260,7 +272,8 @@ public class Empresa {
         Boolean hayPuesto = false;
         for (int i = 0; i < empleados.length; i++) {
             if (busesTotales[i] == null) {
-                // En caso de estar vinculado a una empresa existente, se le pide la desvinculaciín.
+                // En caso de estar vinculado a una empresa existente, se le pide la
+                // desvinculaciín.
                 if (bus.getEmpresa() != null) {
                     bus.getEmpresa().desvincularBus(bus);
                 }
@@ -295,7 +308,7 @@ public class Empresa {
     }
 
     // Desvincular un bus de la empresa.
-    void desvincularBus(Bus bus){
+    void desvincularBus(Bus bus) {
         /*
          * Quita al bus vinculado a la empresa.
          * 
@@ -309,7 +322,7 @@ public class Empresa {
         for (int i = 0; i < busesTotales.length; i++) {
             if (busesTotales[i] == bus) {
                 // Haciendo que las rutas no tengan el bus que se eliminó.
-                for(Ruta ruta: bus.getRutasFuturas()){
+                for (Ruta ruta : bus.getRutasFuturas()) {
                     ruta.setBusAsociado(null);
                 }
 
@@ -323,23 +336,24 @@ public class Empresa {
 
     // Estaba muy básica anteriormente, se modificó para que
     // busque el bus con disponibilidad de horario con fecha más cercana.
-    void asignarRuta(Ruta ruta){
+    void asignarRuta(Ruta ruta) {
         /*
          * Dado una ruta establecida, se busca el bus que tiene un horario disponible
-         * que cumpla las horas establecidas por la ruta. Dentro de esto, se escoge el que
+         * que cumpla las horas establecidas por la ruta. Dentro de esto, se escoge el
+         * que
          * su horario de disponibilidad esté más cercano.
          * 
          * Parámetros:
-         *      - lapso: int,
-         *          Cantidad de tiempo que debe estar libre el bus.
+         * - lapso: int,
+         * Cantidad de tiempo que debe estar libre el bus.
          * 
          * Retorna:
-         *      - busEncontrado: Bus,
-         *          Bus que va a tener esa ruta.
+         * - busEncontrado: Bus,
+         * Bus que va a tener esa ruta.
          */
 
         // Viendo que haya buses.
-        if(busesTotales.length == 0){
+        if (busesTotales.length == 0) {
             // Generar precio aleatorio para comprar bus.
             int precioAleatorio = (int) (Math.random() * 1000) + 17000;
             this.comprarBus(precioAleatorio);
@@ -354,9 +368,9 @@ public class Empresa {
 
         // Buscando la fecha más cercana entre los buses.
         LocalDateTime horarioBus = LocalDateTime.now();
-        for(Bus bus : busesTotales){
+        for (Bus bus : busesTotales) {
             horarioBus = bus.hallarHueco(lapso);
-            if(Duration.between(horarioBusBase, horarioBus).toHours() < 0){
+            if (Duration.between(horarioBusBase, horarioBus).toHours() < 0) {
                 horarioBusBase = horarioBus;
                 busEncontrado = bus;
             }
@@ -368,14 +382,16 @@ public class Empresa {
         busEncontrado.anadirRuta(ruta);
 
         // Buscando un chofer para que la conduzca
-        if(ruta.getChoferAsociado() != null){return;}
+        if (ruta.getChoferAsociado() != null) {
+            return;
+        }
         Boolean existeChambeador = false;
-        for(Chofer empleado: empleados){
-            if(empleado.isDisponible(ruta.getFechaSalida(), ruta.getFechaLlegada())){
+        for (Chofer empleado : empleados) {
+            if (empleado.isDisponible(ruta.getFechaSalida(), ruta.getFechaLlegada())) {
                 existeChambeador = true;
-                LocalDateTime[] retornada = empleado.anadirRuta(new LocalDateTime[]
-                 {ruta.getFechaSalida(), ruta.getFechaLlegada()});
-                if(retornada == null){
+                LocalDateTime[] retornada = empleado
+                        .anadirRuta(new LocalDateTime[] { ruta.getFechaSalida(), ruta.getFechaLlegada() });
+                if (retornada == null) {
                     ruta.setChoferAsociado(empleado);
                     break;
                 }
@@ -383,11 +399,11 @@ public class Empresa {
         }
 
         // Viendo qué pasa si no existe el chofer.
-        if(!existeChambeador){
+        if (!existeChambeador) {
             // Generar sueldo aleatorio.
             int sueldoAleatorio = (int) (Math.random() * 100) + 400;
             ArrayList<LocalDateTime[]> horarioChofer = new ArrayList<LocalDateTime[]>();
-            horarioChofer.add(new LocalDateTime[] {ruta.getFechaSalida(), ruta.getFechaLlegada()});
+            horarioChofer.add(new LocalDateTime[] { ruta.getFechaSalida(), ruta.getFechaLlegada() });
 
             // Contratando al nuevo chofer.
             contratar(sueldoAleatorio, horarioChofer);
@@ -550,26 +566,29 @@ public class Empresa {
     }
 
     // Métodos para ordenar listas de manera adecuada.
-    public static Integer[] ordenar(float[] valores, Boolean invertido){
+    public static Integer[] ordenar(float[] valores, Boolean invertido) {
         /*
-         * Se encuentra la posición en que los valores en el array deberían tener para que
-         * esté ordenado. (Ejemplo: [0.5, 0.1, 0] devolvería [2, 1, 0], porque [0, 0.1, 0.5] está ordenado,
-         * así, 0.5 debería ocupar la posición dos, 0.1 la posición uno y 0 la posición cero).
+         * Se encuentra la posición en que los valores en el array deberían tener para
+         * que
+         * esté ordenado. (Ejemplo: [0.5, 0.1, 0] devolvería [2, 1, 0], porque [0, 0.1,
+         * 0.5] está ordenado,
+         * así, 0.5 debería ocupar la posición dos, 0.1 la posición uno y 0 la posición
+         * cero).
          * 
          * Parámetros:
-         *      - valores: float[],
-         *          Array a encontrar el orden.
-         *      - invertido: Boolean,
-         *          Pregunta si se escribe en orden ascendente (false) o descendente (true).
+         * - valores: float[],
+         * Array a encontrar el orden.
+         * - invertido: Boolean,
+         * Pregunta si se escribe en orden ascendente (false) o descendente (true).
          * 
          * Retorna:
-         *      - posiciones: Integer[],
-         *          Array de posiciones que se deberían ocupar.
+         * - posiciones: Integer[],
+         * Array de posiciones que se deberían ocupar.
          */
 
         // Creando el array de las posiciones que ocupan los valores.
         Integer[] posiciones = new Integer[valores.length];
-        for(int i = 0; i < valores.length; i++){
+        for (int i = 0; i < valores.length; i++) {
             posiciones[i] = i;
         }
 
@@ -588,64 +607,69 @@ public class Empresa {
         };
 
         // Hallando las posiciones que deben tener.
-        if(invertido){comparator = comparator.reversed();}
+        if (invertido) {
+            comparator = comparator.reversed();
+        }
         Arrays.sort(posiciones, comparator);
 
         // Devolviendo las posiciones
         return posiciones;
     }
 
-    public static Integer[] ordenar(float[][] matrizValores, Boolean invertido){
+    public static Integer[] ordenar(float[][] matrizValores, Boolean invertido) {
         /*
-         * Dada una matriz del estilo {{a, b}, {c, d}}, aplica el mismo método de ordenar,
-         * teniendo en cuenta que se va a ordenar como si se tratara del array {a, b, c, d}.
+         * Dada una matriz del estilo {{a, b}, {c, d}}, aplica el mismo método de
+         * ordenar,
+         * teniendo en cuenta que se va a ordenar como si se tratara del array {a, b, c,
+         * d}.
          * Es decir, se concatenan las filas.
          * 
          * Parámetros:
-         *      - valores: float[][],
-         *          Matriz a hallar el orden.
-         *      - invertido: Boolean,
-         *          Pregunta si se escribe en orden ascendente (false) o descendente (true).
+         * - valores: float[][],
+         * Matriz a hallar el orden.
+         * - invertido: Boolean,
+         * Pregunta si se escribe en orden ascendente (false) o descendente (true).
          * 
          * Retorna:
-         *      - posiciones: Integer[],
-         *          Array de posiciones que se deberían ocupar.
+         * - posiciones: Integer[],
+         * Array de posiciones que se deberían ocupar.
          */
 
         // Escribiendo la matriz como un único array concatenando las filas.
         int numeroFilas = matrizValores.length;
         int numeroColumnas = matrizValores[0].length;
         float[] valores = new float[numeroFilas * numeroColumnas];
-        for(int i = 0; i < valores.length; i++){
-            /* 
-             * Definiendo la relación entre un número y la casilla de la matriz que representa,
+        for (int i = 0; i < valores.length; i++) {
+            /*
+             * Definiendo la relación entre un número y la casilla de la matriz que
+             * representa,
              * usando el algoritmo de la división, i = (#Columnas) * q + r con el algoritmo,
              * así, la casilla que representa es [Fila][Columna] = [q][r]
-            */
+             */
             valores[i] = matrizValores[i / numeroColumnas][i % numeroColumnas];
         }
 
         return ordenar(valores, invertido);
     }
 
-    public static Integer[] ordenar(int[] valores, Boolean invertido){
+    public static Integer[] ordenar(int[] valores, Boolean invertido) {
         /*
          * Realiza lo mismo que el método ordenar, pero con valores en int[].
          * 
          * Parámetros:
-         *      - valores: int[],
-         *          Array a encontrar el orden.
-         *      - invertido: Boolean,
-         *          Pregunta si se escribe en orden ascendente (false) o descendente (true).
+         * - valores: int[],
+         * Array a encontrar el orden.
+         * - invertido: Boolean,
+         * Pregunta si se escribe en orden ascendente (false) o descendente (true).
          * 
          * Retorna:
-         *      - posiciones: Integer[],
-         *          Array de posiciones que se deberían ocupar.
+         * - posiciones: Integer[],
+         * Array de posiciones que se deberían ocupar.
          */
 
         // Pasando los enteros a float.
         float[] valoresFloat = new float[valores.length];
-        for(int i = 0; i < valores.length; i++){
+        for (int i = 0; i < valores.length; i++) {
             valoresFloat[i] = (float) valores[i];
         }
 
@@ -654,22 +678,22 @@ public class Empresa {
     }
 
     // Métodos de la funcionalidad 4.
-    public float[][] promediosSesgados(float[][] promedios, int paradaOrigen, int paradaDestino){
+    public float[][] promediosSesgados(float[][] promedios, int paradaOrigen, int paradaDestino) {
         /*
          * Dadas paradas de origen y destino (Que podrían estar no especificados,
          * en cuyo caso se tomará -1), se calculan los flujos promedios.
          * 
          * Parámetros:
-         *      - promedios: float[][],
-         *          Promedios a analizar.
-         *      - paradaOrigen: int,
-         *          Ordinal de la primera parada para la ruta.
-         *      - paradaDestino: int,
-         *          Ordinal de la última parada para la ruta.
+         * - promedios: float[][],
+         * Promedios a analizar.
+         * - paradaOrigen: int,
+         * Ordinal de la primera parada para la ruta.
+         * - paradaDestino: int,
+         * Ordinal de la última parada para la ruta.
          * 
          * Retorna:
-         *      - promediosSesgados: float[][],
-         *          Los promedios que se desean analizar.
+         * - promediosSesgados: float[][],
+         * Los promedios que se desean analizar.
          */
 
         // Viendo solo los trayectos que se solicitan.
@@ -689,58 +713,62 @@ public class Empresa {
         return promediosSesgados;
     }
 
-    public int[] ajustarParadas(int paradaOrigen, int paradaDestino, int numeroParadas, float factor){
+    public int[] ajustarParadas(int paradaOrigen, int paradaDestino, int numeroParadas, float factor) {
         /*
          * Calcula el trayecto con parada origen -> parada destino, tal que
-         * se cumple (Si se puede) el número de paradas deseadas y un factor de crecimiento
+         * se cumple (Si se puede) el número de paradas deseadas y un factor de
+         * crecimiento
          * (Medido con base a la ruta óptima dada por el algoritmo de Bellman-Ford).
          * 
          * Parámetros:
-         *      - paradaOrigen: int,
-         *          Ordinal de la primera parada para la ruta.
-         *      - paradaDestino: int,
-         *          Ordinal de la última parada para la ruta.
-         *      - numeroParadas: int,
-         *          Cantidad de paradas que se quiere tenga la ruta.
-         *      - factor: float,
-         *          Indica la cantidad máxima de expansión permitida en la ruta.
+         * - paradaOrigen: int,
+         * Ordinal de la primera parada para la ruta.
+         * - paradaDestino: int,
+         * Ordinal de la última parada para la ruta.
+         * - numeroParadas: int,
+         * Cantidad de paradas que se quiere tenga la ruta.
+         * - factor: float,
+         * Indica la cantidad máxima de expansión permitida en la ruta.
          * 
          * Retorna:
-         *      - paradasReales: int[],
-         *          Ordinales de las paradas en el trayecto que cumplen
-         *          (En la medida de lo posible) los requisitos.
+         * - paradasReales: int[],
+         * Ordinales de las paradas en el trayecto que cumplen
+         * (En la medida de lo posible) los requisitos.
          */
 
         // Iniciando las variables necesarias.
         float[][] promedios = flujoPromedio();
         float[][] promediosSesgados = promediosSesgados(promedios, paradaOrigen, paradaDestino);
 
-        /* 
+        /*
          * Contruyendo un array que involucre todos los trayectos posibles
-         * Aquí, la entrada i = Red.totalParadas * q + r (Expresión con el algoritmo de la
+         * Aquí, la entrada i = Red.totalParadas * q + r (Expresión con el algoritmo de
+         * la
          * división), nos indica
          * que es el trayecto desde la parada con ordinal (q) hacia la ciudad con
          * ordinal (r).
-         * Y a este se le busca cuáles tienen los mayores viajes según las especificaciones.
+         * Y a este se le busca cuáles tienen los mayores viajes según las
+         * especificaciones.
          */
         Integer[] tuplasParadas = ordenar(promediosSesgados, true);
 
         // Tomando la ruta según el algoritmo de BellmanFord modificado.
-        int ordinalOrigen  = tuplasParadas[0] / Red.totalParadas; // Ciudad mayor flujo saliente.
+        int ordinalOrigen = tuplasParadas[0] / Red.totalParadas; // Ciudad mayor flujo saliente.
         int ordinalDestino = tuplasParadas[0] % Red.totalParadas; // Ciudad mayor flujo entrante.
         int[] paradasOptimas = Red.algoritmoBellmanFord(ordinalOrigen, ordinalDestino);
 
         // Ajustando para que se tenga la cantidad de paradas deseada.
         int numeroParadasCreadas = paradasOptimas.length;
         int[] paradasReales = new int[numeroParadas];
-        if(numeroParadasCreadas > numeroParadas){
-            /* 
+        if (numeroParadasCreadas > numeroParadas) {
+            /*
              * Se buscará una ruta que maximice la cantidad de personas que usarán la ruta.
-             * Para esto se verá las paradas con mayor cantidad de personas que realizan el viaje
+             * Para esto se verá las paradas con mayor cantidad de personas que realizan el
+             * viaje
              * parada inicial -> parada, para cada parada.
-            */
+             */
             float[] SalidasParadasCreadas = new float[numeroParadasCreadas - 2];
-            for(int i = 0; i < numeroParadasCreadas - 2; i++){
+            for (int i = 0; i < numeroParadasCreadas - 2; i++) {
                 int ordinalActual = paradasOptimas[i + 1];
                 SalidasParadasCreadas[i] = promedios[ordinalOrigen][ordinalActual];
             }
@@ -751,19 +779,18 @@ public class Empresa {
             // Creando el array con las paradas adecuadas.
             paradasReales[0] = paradasOptimas[0];
             paradasReales[numeroParadas - 1] = paradasOptimas[numeroParadasCreadas - 1];
-            for(int i = 1; i < numeroParadas - 1; i++){
+            for (int i = 1; i < numeroParadas - 1; i++) {
                 paradasReales[i] = paradasOptimas[concurrencia[i - 1]];
             }
 
             // Ordenando las paradas.
             paradasReales = Red.ordenarParadas(paradasReales);
-        }
-        else if(numeroParadasCreadas < numeroParadas){
+        } else if (numeroParadasCreadas < numeroParadas) {
             // Viendo la distancia del trayecto.
             int recorridoTotal = Red.distancias[ordinalOrigen][ordinalDestino];
 
             // Corrección de errores.
-            if(numeroParadas > Red.totalParadas){
+            if (numeroParadas > Red.totalParadas) {
                 numeroParadas = Red.totalParadas;
             }
 
@@ -772,31 +799,37 @@ public class Empresa {
             int[] noEnRuta = new int[Red.totalParadas - numeroParadasCreadas];
 
             // Enlistando las que aparecen en la ruta,
-            for(int i = 0; i < numeroParadasCreadas; i++){
+            for (int i = 0; i < numeroParadasCreadas; i++) {
                 enRuta[i] = paradasOptimas[i];
             }
 
             // Enlistando las que no aparecen en la ruta.
             Arrays.sort(enRuta);
             int desplazamiento = 0;
-            for(int i = 0; i < Red.totalParadas; i++){
-                if(i < enRuta[desplazamiento]){noEnRuta[i - desplazamiento] = i;}
-                else{desplazamiento++;}
+            for (int i = 0; i < Red.totalParadas; i++) {
+                if (i < enRuta[desplazamiento]) {
+                    noEnRuta[i - desplazamiento] = i;
+                } else {
+                    desplazamiento++;
+                }
             }
 
-            // Viendo los flujos entrantes desde paradas en la ruta hasta paradas que no están en la ruta.
+            // Viendo los flujos entrantes desde paradas en la ruta hasta paradas que no
+            // están en la ruta.
             float[] rutaANoRuta = new float[noEnRuta.length];
             int[] separacion;
-            for(int i = 0; i < noEnRuta.length; i++){
+            for (int i = 0; i < noEnRuta.length; i++) {
                 separacion = Red.posicion(paradasOptimas, noEnRuta[i]);
-                for(int j = 0; j < enRuta.length; j++){
-                    // Viendo si la parada en la ruta está antes o después de la parada que no está en la ruta.
-                    if(enRuta[j] <= separacion[0]){
-                        // Si está antes, importa es cuántos se bajan en la parada que no está en la ruta.
+                for (int j = 0; j < enRuta.length; j++) {
+                    // Viendo si la parada en la ruta está antes o después de la parada que no está
+                    // en la ruta.
+                    if (enRuta[j] <= separacion[0]) {
+                        // Si está antes, importa es cuántos se bajan en la parada que no está en la
+                        // ruta.
                         rutaANoRuta[i] += promedios[enRuta[j]][noEnRuta[i]];
-                    }
-                    else if(enRuta[j] > separacion[0]){
-                        // Si está después, importa es cuántos se suben en la parada que no está en la ruta.
+                    } else if (enRuta[j] > separacion[0]) {
+                        // Si está después, importa es cuántos se suben en la parada que no está en la
+                        // ruta.
                         rutaANoRuta[i] += promedios[noEnRuta[i]][enRuta[j]];
                     }
                 }
@@ -807,23 +840,24 @@ public class Empresa {
             int[] posicion; // Para ver la posición que debería ocupar.
             int contribucion; // Distancia que contribuye.
             int paradaAnterior, paradaPosterior; // Paradas donde se encuentra ensandwichado.
-            for(int i = 0; i < noEnRuta.length; i++){
+            for (int i = 0; i < noEnRuta.length; i++) {
                 posicion = Red.posicion(paradasOptimas, noEnRuta[i]);
                 paradaAnterior = paradasOptimas[posicion[0] + 1];
                 paradaPosterior = paradasOptimas[posicion[1]];
                 contribucion = Red.distancias[paradaAnterior][noEnRuta[i]] +
-                               Red.distancias[paradaPosterior][noEnRuta[i]] -
-                               Red.distancias[paradaAnterior][paradaPosterior];
+                        Red.distancias[paradaPosterior][noEnRuta[i]] -
+                        Red.distancias[paradaAnterior][paradaPosterior];
                 contribucionIndividual[i] = contribucion;
             }
 
-            // Añadiendo las rutas faltates en orden de flujo y viendo su aporte de distancia.
+            // Añadiendo las rutas faltates en orden de flujo y viendo su aporte de
+            // distancia.
             int cantidadFaltante = numeroParadas - numeroParadasCreadas;
             Integer[] paradasEnOrden = ordenar(rutaANoRuta, true);
             int nuevaParada = 0;
             int[] nuevoTrayecto = new int[0];
             int[] aporte = new int[cantidadFaltante];
-            for(int i = 0; i < cantidadFaltante; i++){
+            for (int i = 0; i < cantidadFaltante; i++) {
                 nuevaParada = noEnRuta[paradasEnOrden[i]];
                 nuevoTrayecto = Red.agregarParada(paradasOptimas, nuevaParada);
                 aporte[i] = contribucionIndividual[nuevaParada];
@@ -834,8 +868,8 @@ public class Empresa {
             int desfase = 0;
             Integer[] ordenDeAporte = new Integer[0];
             int paradaAEliminar; // Parada a eliminar en el siguiente paso.
-            while((nuevoRecorridoTotal > (recorridoTotal * factor)) &&
-                  (desfase < paradasEnOrden.length - cantidadFaltante)){
+            while ((nuevoRecorridoTotal > (recorridoTotal * factor)) &&
+                    (desfase < paradasEnOrden.length - cantidadFaltante)) {
                 // Eliminando la parada que más distancia individual contribuye.
                 ordenDeAporte = ordenar(aporte, true);
                 paradaAEliminar = paradasEnOrden[desfase + ordenDeAporte[0]];
@@ -851,10 +885,10 @@ public class Empresa {
                 desfase++;
             }
 
-            if(desfase >= paradasEnOrden.length - cantidadFaltante){
+            if (desfase >= paradasEnOrden.length - cantidadFaltante) {
                 int cuentaRegresiva = 0;
-                while((nuevoRecorridoTotal > (recorridoTotal * factor)) &&
-                      (cuentaRegresiva < cantidadFaltante)){
+                while ((nuevoRecorridoTotal > (recorridoTotal * factor)) &&
+                        (cuentaRegresiva < cantidadFaltante)) {
                     // Eliminando progresivamente las paradas.
                     paradaAEliminar = paradasEnOrden[desfase + ordenDeAporte[cuentaRegresiva]];
                     nuevoTrayecto = Red.eliminarParada(nuevoTrayecto, paradaAEliminar);
@@ -867,34 +901,36 @@ public class Empresa {
 
             // Entregando el resultado final.
             paradasReales = nuevoTrayecto;
+        } else {
+            paradasReales = paradasOptimas;
         }
-        else{paradasReales = paradasOptimas;}
 
         return paradasReales;
     }
 
     public Ruta funcionalidad4(int paradaOrigen, int paradaDestino, int numeroParadas, float factor) {
         /*
-         * Crea una nueva ruta y busca una posible asignación dentro de la empresa (Escoger bus y chofer).
+         * Crea una nueva ruta y busca una posible asignación dentro de la empresa
+         * (Escoger bus y chofer).
          * 
          * Parámetros:
-         *      - paradaOrigen: int,
-         *          Ordinal de la primera parada para la ruta.
-         *      - paradaDestino: int,
-         *          Ordinal de la última parada para la ruta.
-         *      - numeroParadas: int,
-         *          Cantidad de paradas que se quiere tenga la ruta.
-         *      - factor: float,
-         *          Indica la cantidad máxima de expansión permitida en la ruta
-         *          (En caso de tener que agregar paradas más allá de la ruta óptima).
+         * - paradaOrigen: int,
+         * Ordinal de la primera parada para la ruta.
+         * - paradaDestino: int,
+         * Ordinal de la última parada para la ruta.
+         * - numeroParadas: int,
+         * Cantidad de paradas que se quiere tenga la ruta.
+         * - factor: float,
+         * Indica la cantidad máxima de expansión permitida en la ruta
+         * (En caso de tener que agregar paradas más allá de la ruta óptima).
          * 
          * Retorna:
-         *      - rutaOptima: Ruta,
-         *          Ruta que cumple con las especificaciones.
+         * - rutaOptima: Ruta,
+         * Ruta que cumple con las especificaciones.
          */
 
         // Verificación de errores.
-        if(numeroParadas < 2){
+        if (numeroParadas < 2) {
             // Presentar un error.
         }
 
@@ -924,7 +960,7 @@ public class Empresa {
                     }
                 }
                 double compensacion = Contabilidad.calcularCompensacion(listaEspera.size());
-                //System.out.println("Costo de compensación: " + compensacion);
+                // System.out.println("Costo de compensación: " + compensacion);
                 // Llamada a el meteod reasignarPasajeros para darles una ruta diferente
                 reasignarPasajeros(listaEspera, ruta);
             }
@@ -942,14 +978,16 @@ public class Empresa {
                     // Reasignacion de el pasajero a una nueva ruta
                     nuevaRuta.getBusAsociado().asignarPasajero(pasajero);
                     rutaOrigen.getBusAsociado().eliminarPasajero(pasajero);
-                    //System.out.println("Pasajero " + pasajero.getNombre() + " ha sido reasignado a la ruta "
-                    //        + nuevaRuta.getIdRuta());
+                    // System.out.println("Pasajero " + pasajero.getNombre() + " ha sido reasignado
+                    // a la ruta "
+                    // + nuevaRuta.getIdRuta());
                     reasingnado = true;
                     break;
                 }
             }
             if (!reasingnado) {
-                //System.out.println("No se encontró una ruta alternativa disponible para " + pasajero.getNombre());
+                // System.out.println("No se encontró una ruta alternativa disponible para " +
+                // pasajero.getNombre());
             }
         }
     }

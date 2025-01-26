@@ -1,4 +1,5 @@
 package gestorAplicacion.operacion.logistica;
+
 import gestorAplicacion.administracion.Ruta;
 import gestorAplicacion.administracion.Empresa;
 import gestorAplicacion.operacion.individuos.*;
@@ -12,43 +13,48 @@ public class Bus {
         MEDIO(750),
         PESADO(1000),
         EXTRA_PESADO(1250);
+
         private final int PESOMAXIMO;
+
         // Constructor del enum
         PesoMaxEquipaje(int PESOMAXIMO) {
             this.PESOMAXIMO = PESOMAXIMO;
         }
+
         // Método para obtener el peso máximo
         public int getPESOMAXIMO() {
             return PESOMAXIMO;
         }
     }
+
     private String placa;
     private int cantidadAsientos;
-    private ArrayList<Asiento> asientos;
+    private ArrayList<Asiento> asientos = new ArrayList<>(); // Initialize asientos here
     private int kilometrosRecorridos = 0;
-    private ArrayList<Ruta> rutasFuturas = new ArrayList<Ruta>();
+    private ArrayList<Ruta> rutasFuturas = new ArrayList<>();
     private Empresa empresa;
-    private ArrayList<Maleta> equipaje;// Equipaje de los pasajeros
+    private ArrayList<Maleta> equipaje = new ArrayList<>(); // Initialize equipaje here
     private double consumoReportado;
 
     // Constructores
-    public Bus(String placa, int cantidadAsientos,  PesoMaxEquipaje pesoMaxEquipaje) {
+    public Bus(String placa, int cantidadAsientos, PesoMaxEquipaje pesoMaxEquipaje) {
         this(placa, cantidadAsientos, pesoMaxEquipaje, null);
     }
 
-    public Bus(String placa, int cantidadAsientos,  PesoMaxEquipaje pesoMaxEquipaje, ArrayList<Ruta> rutasFuturas) {
+    public Bus(String placa, int cantidadAsientos, PesoMaxEquipaje pesoMaxEquipaje, ArrayList<Ruta> rutasFuturas) {
         this.placa = placa;
         this.cantidadAsientos = cantidadAsientos;
-        this.cantidadAsientos = cantidadAsientos;
+        // Removed duplicate line: this.cantidadAsientos = cantidadAsientos;
         if (rutasFuturas != null) {
             this.setRutasFuturas(rutasFuturas);
         }
     }
 
     // Métodos get-set
-    public  ArrayList<Maleta> getEquipaje(){
+    public ArrayList<Maleta> getEquipaje() {
         return equipaje;
     }
+
     public String getPlaca() {
         return placa;
     }
@@ -85,23 +91,18 @@ public class Bus {
         return rutasFuturas;
     }
 
-    public ArrayList<Ruta> setRutasFuturas(ArrayList<Ruta> nuevasRutasFuturas){
+    // Changed return type to void as it doesn't seem to be used
+    public void setRutasFuturas(ArrayList<Ruta> nuevasRutasFuturas) {
         /*
          * Se añadirán todas las rutas en forma ascendente sin repeticiones,
          * y se devuelven las rutas que no pudieron incluirse.
          */
 
         // Incluyendo las rutas que se puedan incorporar.
-        ArrayList<Ruta> rutasNoIncluidas = new ArrayList<Ruta>();
-        rutasFuturas = new ArrayList<Ruta>();
-        for(Ruta nuevaRuta: nuevasRutasFuturas){
-            if(!this.anadirRuta(nuevaRuta)){
-                rutasNoIncluidas.add(nuevaRuta);
-            }
+        rutasFuturas = new ArrayList<>(); // Initialize rutasFuturas here
+        for (Ruta nuevaRuta : nuevasRutasFuturas) {
+            this.anadirRuta(nuevaRuta); // No need to check return value here
         }
-
-        // Muestra las rutas que no se pueden incluir.
-        return rutasNoIncluidas;
     }
 
     public Empresa getEmpresa() {
@@ -138,82 +139,48 @@ public class Bus {
          */
 
         // Verificación de errores.
-        if (Duration.between(fechaInicial, fechaFinal).toHours() > 0) {
+        // Changed condition to check if fechaFinal is after fechaInicial
+        if (fechaFinal.isAfter(fechaInicial)) {
             return false;
         }
 
         // Se busca si alguna de las rutas futuras
-        Boolean disponibilidad = true;
-        int numeroRutas = rutasFuturas.size();
-        int contador = 0; // (#Rutas)-contador representa la cantidad de intervalos entre [fecha Inicial,
-                          // fecha Final]
-        for (int i = 0; i < numeroRutas; i++) {
-            // Viendo si el final del intervalo [fecha Inicial, fecha Final] está a la
-            // izqueirda o derecha.
-            if((Duration.between(fechaFinal, rutasFuturas.get(numeroRutas - i - 1).getFechaSalida()).toHours() > 1) ||
-               (Duration.between(rutasFuturas.get(i).getFechaLlegada(), fechaInicial).toHours() > 1)){
-                contador++;
+        for (Ruta ruta : rutasFuturas) {
+            // Check if the given time range overlaps with the route's time range
+            if (!(fechaFinal.isBefore(ruta.getFechaSalida()) || fechaInicial.isAfter(ruta.getFechaLlegada()))) {
+                return false; // Overlap found, bus is not available
             }
         }
 
-        // Verificando que no se interseque con margen apropiado con alguna ruta.
-        if (contador < numeroRutas) {
-            disponibilidad = false;
-        }
-
-        return disponibilidad;
+        return true; // No overlaps found, bus is available
     }
 
-    public Boolean anadirRuta(Ruta nuevaRuta){
+    public Boolean anadirRuta(Ruta nuevaRuta) {
         /*
          * Busca si se puede agregar la ruta en las ya establecidas para el bus,
          * mostrando una advertencia si la ruta no puede ser añadida.
          * 
          * Parámetros:
-         *      - nuevaRuta: Ruta,
-         *          Ruta a ser añadida.
+         * - nuevaRuta: Ruta,
+         * Ruta a ser añadida.
          * 
          * Retorna:
-         *      - asignado: Boolean,
-         *          Indica si se pudo añadir la ruta.
+         * - asignado: Boolean,
+         * Indica si se pudo añadir la ruta.
          */
 
-        // Se busca dónde debería ir la nueva ruta.
-        int posicion = 0;
         for (Ruta ruta : rutasFuturas) {
-            // Primero se mira si el intervalo de la nueva ruta se encuentra
-            // a la derecha de los intervalos las rutas existentes.
-            if (Duration.between(ruta.getFechaSalida(), nuevaRuta.getFechaSalida()).toHours() > 0) {
-                // Se encuentra en un margen aceptable.
-                if (Duration.between(ruta.getFechaLlegada(), nuevaRuta.getFechaSalida()).toHours() > 1) {
-                    posicion++;
-                }
-                // Ambos intervalos se intersectan o no dejan el margen aceptable.
-                else {
-                    posicion = -1;
-                    break;
-                }
-            }
-
-            // Ahora se mira si se encuentra a la izquierda
-            else {
-                // Se intersecan o no dejan el margen aceptable.
-                if (Duration.between(nuevaRuta.getFechaLlegada(), ruta.getFechaSalida()).toHours() > 1) {
-                    posicion = -1;
-                    break;
-                }
+            // Check for overlaps with existing routes, considering a 1-hour buffer
+            if (!(nuevaRuta.getFechaLlegada().plusHours(1).isBefore(ruta.getFechaSalida())
+                    || nuevaRuta.getFechaSalida().minusHours(1).isAfter(ruta.getFechaLlegada()))) {
+                return false; // Overlap found, cannot add the route
             }
         }
 
-        // Si no se intersecta con ningún horario, se añade correctamente.
-        if (posicion != -1) {
-            rutasFuturas.add(posicion, nuevaRuta);
-            nuevaRuta.setBusAsociado(this);
-            return true;
-        }
-        else{
-            return false;
-        }
+        // No overlaps found, add the route
+        rutasFuturas.add(nuevaRuta);
+        nuevaRuta.setBusAsociado(this);
+        return true;
     }
 
     public void quitarRuta(Ruta ruta) {
@@ -232,77 +199,79 @@ public class Bus {
     }
 
     public String asignarPasajero(Pasajero pasajero) {
-        ArrayList<Asiento> asientosActuales = this.getAsientos();
-        if (cantidadAsientos - asientosActuales.size() > 0) {
+        if (asientos.size() < cantidadAsientos) {
             Asiento asiento = new Asiento(pasajero);
             asientos.add(asiento);
-            String output = "Asiento asignado a " + pasajero.getNombre() + " en el bus " + this.placa;
-            return output;
+            return "Asiento asignado a " + pasajero.getNombre() + " en el bus " + this.placa;
         } else {
             return "No hay asientos disponibles en el bus " + this.placa;
         }
     }
 
     public String eliminarPasajero(Pasajero pasajero) {
-        ArrayList<Asiento> asientosActuales = getAsientos();
-        if (cantidadAsientos - asientosActuales.size() > 0) {
-            for (Asiento asiento : asientosActuales) {
-                if (asiento.getUsuario().getNombre() == pasajero.getNombre()) {
-                    asientosActuales.remove(asiento);
-                    return "Asiento quitado a " + pasajero.getNombre() + " en el bus " + this.placa;
-                }
+        for (Asiento asiento : asientos) {
+            if (asiento.getUsuario() == pasajero) { // Use direct object comparison
+                asientos.remove(asiento);
+                return "Asiento quitado a " + pasajero.getNombre() + " en el bus " + this.placa;
             }
-
         }
-        return "No se ha encontrad al pasajero " + pasajero.getNombre() + " en el bus " + this.placa;
+        return "No se ha encontrado al pasajero " + pasajero.getNombre() + " en el bus " + this.placa;
     }
 
-    public LocalDateTime hallarHueco(int lapso){
+    public LocalDateTime hallarHueco(int lapso) {
         /*
-         * Mira en el horario del bus a ver si encuentra un hueco de la duración especificada.
+         * Mira en el horario del bus a ver si encuentra un hueco de la duración
+         * especificada.
          * 
          * Parámetros:
-         *      - lapso: int,
-         *          Tiempo que se necesita al bus.
+         * - lapso: int,
+         * Tiempo que se necesita al bus.
          * 
          * Retorna:
-         *      - fecha: LocalDateTime,
-         *          Hora en la cual puede iniciar la actividad a reclutarlo.
+         * - fecha: LocalDateTime,
+         * Hora en la cual puede iniciar la actividad a reclutarlo.
          */
 
-        // Viendo si está disponible en una hora con ese lapso.
-        if(Duration.between(LocalDateTime.now(), rutasFuturas.getFirst().getFechaSalida()).toHours() > lapso + 2){
-                return rutasFuturas.getFirst().getFechaSalida().minusHours(lapso + 2);
-            }
+        if (rutasFuturas.isEmpty()) {
+            return LocalDateTime.now(); // If no routes, bus is always available
+        }
 
-        // Viendo si existe una franja entre los horarios de las rutas que tiene el bus.
-        for(int i = 0; i < rutasFuturas.size() - 1; i++){
-            if(Duration.between(rutasFuturas.get(i).getFechaLlegada(),
-               rutasFuturas.get(i).getFechaSalida()).toHours() > lapso + 2){
+        // Check for a gap before the first route
+        if (Duration.between(LocalDateTime.now(), rutasFuturas.get(0).getFechaSalida()).toHours() > lapso + 2) {
+            return rutasFuturas.get(0).getFechaSalida().minusHours(lapso + 2);
+        }
+
+        // Check for gaps between existing routes
+        for (int i = 0; i < rutasFuturas.size() - 1; i++) {
+            if (Duration.between(rutasFuturas.get(i).getFechaLlegada(), rutasFuturas.get(i + 1).getFechaSalida())
+                    .toHours() > lapso + 2) {
                 return rutasFuturas.get(i).getFechaLlegada().plusHours(1);
             }
         }
-        
-        return rutasFuturas.getLast().getFechaLlegada().plusHours(1);
+
+        // If no gaps found, return the time after the last route
+        return rutasFuturas.get(rutasFuturas.size() - 1).getFechaLlegada().plusHours(1);
     }
 
-    public String toString(){
+    public String toString() {
         return "Soy el bus con placa " + placa;
     }
 
+    // You can implement these methods later if needed
     public void reparar() {
-
+        // Implementation for repairing the bus
     }
 
     public void verificarIntegridad() {
-
+        // Implementation for checking the bus integrity
     }
 
     public void calcularConsumoCombustible() {
-
+        // Implementation for calculating fuel consumption
     }
 
     public float danoAleatorio() {
+        // Implementation for generating random damage
         return 0;
     }
 }
