@@ -81,7 +81,7 @@ public class Main {
                     System.out.println((i + 1) + ". " + rutasDisponibles.get(i));
                 }
 
-                System.out.print("Seleccione la opción de ruta (1-" + rutasDisponibles.size() + "): "));
+                System.out.print("Seleccione la opción de ruta (1-" + rutasDisponibles.size() + "): ");
                 int opcionRuta = scanner.nextInt();
                 scanner.nextLine();
 
@@ -153,7 +153,7 @@ public class Main {
                         System.out.println("Ingrese el Numero de Maletas del Pasajero");
                         int cantidadMaletas =sc.nextInt();
                         // Creamos una array para poder rectificar si dichos identificadores si son correctos
-                        ArrayList<Integer> nums_maletas;
+                        ArrayList<Integer> nums_maletas = new ArrayList<Integer>();
                         for (int index = 0; index <cantidadMaletas; index++) {
                             System.out.println( "Ingrese el identificador de la maleta");
                             Integer numMaleta = sc.nextInt();

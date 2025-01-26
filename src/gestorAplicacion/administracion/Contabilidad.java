@@ -13,13 +13,11 @@ public class Contabilidad implements Serializable {
     private double costosOperativos;
     private static ArrayList<Factura> ventas;
     private static ArrayList<Factura> transaccionesReembolsadas;
-    // Getters y Setters//
 
+    // Getters y Setters//
     public double getIngresos() {
         return ingresos;
     }
-
-
 
     public void setIngresos(double ingresos) {
         this.ingresos = ingresos;
@@ -41,8 +39,8 @@ public class Contabilidad implements Serializable {
     }
     // Metodos de clase//
     static public double calcularCompensacion(int numeroPasajeros) {
-        double costoPorPasajero = costoCompensacion; // Definir el costo de compensación por pasajero, definirlo mas
-                                                     // adelente
+        // Definir el costo de compensación por pasajero, definirlo más adelente.
+        double costoPorPasajero = costoCompensacion;
         return numeroPasajeros * costoPorPasajero;
     }
 
@@ -61,47 +59,49 @@ public class Contabilidad implements Serializable {
     
         return tarifaBase + porcentajeReembolso + tarifaPorMetodo;
         }
+
     public static double calcularDescuentos(Factura factura) {
-            double descuento = 0.0;
+        double descuento = 0.0;
         
-            // Verificar si el usuario es frecuente
-            int apariciones = 0;
-            for (Factura f : Contabilidad.getVentas()) {
-                if (f.getIdUsuario() == factura.getIdUsuario()) {
-                    apariciones++;
-                }
+        // Verificar si el usuario es frecuente
+        int apariciones = 0;
+        for (Factura f : Contabilidad.getVentas()) {
+            if (f.getIdUsuario() == factura.getIdUsuario()) {
+                apariciones++;
             }
-        
-            // Aplicar descuento por fidelidad si el usuario aparece más de 10 veces
-            if (apariciones > 10) {
-                descuento += 0.1; // Descuento del 10%
-            }
-        
-            // Verificar si el método de pago es transferencia y aplicar descuento
-            if (factura.getMetodoPago() == Factura.MetodoPago.Transferencia) {
-                descuento += 0.05; // Descuento adicional del 5%
-            }
-        
-            return descuento;
         }
+        
+        // Aplicar descuento por fidelidad si el usuario aparece más de 10 veces
+        if (apariciones > 10) {
+            descuento += 0.1; // Descuento del 10%
+        }
+
+        // Verificar si el método de pago es transferencia y aplicar descuento
+        if (factura.getMetodoPago() == Factura.MetodoPago.Transferencia) {
+            descuento += 0.05; // Descuento adicional del 5%
+        }
+
+        return descuento;
+    }
     
-        public static double montoReembolso(Factura factura){
+    public static double montoReembolso(Factura factura){
         double tarifas = calcularTarifas(factura); // Método previamente implementado.
         double descuentos = calcularDescuentos(factura);
         double montoFinal = factura.getValor() - tarifas + descuentos;
         return montoFinal;
-        }
+    }
 
-        public static String generarDesglose(Factura factura ) {
-            double tarifas = calcularTarifas(factura); // Método previamente implementado.
-            double descuentos = calcularDescuentos(factura);
-            double montoFinal = factura.getValor() - tarifas + descuentos;
-            return "Desglose de Reembolso:\n" +
-                   "Monto Base: $" + factura.getValor() + "\n" +
-                   "Tarifas Administrativas: $" + tarifas + "\n" +
-                   "Descuentos Aplicados: $" + descuentos + "\n" +
-                   "Monto Final a Transferir: $" + montoFinal;
-        }
+    public static String generarDesglose(Factura factura ) {
+        double tarifas = calcularTarifas(factura); // Método previamente implementado.
+        double descuentos = calcularDescuentos(factura);
+        double montoFinal = factura.getValor() - tarifas + descuentos;
+        return "Desglose de Reembolso:\n" +
+                "Monto Base: $" + factura.getValor() + "\n" +
+                "Tarifas Administrativas: $" + tarifas + "\n" +
+                "Descuentos Aplicados: $" + descuentos + "\n" +
+                "Monto Final a Transferir: $" + montoFinal;
+    }
+
     // Metodos de Instancia//
     public ArrayList<String> reportarFinanzas(double costoCompensacion, List<Factura> facturasAjustadas) {
         ArrayList<String> mensajeCompleto = new ArrayList<String>();
@@ -120,15 +120,16 @@ public class Contabilidad implements Serializable {
         return mensajeCompleto;
     }
 
-        // Método para calcular el total de ingresos
-        public double calcularTotalIngresos() {
-            double totalIngresos = 0.0;
-            for (Factura factura : ventas) {
-                totalIngresos += factura.getValor();
-            }
-            return totalIngresos;
+    // Método para calcular el total de ingresos
+    public double calcularTotalIngresos() {
+        double totalIngresos = 0.0;
+        for (Factura factura : ventas) {
+            totalIngresos += factura.getValor();
         }
-            // Método para procesar reembolsos
+        return totalIngresos;
+    }
+
+    // Método para procesar reembolsos
     public void procesarReembolso(Factura factura) {
         // Verificar si la factura existe en las ventas registradas
         if (ventas.contains(factura)) {
@@ -149,6 +150,7 @@ public class Contabilidad implements Serializable {
             System.out.println("La factura ID: " + factura.getIdFactura() + " no se encuentra registrada en las ventas.");
         }
     }
+
     public void pagarMantenimiento() {
 
     }
