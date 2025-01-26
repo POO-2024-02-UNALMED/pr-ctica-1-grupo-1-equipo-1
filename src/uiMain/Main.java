@@ -108,7 +108,7 @@ public class Main {
                 }
 
                 System.out.println("Rutas disponibles:");
-                for (int i 2= 0; i < rutasDisponibles.size(); i++) {
+                for (int i = 0; i < rutasDisponibles.size(); i++) {
                     System.out.println((i + 1) + ". " + rutasDisponibles.get(i));
                 }
 
