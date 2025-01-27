@@ -17,6 +17,7 @@ public class Ruta extends Red {
     private Parada lugarInicio;
     private Parada lugarFinal;
     private Parada[] paradas;
+    private float distanciaRuta;
 
             // Constantes de dificultad
     public static final float DIFICULTAD_BAJA = 20; // km
