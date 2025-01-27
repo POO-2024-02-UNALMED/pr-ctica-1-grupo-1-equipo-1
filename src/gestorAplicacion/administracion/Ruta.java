@@ -18,6 +18,11 @@ public class Ruta extends Red {
     private Parada lugarFinal;
     private Parada[] paradas;
 
+            // Constantes de dificultad
+    public static final float DIFICULTAD_BAJA = 20; // km
+    public static final float DIFICULTAD_MEDIA = 40; // km
+    public static final float DIFICULTAD_ALTA = 60; // km
+
     static {
 
     }
