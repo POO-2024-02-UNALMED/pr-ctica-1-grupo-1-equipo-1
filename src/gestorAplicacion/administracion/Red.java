@@ -63,7 +63,6 @@ public abstract class Red {
                 if (distancias[i][j] == 0 && i != j) {
                     distancias[i][j] = 100000; // Distancia infinita.
                 }
-                distanciasOriginales[i][j] = distancias[i][j];
             }
         }
 
