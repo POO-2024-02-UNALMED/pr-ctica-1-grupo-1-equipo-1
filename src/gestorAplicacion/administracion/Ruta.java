@@ -32,7 +32,6 @@ public class Ruta extends Red {
         this.fechaLlegada = fechaLlegada; // ""
         this.lugarInicio = lugarInicio;
         this.lugarFinal = lugarFinal;
-        this.setParadas(paradas);
     }
 
     public Ruta(Parada lugarInicio, Parada lugarFinal, Parada[] paradas) {
