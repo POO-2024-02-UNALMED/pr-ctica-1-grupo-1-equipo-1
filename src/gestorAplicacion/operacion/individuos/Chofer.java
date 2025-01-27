@@ -51,6 +51,8 @@ public class Chofer extends Persona {
     public void setSueldo(int nuevoSueldo) {
         sueldo = nuevoSueldo;
     }
+     public void aumentarSueldo(int sueldo) {
+        this.sueldo += sueldo;
 
     public int getCantidadHorasConducidas() {
         return cantidadHorasConducidas;
