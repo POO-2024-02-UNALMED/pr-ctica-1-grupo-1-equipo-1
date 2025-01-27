@@ -18,13 +18,11 @@ public class Ruta extends Red {
     private Parada lugarFinal;
     private Parada[] paradas;
 
-    static {
 
-    }
 
     // Constructores
     public Ruta(Bus busAsociado, LocalDateTime fechaSalida, LocalDateTime fechaLlegada, // Cambiar por objetos de tiempo
-            Parada lugarInicio, Parada lugarFinal, Parada[] paradas) {
+            Parada lugarInicio, Parada lugarFinal) {
         totalRutas++;
         this.idRuta = totalRutas;
         this.busAsociado = busAsociado;
@@ -32,27 +30,28 @@ public class Ruta extends Red {
         this.fechaLlegada = fechaLlegada; // ""
         this.lugarInicio = lugarInicio;
         this.lugarFinal = lugarFinal;
-        this.setParadas(paradas);
+        
     }
 
     public Ruta(Parada lugarInicio, Parada lugarFinal, Parada[] paradas) {
         // Cambiar por objetos de tiempo
-        this(null, LocalDateTime.now(), LocalDateTime.now(), lugarInicio, lugarFinal, paradas);
+        this(null, LocalDateTime.now(), LocalDateTime.now(), lugarInicio, lugarFinal);
     }
 
     public Ruta(int ordinalLugarInicio, int ordinalLugarFinal, int[] ordinalesParadas) {
         // Cambiar por objetos de tiempo
         this(null, LocalDateTime.now(), LocalDateTime.now(),
                 Parada(ordinalLugarInicio),
-                Parada(ordinalLugarFinal),
-                Red.enteroAParada(ordinalesParadas));
+                Parada(ordinalLugarFinal));
     }
 
     // Métodos get-set
     public static int getTotalRutas() {
         return totalRutas;
     }
-
+    static public void addRutas(Ruta ruta){
+        rutas.add(ruta);
+    }
     public static void setTotalRutas(int nuevoTotalRutas) {
         totalRutas = nuevoTotalRutas;
     }
@@ -144,6 +143,7 @@ public class Ruta extends Red {
             Parada[] paradas = ruta.getParadas();
             if (paradas[0].equals(Parada.valueOf(lugarInicio))
                     && paradas[paradas.length - 1].equals(Parada.valueOf(lugarFinal))) {
+                
                 rutasFiltradas.add(ruta);
             }
         }

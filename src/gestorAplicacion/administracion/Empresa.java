@@ -6,12 +6,9 @@ import gestorAplicacion.operacion.individuos.Chofer;
 import gestorAplicacion.operacion.individuos.Pasajero;
 import gestorAplicacion.operacion.logistica.Bus;
 
-//import java.text.spi.NumberFormatProvider;
-//import gestorAplicacion.operacion.individuos.*;
 import java.util.ArrayList; // Para crear la red de carreteras que tiene el terminal.
 import java.util.Arrays; // Para ordenar arrays.
 import java.util.Comparator;
-//import java.util.List;
 
 public class Empresa {
     private String nombre;
@@ -147,7 +144,7 @@ public class Empresa {
     // Métodos de instancia
 
     // Todas las formas de contratar un chofer.
-    void contratar(String nombre, int edad,int sueldo) {
+    void contratar(String nombre, int edad, int sueldo) {
         contratar(new Chofer(sueldo), sueldo, null);
     }
 

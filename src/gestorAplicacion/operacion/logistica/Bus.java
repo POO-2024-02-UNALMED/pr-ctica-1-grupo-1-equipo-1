@@ -35,6 +35,7 @@ public class Bus {
     private Empresa empresa;
     private ArrayList<Maleta> equipaje = new ArrayList<>(); // Initialize equipaje here
     private double consumoReportado;
+    
 
     // Constructores
     public Bus(String placa, int cantidadAsientos, PesoMaxEquipaje pesoMaxEquipaje) {

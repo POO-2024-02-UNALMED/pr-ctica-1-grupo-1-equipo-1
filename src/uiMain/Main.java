@@ -1,6 +1,7 @@
 package uiMain;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,6 +12,29 @@ import gestorAplicacion.operacion.logistica.*;
 
 public class Main {
     public static final LocalDateTime horaZero = LocalDateTime.now(); // Captura el tiempo al ejecutarse el programa
+
+    public static String capitalizeFirstChar(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    static public LocalDateTime[] generateDateTime(int minutes) {
+
+        LocalDateTime startDate = LocalDateTime.now();
+
+        LocalDateTime endDate = startDate.plusMinutes(minutes);
+
+        LocalDateTime[] dates = new LocalDateTime[] { startDate, endDate };
+        return dates;
+    }
+
+    static {
+        for (int[][] carretera : Red.carreteras) {
+            System.out.println(Arrays.deepToString(carretera));
+        }
+    }
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -49,24 +73,23 @@ public class Main {
                 System.out.println(" Bienvenido al sistema de compra de tiquetes ");
                 System.out.println("=============================================");
                 System.out.println("");
-                
-                //Nombres y Apellidos
+
+                // Nombres y Apellidos
                 System.out.print("Nombres: ");
                 String nombres = scanner.nextLine();
                 System.out.print("Apellidos: ");
                 String apellidos = scanner.nextLine();
                 String nombre = nombres + " " + apellidos;
-                
-                //Documento
+
+                // Documento
                 System.out.print("Numero de Documento: ");
                 String id = scanner.nextLine();
-                
-                //Edad
+
+                // Edad
                 System.out.print("Edad: ");
                 int edad = scanner.nextInt();
                 scanner.nextLine();
                 Pasajero pasajero = new Pasajero(nombre, edad, id);
-                
 
                 if (edad < 18) {
                     System.out.println("Debe registrar un acompañante adulto.");
@@ -85,25 +108,29 @@ public class Main {
 
                 System.out.println("Ciudad de origen: ");
                 for (int i = 0; i < Red.Parada.values().length; i++) {
-                    System.out.println((i + 1) + ". " + Red.Parada.values()[i]);
+                    String paradaStr = Red.Parada.values()[i].toString();
+                    System.out.println((i + 1) + ". " + capitalizeFirstChar(paradaStr));
                 }
-                System.out.println("Ingrese el nombre de la ciudad: ");
+                System.out.print("Ingrese el nombre de la ciudad: ");
 
                 String lugarInicio = scanner.nextLine().toUpperCase();
 
                 System.out.println("Ciudad de destino: ");
+
                 for (int i = 0; i < Red.Parada.values().length; i++) {
                     if (Red.Parada.values()[i] == Red.Parada.valueOf(lugarInicio)) {
                         continue;
                     }
-                    System.out.println((i + 1) + ". " + Red.Parada.values()[i]);
+                    String paradaStr = Red.Parada.values()[i].toString();
+                    System.out.println((i + 1) + ". " + capitalizeFirstChar(paradaStr));
                 }
-                System.out.println("Ingrese el nombre de la ciudad: ");
+                System.out.print("Ingrese el nombre de la ciudad: ");
                 String lugarFinal = scanner.nextLine().toUpperCase();
 
                 List<Ruta> rutasDisponibles = Ruta.filtrarRutas(lugarInicio, lugarFinal);
-                if (rutasDisponibles == null) {
-                    System.out.println("No hay rutas disponibles entre " + lugarInicio + " y " + lugarFinal);
+                if (rutasDisponibles.isEmpty()) {
+                    System.out.println("No hay rutas disponibles entre " + capitalizeFirstChar(lugarInicio) + " y "
+                            + capitalizeFirstChar(lugarFinal));
                     break;
                 }
 

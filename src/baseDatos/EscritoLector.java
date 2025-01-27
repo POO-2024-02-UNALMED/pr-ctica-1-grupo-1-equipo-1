@@ -21,8 +21,7 @@ public class EscritoLector {
     static File archivo = new File("");
 
     public static void main(String[] args) {
-        Parada[] paradas = { Parada.BARRANQUILLA, Parada.VALLEDUPAR, Parada.BOGOTA, Parada.MEDELLIN, Parada.NEIVA,
-                Parada.CALI };
+
         /*
          * Zona Para hacer la Serializacion Para sus Respectivos Casos de Pruebas
          *
@@ -71,26 +70,19 @@ public class EscritoLector {
         Chofer chofer9 = new Chofer("Jose Antonio", 70, 89012, 3000000);
         Chofer chofer10 = new Chofer("Natalia Fernandez", 75, 56789, 3200000);
 
-        Ruta ruta1 = new Ruta(bus1, LocalDateTime.of(2025, 1, 27, 8, 0), LocalDateTime.of(2025, 1, 27, 12, 0),
-                Parada.VALLEDUPAR, Parada.BOGOTA, paradas);
-        Ruta ruta2 = new Ruta(bus2, LocalDateTime.of(2025, 1, 27, 9, 0), LocalDateTime.of(2025, 1, 27, 13, 0),
-                Parada.BOGOTA, Parada.MEDELLIN, paradas);
-        Ruta ruta3 = new Ruta(bus3, LocalDateTime.of(2025, 1, 27, 10, 0), LocalDateTime.of(2025, 1, 27, 14, 0),
-                Parada.MEDELLIN, Parada.NEIVA, paradas);
-        Ruta ruta4 = new Ruta(bus4, LocalDateTime.of(2025, 1, 27, 11, 0), LocalDateTime.of(2025, 1, 27, 15, 0),
-                Parada.NEIVA, Parada.CALI, paradas);
-        Ruta ruta5 = new Ruta(bus5, LocalDateTime.of(2025, 1, 27, 12, 0), LocalDateTime.of(2025, 1, 27, 16, 0),
-                Parada.CALI, Parada.BOGOTA, paradas);
-        Ruta ruta6 = new Ruta(bus6, LocalDateTime.of(2025, 1, 27, 13, 0), LocalDateTime.of(2025, 1, 27, 17, 0),
-                Parada.BOGOTA, Parada.VALLEDUPAR, paradas);
-        Ruta ruta7 = new Ruta(bus7, LocalDateTime.of(2025, 1, 27, 14, 0), LocalDateTime.of(2025, 1, 27, 18, 0),
-                Parada.VALLEDUPAR, Parada.BOGOTA, paradas);
-        Ruta ruta8 = new Ruta(bus8, LocalDateTime.of(2025, 1, 27, 15, 0), LocalDateTime.of(2025, 1, 27, 19, 0),
-                Parada.BOGOTA, Parada.VALLEDUPAR, paradas);
-        Ruta ruta9 = new Ruta(bus9, LocalDateTime.of(2025, 1, 27, 16, 0), LocalDateTime.of(2025, 1, 27, 20, 0),
-                Parada.VALLEDUPAR, Parada.BOGOTA, paradas);
-        Ruta ruta10 = new Ruta(bus10, LocalDateTime.of(2025, 1, 27, 17, 0), LocalDateTime.of(2025, 1, 27, 21, 0),
-                Parada.BOGOTA, Parada.VALLEDUPAR, paradas);
+        // Create some Empresa objects
+        for (int[][] carretera : Red.carreteras) {
+            Red.Parada origen = Red.Parada(carretera[0][0]);
+            Red.Parada destino = Red.Parada(carretera[0][1]);
+            int distancia = carretera[1][0];
+            int tiempo = carretera[1][1];
+            LocalDateTime[] dates = Main.generateDateTime(tiempo);
+            LocalDateTime dateStart = dates[0];
+            LocalDateTime dateEnd = dates[1];
+            Ruta nuevaRuta = new Ruta(bus1, dateStart, dateEnd, origen, destino);
+            Ruta.addRutas(nuevaRuta);
+            
+        }
 
         // Serialización (guardar objetos en el archivo)
         try {

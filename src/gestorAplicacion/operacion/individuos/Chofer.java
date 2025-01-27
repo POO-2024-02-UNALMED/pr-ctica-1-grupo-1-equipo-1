@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.io.Serializable;
 
-public class Chofer extends Persona {
+public class Chofer extends Persona implements Serializable{
     private int sueldo;
     private int cantidadHorasConducidas = 0;
     private Empresa empresa;
