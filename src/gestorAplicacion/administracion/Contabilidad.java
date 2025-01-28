@@ -67,7 +67,6 @@ public class Contabilidad implements Serializable {
 
     public static double calcularDescuentos(Factura factura) {
         double descuento = 0.0;
-
         // Verificar si el usuario es frecuente
         int apariciones = 0;
         for (Factura f : Contabilidad.getVentas()) {
@@ -98,7 +97,6 @@ public class Contabilidad implements Serializable {
     }
 
     public static String generarDesglose(Factura factura) {
-
         double tarifas = calcularTarifas(factura); // Método previamente implementado.
         double descuentos = calcularDescuentos(factura);
         double montoFinal = factura.getValor() - tarifas + descuentos;
@@ -164,11 +162,9 @@ public class Contabilidad implements Serializable {
     }
 
     public static double calcularValorTiquete(Ruta ruta, String origen, String destino) {
-        double valorBasePorKm = 0.05; // Example base value per kilometer
-        Parada[] rutParadas = ruta.getParadas();
-        Parada[] arrayDeParadas = { Parada.valueOf(origen), Parada.valueOf(destino) };
-        Parada[] paradasCompletas = concatenateArrays(rutParadas, arrayDeParadas);
-        double distancia = Red.longitud(paradasCompletas);
+        double valorBasePorKm = 0.05;
+        Parada[] paradas = ruta.getParadas();
+        double distancia = Red.longitud(paradas);
         double valorTiquete = distancia * valorBasePorKm;
         return valorTiquete;
     }

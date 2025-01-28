@@ -1,14 +1,12 @@
 package gestorAplicacion.administracion;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import gestorAplicacion.operacion.logistica.Asiento;
 import gestorAplicacion.administracion.Red.Parada;
-
+import gestorAplicacion.operacion.logistica.Asiento;
 import gestorAplicacion.operacion.logistica.Bus;
 import gestorAplicacion.operacion.logistica.Maleta;
-
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class Factura implements Serializable {
     // Atributos
@@ -65,6 +63,18 @@ public class Factura implements Serializable {
 
     }
     // Getters y Setters//
+
+    public ArrayList<Asiento> getAsientosAsignados() {
+        return asientosAsignados;
+    }
+    
+    public Bus getBusAsignado() {
+        if (rutaElegida != null) {
+            return rutaElegida.getBusAsociado();
+        } else {
+            return null; // o manejar el caso en que rutaElegida sea null de otra manera
+        }
+    }
 
     public MetodoPago getMetodoPago() {
         return metodoPago;

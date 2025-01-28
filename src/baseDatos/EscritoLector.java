@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import gestorAplicacion.administracion.*;
 import gestorAplicacion.administracion.Red.Parada;
-import gestorAplicacion.operacion.*;
 import gestorAplicacion.operacion.individuos.Chofer;
 import gestorAplicacion.operacion.logistica.Bus;
 import uiMain.*;

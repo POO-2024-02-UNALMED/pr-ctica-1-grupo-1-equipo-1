@@ -103,26 +103,23 @@ public class Main {
                     System.out.print("Edad del acompañante: ");
                     int edadAcomp = scanner.nextInt();
                     scanner.nextLine();
-                    pasajero.registrarAcompanante(nombreAcomp, idAcomp, edadAcomp);
+                    // pasajero.registrarAcompanante(nombreAcomp, idAcomp, edadAcomp);
                 }
 
                 System.out.println("Ciudad de origen: ");
-                for (int i = 0; i < Red.Parada.values().length; i++) {
-                    String paradaStr = Red.Parada.values()[i].toString();
-                    System.out.println((i + 1) + ". " + capitalizeFirstChar(paradaStr));
+                for (int i = 0; i < Red.totalParadas; i++) {
+                    System.out.println((i + 1) + ". " + Red.Parada(i));
                 }
                 System.out.print("Ingrese el nombre de la ciudad: ");
 
                 String lugarInicio = scanner.nextLine().toUpperCase();
 
                 System.out.println("Ciudad de destino: ");
-
-                for (int i = 0; i < Red.Parada.values().length; i++) {
-                    if (Red.Parada.values()[i] == Red.Parada.valueOf(lugarInicio)) {
+                for (int i = 0; i < Red.totalParadas; i++) {
+                    if (Red.Parada(i) == Red.Parada.valueOf(lugarInicio)) {
                         continue;
                     }
-                    String paradaStr = Red.Parada.values()[i].toString();
-                    System.out.println((i + 1) + ". " + capitalizeFirstChar(paradaStr));
+                    System.out.println((i + 1) + ". " + Red.Parada(i));
                 }
                 System.out.print("Ingrese el nombre de la ciudad: ");
                 String lugarFinal = scanner.nextLine().toUpperCase();
@@ -149,13 +146,44 @@ public class Main {
                 }
 
                 Ruta rutaSeleccionada = rutasDisponibles.get(opcionRuta - 1);
-
-                System.out.print("Seleccione el tipo de asiento (1 para Estándar, 2 para VIP): ");
-                int tipoAsiento = scanner.nextInt();
-                scanner.nextLine();
-                pasajero.comprarTiquete(String.valueOf(rutaSeleccionada.getLugarInicio()),
+                Factura factura = pasajero.comprarTiquete(String.valueOf(rutaSeleccionada.getLugarInicio()),
                         String.valueOf(rutaSeleccionada.getLugarFinal()), "Tarjeta", horaZero, scanner);
+
+                Asiento[] asientos = factura.getAsientosAsignados().toArray(new Asiento[0]);
+
+                System.out.println("Asientos disponibles en el bus " + factura.getBusAsignado().getPlaca() + ": ");
+
+                for (int i = 0; i < asientos.length; i++) {
+                    if (asientos[i].isEstado()) {
+                        System.out.print((i + 1) + " ");
+                    } else {
+                        System.out.print("X ");
+                    }
+                    if ((i + 1) % 4 == 0) {
+                        System.out.println();
+                    }
+                }
+
+                int opcionAsiento;
+                do {
+                    System.out.print("Seleccione un asiento: ");
+                    opcionAsiento = scanner.nextInt();
+
+                    if (opcionAsiento > 0 && opcionAsiento <= asientos.length
+                            && !asientos[opcionAsiento - 1].isEstado()) {
+                        System.out.println(
+                                "El asiento seleccionado ya está ocupado. Por favor, seleccione otro asiento.");
+                    }
+                } while (opcionAsiento < 1 || opcionAsiento > asientos.length
+                        || !asientos[opcionAsiento - 1].isEstado());
+
+                Asiento asientoSeleccionado = asientos[opcionAsiento - 1];
+                asientoSeleccionado.setEstado(false);
+                asientoSeleccionado.setUsuario(pasajero);
+                pasajero.setAsiento(asientoSeleccionado);
+
                 break;
+
             case 3:
                 // Lógica para ver pasajes comprados (pendiente de implementar)
                 break;
@@ -487,18 +515,16 @@ public class Main {
             columna = ubicacion % Red.totalParadas;
             if (promediosSesgados[fila][columna] > 0) {
                 System.out.println("Demada del trayecto con ciudad origen <" +
-                        Red.Parada(fila).toString() +
-                        "> y con ciudad destino <" +
-                        Red.Parada(columna).toString() +
-                        "> es: " + promediosSesgados[fila][columna]);
+                        Red.Parada(fila) + "> y con ciudad destino <" +
+                        Red.Parada(columna) + "> es: " +
+                        promediosSesgados[fila][columna]);
             }
         }
 
         // Hallando las paradas más populares.
         fila = ordenados[0] / Red.totalParadas;
         columna = ordenados[0] % Red.totalParadas;
-        System.out.println("Más demandada: " + Red.Parada(fila).toString() +
-                " --> " + Red.Parada(columna).toString());
+        System.out.println("Más demandada: " + Red.Parada(fila) + " --> " + Red.Parada(columna));
 
         return new int[] { fila, columna };
     }
@@ -533,9 +559,9 @@ public class Main {
         System.err.println("");
         System.err.println("El trayecto dado por el algoritmo Bellman-Ford es:");
         for (int i = 0; i < ordinalesTrayecto.length - 1; i++) {
-            System.out.print(Red.Parada(ordinalesTrayecto[i]).toString() + "-->");
+            System.out.print(Red.Parada(ordinalesTrayecto[i]) + "-->");
         }
-        System.err.println(Red.Parada(ordinalesTrayecto[ordinalesTrayecto.length - 1]).toString());
+        System.err.println(Red.Parada(ordinalesTrayecto[ordinalesTrayecto.length - 1]));
 
         System.out.print("Número de paradas para la ruta (Mínimo 2): ");
         int numeroParadas = scanner.nextInt();
@@ -589,10 +615,10 @@ public class Main {
 
             // Mostrando las paradas en orden de cantidad de salida.
             for (int i = 0; i < concurrencia.length; i++) {
-                System.out.println(Red.Parada(ordinalesTrayecto[concurrencia[i]]).toString() +
+                System.out.println(Red.Parada(ordinalesTrayecto[concurrencia[i]]) +
                         " tiene " + salientes[i] +
                         " personas saliendo en promedio desde " +
-                        Red.Parada(ordinalesTrayecto[0]).toString());
+                        Red.Parada(ordinalesTrayecto[0]));
             }
             System.out.println("");
         } else if (numeroParadas > ordinalesTrayecto.length) {
@@ -656,7 +682,7 @@ public class Main {
                     }
                 }
 
-                System.out.println(Red.Parada(noEnRuta[i]).toString() + " es pedido por " +
+                System.out.println(Red.Parada(noEnRuta[i]) + " es pedido por " +
                         rutaANoRuta[i] + " personas en promedio.");
             }
             System.out.println("");
@@ -675,9 +701,9 @@ public class Main {
                         Red.distancias[paradaAnterior][paradaPosterior];
                 contribucionIndividual[i] = contribucion;
 
-                System.out.println("Al ubicar a " + Red.Parada(noEnRuta[i]).toString() +
-                        " entre las ciudades " + Red.Parada(paradaAnterior).toString() +
-                        "-" + Red.Parada(paradaPosterior).toString() +
+                System.out.println("Al ubicar a " + Red.Parada(noEnRuta[i]) +
+                        " entre las ciudades " + Red.Parada(paradaAnterior) +
+                        "-" + Red.Parada(paradaPosterior) +
                         " esta añade una distancia de " + contribucion);
             }
             System.out.println("");
@@ -693,7 +719,7 @@ public class Main {
                 nuevaParada = noEnRuta[paradasEnOrden[i]];
                 nuevoTrayecto = Red.agregarParada(ordinalesTrayecto, nuevaParada);
                 aporte[i] = contribucionIndividual[nuevaParada];
-                System.out.println("Añadiendo a " + Red.Parada(nuevaParada).toString() +
+                System.out.println("Añadiendo a " + Red.Parada(nuevaParada) +
                         " con " + aporte[i] + " distancia adicional");
             }
             System.out.println("");
@@ -719,8 +745,8 @@ public class Main {
                 nuevoTrayecto = Red.agregarParada(nuevoTrayecto, nuevaParada);
 
                 System.out.println("");
-                System.out.println("Cambiando " + Red.Parada(paradaAEliminar).toString() +
-                        " por " + Red.Parada(nuevaParada).toString());
+                System.out.println("Cambiando " + Red.Parada(paradaAEliminar) +
+                        " por " + Red.Parada(nuevaParada));
                 System.out.println("");
 
                 // Viendo la siguiente iteración.
@@ -740,7 +766,7 @@ public class Main {
                     paradaAEliminar = paradasEnOrden[desfase + ordenDeAporte[cuentaRegresiva]];
                     nuevoTrayecto = Red.eliminarParada(nuevoTrayecto, paradaAEliminar);
 
-                    System.out.println("Eliminando " + Red.Parada(paradaAEliminar).toString());
+                    System.out.println("Eliminando " + Red.Parada(paradaAEliminar));
 
                     // Viendo la siguiente iteración.
                     nuevoRecorridoTotal = Red.longitud(nuevoTrayecto);

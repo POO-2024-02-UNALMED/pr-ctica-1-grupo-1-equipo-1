@@ -1,7 +1,7 @@
 package gestorAplicacion.operacion.logistica;
 
-import gestorAplicacion.administracion.Ruta;
 import gestorAplicacion.administracion.Empresa;
+import gestorAplicacion.administracion.Ruta;
 import gestorAplicacion.operacion.individuos.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -169,6 +169,11 @@ public class Bus {
          * - asignado: Boolean,
          * Indica si se pudo añadir la ruta.
          */
+            // Verificar si la ruta ya existe en la lista
+        if (rutasFuturas.contains(nuevaRuta)) {
+            System.out.println("La ruta ya está asignada a este bus.");
+            return false;
+    }
 
         for (Ruta ruta : rutasFuturas) {
             // Check for overlaps with existing routes, considering a 1-hour buffer

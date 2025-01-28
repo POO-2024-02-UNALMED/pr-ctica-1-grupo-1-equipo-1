@@ -1,5 +1,4 @@
 package gestorAplicacion.administracion;
-
 import java.util.ArrayList;
 
 public abstract class Red {
@@ -55,22 +54,22 @@ public abstract class Red {
         // de Floyd-Warshall.
         // Iniciando la matriz de pesos.
         for (int[][] arista : carreteras) {
-            distancias[arista[0][0] - 1][arista[0][1] - 1] = w(arista[1][0], arista[0][1]);
-            distancias[arista[0][1] - 1][arista[0][0] - 1] = w(arista[1][0], arista[0][1]);
+            distancias[arista[0][0]][arista[0][1]] = w(arista[1][0], arista[1][1]);
+            distancias[arista[0][1]][arista[0][0]] = w(arista[1][0], arista[1][1]);
         }
         // Definiendo distancia infinita entre puntos que no tiene una ruta directa.
         for (int i = 0; i < totalParadas; i++) {
-            for (int j = i + 1; j < totalParadas; j++) {
-                if (distancias[i][j] == 0) {
+            for (int j = 0; j < totalParadas; j++) {
+                if (distancias[i][j] == 0 && i != j) {
                     distancias[i][j] = 100000; // Distancia infinita.
                 }
             }
         }
 
         // Algoritmo Floyd-Warshall.
-        for (int i = 0; i < totalParadas; i++) {
-            for (int j = 0; j < totalParadas; j++) {
-                for (int k = 0; k < totalParadas; k++) {
+        for (int k = 0; k < totalParadas; k++) {
+            for (int i = 0; i < totalParadas; i++) {
+                for (int j = 0; j < totalParadas; j++) {
                     distancias[i][j] = Math.min(distancias[i][j],
                             distancias[i][k] + distancias[k][j]);
                 }
@@ -120,8 +119,74 @@ public abstract class Red {
          * en la ruta donde se optimiza la posición de la nueva parada.
          */
 
-        // Haciendo el cambio adecuado.
-        return posicion(enteroAParada(ordinalTrayecto), Parada(ordinal));
+        // Tomando el número de trayecto
+        int longitudTrayecto = ordinalTrayecto.length;
+
+        // Trata de errores.
+        if (ordinalTrayecto.length < 1) {
+            // Mostrar error.
+        }
+        if((ordinal < 0) || (ordinal >= totalParadas)){
+            return null;
+        }
+
+        // Encontrando dónde se minimiza la distancia
+        int distanciaMinima = distancias[ordinal][ordinalTrayecto[0]];
+        int posicionDistanciaMinima = 0;
+        for (int i = 1; i < longitudTrayecto; i++) {
+            // Viendo que el punto no esté ya en el array.
+            if (distancias[ordinal][ordinalTrayecto[i]] == 0) {
+                return null;
+            }
+
+            // Viendo si la distancia a este punto es menor a las anteriores.
+            if (distanciaMinima > distancias[ordinal][ordinalTrayecto[i]]) {
+                distanciaMinima = distancias[ordinal][ordinalTrayecto[i]];
+                posicionDistanciaMinima = i;
+            }
+        }
+
+        // Viendo si es mejor poner la nueva parada antes del punto con distancia mínima
+        // o después.
+        int distanciaAnterior; // Distancia al agregar la nueva parada antes de la parada con distancia mínima.
+        int distanciaPosterior; // Distancia al agregar la nueva parada después de la parada con distancia
+                                // mínima.
+        int anterior, minima, posterior; // Ordinal de trayecto anterior al mínimo, mínimo y posterior al mínimo.
+        int nueva = ordinal; // Ordinal de la nueva parada.
+        minima = ordinalTrayecto[posicionDistanciaMinima];
+        if (posicionDistanciaMinima == 0) {
+            posterior = ordinalTrayecto[1];
+
+            // Distancia agregando la nueva parada al inicio.
+            distanciaAnterior = distancias[nueva][minima] + distancias[minima][posterior];
+            // Distancia agregando la nueva parada entre la primera y segunda parada.
+            distanciaPosterior = distancias[minima][nueva] + distancias[nueva][posterior];
+        } else if (posicionDistanciaMinima == longitudTrayecto - 1) {
+            anterior = ordinalTrayecto[longitudTrayecto - 2];
+            // Distancia agregando la nueva parada entre la penúltima y última parada.
+            distanciaAnterior = distancias[anterior][nueva] + distancias[nueva][minima];
+            // Distancia agregando la nueva parada al final.
+            distanciaPosterior = distancias[anterior][minima] + distancias[minima][nueva];
+        } else {
+            anterior = ordinalTrayecto[posicionDistanciaMinima - 1];
+            posterior = ordinalTrayecto[posicionDistanciaMinima + 1];
+            // Distancia agregando la nueva parada entre la penúltima y última parada.
+            distanciaAnterior = distancias[anterior][nueva] + distancias[nueva][minima] +
+                    distancias[minima][posterior];
+            // Distancia agregando la nueva parada al final.
+            distanciaPosterior = distancias[anterior][minima] + distancias[minima][nueva] +
+                    distancias[nueva][posterior];
+        }
+
+        // Devolviendo las posiciones óptimas.
+        int[] posiciones = new int[2];
+        if (distanciaAnterior > distanciaPosterior) {
+            posiciones = new int[] { posicionDistanciaMinima, posicionDistanciaMinima + 1 };
+        } else {
+            posiciones = new int[] { posicionDistanciaMinima - 1, posicionDistanciaMinima };
+        }
+
+        return posiciones;
     }
 
     static int[] posicion(Parada[] trayecto, Parada parada) {
@@ -142,74 +207,13 @@ public abstract class Red {
          * en la ruta donde se optimiza la posición de la nueva parada.
          */
 
-        // Tomando el número de trayecto
-        int longitudTrayecto = trayecto.length;
-
-        // Trata de errores.
-        if (trayecto.length < 1) {
-            // Mostrar error.
-        }
-        if (parada == null) {
-            return null;
+        // Pasando las paradas a ordinales.
+        int[] ordinalesTrayecto = new int[trayecto.length];
+        for(int i = 0; i < trayecto.length; i++){
+            ordinalesTrayecto[i] = trayecto[i].ordinal();
         }
 
-        // Encontrando dónde se minimiza la distancia
-        int distanciaMinima = distancias[parada.ordinal()][trayecto[0].ordinal()];
-        int posicionDistanciaMinima = 0;
-        for (int i = 1; i < longitudTrayecto; i++) {
-            // Viendo que el punto no esté ya en el array.
-            if (distancias[parada.ordinal()][trayecto[i].ordinal()] == 0) {
-                return null;
-            }
-
-            // Viendo si la distancia a este punto es menor a las anteriores.
-            if (distanciaMinima > distancias[parada.ordinal()][trayecto[i].ordinal()]) {
-                distanciaMinima = distancias[parada.ordinal()][trayecto[i].ordinal()];
-                posicionDistanciaMinima = i;
-            }
-        }
-
-        // Viendo si es mejor poner la nueva parada antes del punto con distancia mínima
-        // o después.
-        int distanciaAnterior; // Distancia al agregar la nueva parada antes de la parada con distancia mínima.
-        int distanciaPosterior; // Distancia al agregar la nueva parada después de la parada con distancia
-                                // mínima.
-        int anterior, minima, posterior; // Ordinal de trayecto anterior al mínimo, mínimo y posterior al mínimo.
-        int nueva = parada.ordinal(); // Ordinal de la nueva parada.
-        minima = trayecto[posicionDistanciaMinima].ordinal();
-        if (posicionDistanciaMinima == 0) {
-            posterior = trayecto[1].ordinal();
-
-            // Distancia agregando la nueva parada al inicio.
-            distanciaAnterior = distancias[minima][posterior] + distancias[minima][nueva];
-            // Distancia agregando la nueva parada entre la primera y segunda parada.
-            distanciaPosterior = distancias[minima][nueva] + distancias[nueva][posterior];
-        } else if (posicionDistanciaMinima == longitudTrayecto - 1) {
-            anterior = trayecto[posicionDistanciaMinima - 2].ordinal();
-            // Distancia agregando la nueva parada entre la penúltima y última parada.
-            distanciaAnterior = distancias[anterior][minima] + distancias[minima][nueva];
-            // Distancia agregando la nueva parada al final.
-            distanciaPosterior = distancias[anterior][nueva] + distancias[nueva][minima];
-        } else {
-            anterior = trayecto[posicionDistanciaMinima - 1].ordinal();
-            posterior = trayecto[posicionDistanciaMinima + 1].ordinal();
-            // Distancia agregando la nueva parada entre la penúltima y última parada.
-            distanciaAnterior = distancias[anterior][nueva] + distancias[nueva][minima] +
-                    distancias[minima][posterior];
-            // Distancia agregando la nueva parada al final.
-            distanciaPosterior = distancias[anterior][minima] + distancias[minima][nueva] +
-                    distancias[nueva][posterior];
-        }
-
-        // Devolviendo las posiciones óptimas.
-        int[] posiciones = new int[2];
-        if (distanciaAnterior > distanciaPosterior) {
-            posiciones = new int[] { posicionDistanciaMinima - 1, posicionDistanciaMinima + 1 };
-        } else {
-            posiciones = new int[] { posicionDistanciaMinima - 2, posicionDistanciaMinima };
-        }
-
-        return posiciones;
+        return posicion(ordinalesTrayecto, parada.ordinal());
     }
 
     public static int longitud(int[] ordinalesTrayecto) {
@@ -339,14 +343,13 @@ public abstract class Red {
         // vértice.
         int[] padres = new int[totalParadas];
         int[] recorrido = new int[totalParadas];
-        recorrido[verticeInicial] = 0;
 
         // Estableciendo la distancia infinita y que el padre es null (Un padre
         // inexistente será tomado como -1).
         for (int i = 0; i < totalParadas; i++) {
             padres[i] = -1;
             recorrido[i] = 100000; // Distancia infinita.
-        }
+        }recorrido[verticeInicial] = 0;
 
         // Implementación del algoritmo de Bell-Forman para hallar el predecesor y
         // distancia asociada óptima
@@ -373,24 +376,21 @@ public abstract class Red {
         }
 
         // Construcción de las paradas intermedias.
-        ArrayList<Parada> paradas = new ArrayList<Parada>();
+        ArrayList<Integer> paradas = new ArrayList<Integer>();
         int parada = verticeFinal;
-        paradas.add(Parada(parada));
-        while (padres[parada] > -1) {
+        paradas.add(parada);
+        while (padres[parada] != -1) {
             // Añadiendo al padre a la lista.
-            paradas.add(0, Parada(padres[parada]));
+            paradas.add(0, padres[parada]);
 
             // Haciendo inducción.
             parada = padres[parada];
         }
 
-        // Añadiendo el vértice de origen a la parada.
-        paradas.add(0, Parada(verticeInicial));
-
         // Retorno de las paradas.
         int[] ordinalesRutaOptima = new int[paradas.size()];
         for (int i = 0; i < paradas.size(); i++) {
-            ordinalesRutaOptima[i] = paradas.get(i).ordinal();
+            ordinalesRutaOptima[i] = paradas.get(i);
         }
 
         return ordinalesRutaOptima;
@@ -410,25 +410,32 @@ public abstract class Red {
          * Paradas (ordinales) organizadas para minimizar el orden.
          */
 
+        // Verificación de errores.
+        if(ordinales == null){
+            return new int[0];
+        }
+        else if(ordinales.length < 1){
+            return ordinales;
+        }
+
         // Creando el array que contendrá las apradas ordenadas.
-        int[] paradasOrdenadas = new int[1];
-        paradasOrdenadas[0] = ordinales[0];
+        int[] paradasOrdenadas = new int[] {ordinales[0], ordinales[1]};
 
         // Ordenando el array.
-        int[] temp;
-        for (int i = 1; i < ordinales.length; i++) {
+        int[] temp = new int[2];
+        for (int i = 2; i < ordinales.length; i++) {
             // Viendo la posición del elemento i-ésimo.
-            int[] posiciones = posicion(enteroAParada(paradasOrdenadas), Parada(ordinales[i]));
+            int[] posiciones = posicion(paradasOrdenadas, ordinales[i]);
 
             // Añadiéndolo a la lista si es distinto.
             if (posiciones != null) {
-                temp = new int[i + 1];
-                temp[posiciones[0] + 2] = ordinales[i];
-                for (int j = 0; j < i + 1; j++) {
+                temp = new int[temp.length + 1];
+                temp[posiciones[0] + 1] = ordinales[i];
+                for (int j = 0; j < temp.length; j++) {
                     if (j < posiciones[0] + 1) {
-                        temp[i] = paradasOrdenadas[i];
-                    } else if (j > posiciones[0] + 1) {
-                        temp[i] = paradasOrdenadas[i - 1];
+                        temp[j] = paradasOrdenadas[j];
+                    } else if (j > posiciones[1]) {
+                        temp[j] = paradasOrdenadas[j - 1];
                     }
                 }
 
@@ -595,11 +602,14 @@ public abstract class Red {
             }
         }
 
+        // Desplazando de manera correcta el último elemento.
+        if(estaEnElArray){
+            nuevoTrayecto[numeroParadas - 2] = ordinalTrayecto[numeroParadas - 1];
+        }
+
         // Preguntando si la parada se encontraba en el array.
         if (!estaEnElArray && ordinalTrayecto[numeroParadas - 1] != ordinal) {
             return ordinalTrayecto;
-        } else if (!estaEnElArray && ordinalTrayecto[numeroParadas - 1] == ordinal) {
-            nuevoTrayecto[numeroParadas - 2] = ordinalTrayecto[numeroParadas - 1];
         }
 
         return nuevoTrayecto;
