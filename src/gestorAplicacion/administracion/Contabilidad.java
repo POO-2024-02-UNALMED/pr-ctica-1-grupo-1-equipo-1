@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import gestorAplicacion.administracion.Red.Parada;
-
 import java.io.Serializable;
 
 public class Contabilidad implements Serializable {
@@ -13,8 +11,8 @@ public class Contabilidad implements Serializable {
     static double costoCompensacion = 10.0;
     private double ingresos;
     private double costosOperativos;
-    private static ArrayList<Factura> ventas;
-    private static ArrayList<Factura> transaccionesReembolsadas;
+    private static ArrayList<Factura> ventas = new ArrayList<>();
+    private static ArrayList<Factura> transaccionesReembolsadas = new ArrayList<>();
 
     // Getters y Setters//
     public double getIngresos() {
@@ -59,8 +57,8 @@ public class Contabilidad implements Serializable {
     public static double calcularTarifas(Factura factura) {
         double tarifaBase = 5.0; // Tarifa fija por procesamiento.
         double porcentajeReembolso = 0.02 * factura.getValor(); // 2% del valor del reembolso.
-        double tarifaPorMetodo = factura.getMetodoPago() == Factura.MetodoPago.TarjetadeCredito ? 2.0 : 0.0; // operador
-                                                                                                             // ternario
+        double tarifaPorMetodo = factura.getMetodoPago() == Factura.MetodoPagos.TarjetadeCredito ? 2.0 : 0.0; // operador
+                                                                                                              // ternario
 
         return tarifaBase + porcentajeReembolso + tarifaPorMetodo;
     }
@@ -81,7 +79,7 @@ public class Contabilidad implements Serializable {
         }
 
         // Verificar si el método de pago es transferencia y aplicar descuento
-        if (factura.getMetodoPago() == Factura.MetodoPago.Transferencia) {
+        if (factura.getMetodoPago() == Factura.MetodoPagos.Transferencia) {
             descuento += 0.05; // Descuento adicional del 5%
         }
 
@@ -161,10 +159,9 @@ public class Contabilidad implements Serializable {
         }
     }
 
-    public static double calcularValorTiquete(Ruta ruta, String origen, String destino) {
+    public static double calcularValorTiquete(Ruta ruta) {
         double valorBasePorKm = 0.05;
-        Parada[] paradas = ruta.getParadas();
-        double distancia = Red.longitud(paradas);
+        double distancia = ruta.getDistancia();
         double valorTiquete = distancia * valorBasePorKm;
         return valorTiquete;
     }

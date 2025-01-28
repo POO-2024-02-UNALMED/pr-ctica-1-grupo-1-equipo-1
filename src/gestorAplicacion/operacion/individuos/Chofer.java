@@ -1,16 +1,18 @@
 package gestorAplicacion.operacion.individuos;
 
 import gestorAplicacion.administracion.Empresa;
+import gestorAplicacion.administracion.Red.Parada;
 import gestorAplicacion.administracion.Ruta;
 import gestorAplicacion.operacion.logistica.Bus;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
-public class Chofer extends Persona implements Serializable{
+public class Chofer extends Persona implements Serializable {
     private int sueldo;
     private int cantidadHorasConducidas = 0;
     private Empresa empresa;
@@ -21,6 +23,7 @@ public class Chofer extends Persona implements Serializable{
     private Bus bus;
     private Pasajero pasajero;
     private int tiempoReal;
+    private static ArrayList<Chofer> choferes = new ArrayList<Chofer>();
 
     // El horario va a ser un ArrayList de arrays con 2 elementos {Fecha inicio,
     // Fecha fin}.
@@ -33,9 +36,19 @@ public class Chofer extends Persona implements Serializable{
         this.id = id;
         this.sueldo = sueldo;
     }
-    public Chofer(int sueldo){
 
+    public Chofer(String nombre, int edad, int id, int sueldo, Bus bus) {
+        this.nombre = nombre;
+        this.edad = edad;
+        this.id = id;
+        this.sueldo = sueldo;
+        this.bus = bus;
     }
+
+    public Chofer(int sueldo) {
+        this.sueldo = sueldo;
+    }
+
     public Chofer(int sueldo, ArrayList<LocalDateTime[]> horario) {
         this.sueldo = sueldo;
         if (horario != null) {
@@ -52,9 +65,11 @@ public class Chofer extends Persona implements Serializable{
     public void setSueldo(int nuevoSueldo) {
         sueldo = nuevoSueldo;
     }
-     public void aumentarSueldo(int sueldo) {
+
+    public void aumentarSueldo(int sueldo) {
         this.sueldo += sueldo;
-     }
+    }
+
     public int getCantidadHorasConducidas() {
         return cantidadHorasConducidas;
     }
@@ -86,6 +101,10 @@ public class Chofer extends Persona implements Serializable{
 
     public int getTiempoReal() {
         return tiempoReal;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void setTiempoReal(int nuevoTiempoReal) {
@@ -312,6 +331,44 @@ public class Chofer extends Persona implements Serializable{
         }
 
         return dofa;
+    }
+
+    public static void eliminarChofer(Scanner scanner) {
+        System.out.println("Eliminar Chofer");
+        System.out.print("ID del chofer a eliminar: ");
+        int idRuta = scanner.nextInt();
+        scanner.nextLine(); // Consumir la nueva línea
+
+        // Buscar y eliminar el chofer en la lista de choferes
+        for (Chofer chofer : choferes) {
+            if (chofer.getId() == idRuta) { 
+                System.out.println("Chofer eliminado con éxito.");
+                choferes.remove(chofer);
+                break;
+            } else {
+                System.out.println("No se encontró ningin chofer con ese ID.");
+            }
+        }
+    }
+
+    public static void anadirChofer(Scanner scanner) {
+        System.out.println("Añadir Chofer");
+
+        scanner.nextLine();
+        System.out.print("Nombre: ");
+        String nombre = scanner.nextLine().trim();
+        System.out.print("Edad: ");
+        int edad = scanner.nextInt();
+        System.out.print("ID: ");
+        int Id = scanner.nextInt();
+        System.out.print("Salario: ");
+        int salario = scanner.nextInt();
+        scanner.nextLine();
+
+        Chofer nuevoChofer = new Chofer(nombre, edad, Id, salario);
+        choferes.add(nuevoChofer);
+
+        System.out.println("Chofer añadido con éxito.");
     }
 
     public double getPuntajeDefinitivo() {

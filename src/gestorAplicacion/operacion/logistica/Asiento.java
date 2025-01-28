@@ -1,18 +1,24 @@
 package gestorAplicacion.operacion.logistica;
+import java.io.Serializable;
+
 import gestorAplicacion.operacion.individuos.Pasajero;
 
-public class Asiento{
+public class Asiento implements Serializable{
 
     //Atributos//
 
     private int idAsiento;
     private Bus bus;
-    private boolean estado;
+    private boolean estado = true;
     private Pasajero Usuario;
     private String integridad;
 
     public Asiento(Pasajero pasajero){
         this.Usuario = pasajero;
+        this.estado = true;
+    }
+    public Asiento(){
+        this.estado = true;
     }
     // Getters y Setters//
 

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class Factura implements Serializable {
     // Atributos
-    public enum MetodoPago {
+    public enum MetodoPagos {
         Efectivo, TarjetadeCredito, TarjetadeDebito, Transferencia
     }
 
@@ -19,13 +19,13 @@ public class Factura implements Serializable {
     private int idUsuario;
     private double valor;
     private int numAsientosAsignados;
-    private ArrayList<Asiento> asientosAsignados;
+    private ArrayList<Asiento> asientosAsignados = new ArrayList<>();;
     private LocalDateTime fecha;
     private int cantidadMaletas;
     private Ruta rutaElegida;
     private Parada origen;
     private Parada destino;
-    private MetodoPago metodoPago;
+    private MetodoPagos metodoPago;
 
     // Constructores
     public Factura(String usuarioNombre, int idFactura, double valorTiquete, int numAsientosAsignados,
@@ -41,7 +41,7 @@ public class Factura implements Serializable {
         this.rutaElegida = rutaElegida;
         this.origen = Parada.valueOf(origen);
         this.destino = Parada.valueOf(destino);
-        this.metodoPago = MetodoPago.valueOf(met);
+        this.metodoPago = MetodoPagos.valueOf(met);
 
     }
 
@@ -59,7 +59,7 @@ public class Factura implements Serializable {
         this.rutaElegida = rutaElegida;
         this.origen = origen;
         this.destino = destino;
-        this.metodoPago = MetodoPago.valueOf(met);
+        this.metodoPago = MetodoPagos.valueOf(met);
 
     }
     // Getters y Setters//
@@ -67,7 +67,7 @@ public class Factura implements Serializable {
     public ArrayList<Asiento> getAsientosAsignados() {
         return asientosAsignados;
     }
-    
+
     public Bus getBusAsignado() {
         if (rutaElegida != null) {
             return rutaElegida.getBusAsociado();
@@ -76,11 +76,11 @@ public class Factura implements Serializable {
         }
     }
 
-    public MetodoPago getMetodoPago() {
+    public MetodoPagos getMetodoPago() {
         return metodoPago;
     }
 
-    public void setMetodoPago(MetodoPago metodoPago) {
+    public void setMetodoPago(MetodoPagos metodoPago) {
         this.metodoPago = metodoPago;
     }
 
@@ -243,8 +243,17 @@ public class Factura implements Serializable {
 
     // Metodos de Instancia//
 
-    public void ImprimirFactura() {
+    public String ImprimirFactura(Factura factura) {
+        return ("=============================================\n" + //
+                "          Reporte de Facutra Comprada \n" + //
+                "=============================================\n" + //
 
+                "Factura: " + factura.getIdFactura() + "\n" +
+                "Usuario: " + factura.getUsuarioNombre() + "\n" +
+                "Valor: $" + factura.getValor() + " USD" + "\n" +
+                "Origen: " + factura.getOrigen() + "\n" +
+                "Destino: " + factura.getDestino() + "\n" +
+                "Fecha: " + factura.getFecha());
     }
 
     public void AplicarDescuento() {

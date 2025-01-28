@@ -10,7 +10,10 @@ import java.util.ArrayList; // Para crear la red de carreteras que tiene el term
 import java.util.Arrays; // Para ordenar arrays.
 import java.util.Comparator;
 
-public class Empresa {
+import java.io.Serializable;
+
+public class Empresa implements Serializable {
+
     private String nombre;
     private Chofer[] empleados;
     private Bus[] busesTotales;

@@ -30,12 +30,6 @@ public class Main {
         return dates;
     }
 
-    static {
-        for (int[][] carretera : Red.carreteras) {
-            System.out.println(Arrays.deepToString(carretera));
-        }
-    }
-
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -51,11 +45,10 @@ public class Main {
         System.out.println("\nOpciones disponibles:");
         System.out.println("1. Consultar Rutas");
         System.out.println("2. Comprar Pasaje");
-        System.out.println("3. Ver Pasajes Comprados");
-        System.out.println("4. Solicitar Reembolso");
-        System.out.println("5. Panel Empresa");
-        System.out.println("6. Salir");
-        System.out.print("Seleccione una opción (1-6): ");
+        System.out.println("3. Solicitar Reembolso");
+        System.out.println("4. Panel Empresa");
+        System.out.println("5. Salir");
+        System.out.print("Seleccione una opción (1-5): ");
 
         int opcion = scanner.nextInt();
         scanner.nextLine();
@@ -66,7 +59,40 @@ public class Main {
     private static void ejecutarCaso(Scanner scanner, int opcion) {
         switch (opcion) {
             case 1:
-                // Lógica para consultar rutas (pendiente de implementar)
+                System.out.println("=============================================");
+                System.out.println(" Bienvenido al sistema de consultas de rutas ");
+                System.out.println("=============================================");
+                System.out.println("");
+                System.out.println("Ciudad de origen: ");
+                for (int i = 0; i < Red.totalParadas; i++) {
+                    System.out.println((i + 1) + ". " + Red.Parada(i));
+                }
+                System.out.print("Ingrese el nombre de la ciudad: ");
+
+                String lugarInicio = scanner.nextLine().toUpperCase();
+
+                System.out.println("Ciudad de destino: ");
+                for (int i = 0; i < Red.totalParadas; i++) {
+                    if (Red.Parada(i) == Red.Parada.valueOf(lugarInicio)) {
+                        continue;
+                    }
+                    System.out.println((i + 1) + ". " + Red.Parada(i));
+                }
+                System.out.print("Ingrese el nombre de la ciudad: ");
+                String lugarFinal = scanner.nextLine().toUpperCase();
+
+                List<Ruta> rutasDisponibles = Ruta.filtrarRutas(lugarInicio, lugarFinal);
+                if (rutasDisponibles.isEmpty()) {
+                    System.out.println("No hay rutas disponibles entre " + capitalizeFirstChar(lugarInicio) + " y "
+                            + capitalizeFirstChar(lugarFinal));
+                    break;
+                }
+
+                System.out.println("Rutas disponibles:");
+                for (int i = 0; i < rutasDisponibles.size(); i++) {
+                    System.out.println((i + 1) + ". " + rutasDisponibles.get(i).imprimirRuta());
+                }
+
                 break;
             case 2:
                 System.out.println("=============================================");
@@ -103,7 +129,7 @@ public class Main {
                     System.out.print("Edad del acompañante: ");
                     int edadAcomp = scanner.nextInt();
                     scanner.nextLine();
-                    // pasajero.registrarAcompanante(nombreAcomp, idAcomp, edadAcomp);
+                    pasajero.registrarAcompanante(nombreAcomp, idAcomp, edadAcomp);
                 }
 
                 System.out.println("Ciudad de origen: ");
@@ -112,86 +138,61 @@ public class Main {
                 }
                 System.out.print("Ingrese el nombre de la ciudad: ");
 
-                String lugarInicio = scanner.nextLine().toUpperCase();
+                String lugarInicioCaso1 = scanner.nextLine().toUpperCase();
 
                 System.out.println("Ciudad de destino: ");
                 for (int i = 0; i < Red.totalParadas; i++) {
-                    if (Red.Parada(i) == Red.Parada.valueOf(lugarInicio)) {
+                    if (Red.Parada(i) == Red.Parada.valueOf(lugarInicioCaso1)) {
                         continue;
                     }
                     System.out.println((i + 1) + ". " + Red.Parada(i));
                 }
                 System.out.print("Ingrese el nombre de la ciudad: ");
-                String lugarFinal = scanner.nextLine().toUpperCase();
+                String lugarFinalCaso1 = scanner.nextLine().toUpperCase();
 
-                List<Ruta> rutasDisponibles = Ruta.filtrarRutas(lugarInicio, lugarFinal);
-                if (rutasDisponibles.isEmpty()) {
-                    System.out.println("No hay rutas disponibles entre " + capitalizeFirstChar(lugarInicio) + " y "
-                            + capitalizeFirstChar(lugarFinal));
+                List<Ruta> rutasDisponiblesCaso1 = Ruta.filtrarRutas(lugarInicioCaso1, lugarFinalCaso1);
+                if (rutasDisponiblesCaso1.isEmpty()) {
+                    System.out.println("No hay rutas disponibles entre " + capitalizeFirstChar(lugarInicioCaso1) + " y "
+                            + capitalizeFirstChar(lugarFinalCaso1));
                     break;
                 }
 
                 System.out.println("Rutas disponibles:");
-                for (int i = 0; i < rutasDisponibles.size(); i++) {
-                    System.out.println((i + 1) + ". " + rutasDisponibles.get(i));
+                for (int i = 0; i < rutasDisponiblesCaso1.size(); i++) {
+                    System.out.println((i + 1) + ". " + rutasDisponiblesCaso1.get(i));
                 }
 
-                System.out.println("Seleccione la opción de ruta (1-" + rutasDisponibles.size() + "): ");
+                System.out.println("Seleccione la opción de ruta (1-" + rutasDisponiblesCaso1.size() + "): ");
                 int opcionRuta = scanner.nextInt();
                 scanner.nextLine();
 
-                if (opcionRuta < 1 || opcionRuta > rutasDisponibles.size()) {
+                if (opcionRuta < 1 || opcionRuta > rutasDisponiblesCaso1.size()) {
                     System.out.println("Opción inválida");
                     break;
                 }
-
-                Ruta rutaSeleccionada = rutasDisponibles.get(opcionRuta - 1);
-                Factura factura = pasajero.comprarTiquete(String.valueOf(rutaSeleccionada.getLugarInicio()),
-                        String.valueOf(rutaSeleccionada.getLugarFinal()), "Tarjeta", horaZero, scanner);
-
-                Asiento[] asientos = factura.getAsientosAsignados().toArray(new Asiento[0]);
-
-                System.out.println("Asientos disponibles en el bus " + factura.getBusAsignado().getPlaca() + ": ");
-
-                for (int i = 0; i < asientos.length; i++) {
-                    if (asientos[i].isEstado()) {
-                        System.out.print((i + 1) + " ");
-                    } else {
-                       System.out.print("X ");
-                    } 
-                    if ((i + 1) % 4 == 0) {
-                        System.out.println();
-                    }
+                System.out.println("Seleccione el método de pago: ");
+                for (int i = 0; i < Factura.MetodoPagos.values().length; i++) {
+                    System.out.println((i + 1) + ". " + Factura.MetodoPagos.values()[i]);
                 }
-
-                int opcionAsiento;
-                do {
-                    System.out.print("Seleccione un asiento: ");
-                    opcionAsiento = scanner.nextInt();
-
-                    if (opcionAsiento > 0 && opcionAsiento <= asientos.length
-                            && !asientos[opcionAsiento - 1].isEstado()) {
-                        System.out.println(
-                                "El asiento seleccionado ya está ocupado. Por favor, seleccione otro asiento.");
-                    }
-                } while (opcionAsiento < 1 || opcionAsiento > asientos.length
-                        || !asientos[opcionAsiento - 1].isEstado());
-
-                Asiento asientoSeleccionado = asientos[opcionAsiento - 1];
-                asientoSeleccionado.setEstado(false);
-                asientoSeleccionado.setUsuario(pasajero);
-                pasajero.setAsiento(asientoSeleccionado);
-
+                int opcionPago = scanner.nextInt();
+                scanner.nextLine();
+                if (opcionPago < 1 || opcionPago > Factura.MetodoPagos.values().length) {
+                    System.out.println("Opción inválida");
+                    opcionPago = scanner.nextInt();
+                }
+                String tipoOpcionPago = Factura.MetodoPagos.values()[opcionPago - 1].toString();
+                Ruta rutaSeleccionada = rutasDisponiblesCaso1.get(opcionRuta - 1);
+                Factura factura = pasajero.comprarTiquete(rutaSeleccionada, tipoOpcionPago, horaZero, scanner,
+                        pasajero);
+                System.out.println("Factura generada con éxito:");
+                System.out.println(factura.ImprimirFactura(factura));
                 break;
 
-            case 3:
-                // Lógica para ver pasajes comprados (pendiente de implementar)
-                break;
-            case 4: // Funcionalidad 3 Reembolso de Tiquete
-            System.out.println("=============================================");
-            System.out.println(" Bienvenido al sistema de reembolsos de tiquetes ");
-            System.out.println("=============================================");
-            System.out.println("");
+            case 3: // Funcionalidad 3 Reembolso de Tiquete
+                System.out.println("=============================================");
+                System.out.println(" Bienvenido al sistema de reembolsos de tiquetes ");
+                System.out.println("=============================================");
+                System.out.println("");
                 System.out.print("Para hacerse efectivo el reembolso se le pediran una serie de datos" +
                         "\nAntes de esto tenga en cuenta que el dinero reembolsado" +
                         "\nSera ingresado a su monedero virtual," +
@@ -295,7 +296,7 @@ public class Main {
                                 System.out.println("Su wallet actual es: " + pasajero1.getWallet());
                                 System.out.println("=============================================");
                                 // Ejecucion Correcta
-                                
+
                                 break;
 
                             } else {
@@ -326,12 +327,61 @@ public class Main {
                 System.out.println("Gracias por usar el sistema. ¡Hasta luego!");
                 scanner.close();
                 return;
-            case 6:
+            case 4:
                 System.out.println("Panel Empresa");
-                // Aquí se debería crear un panel de opciones, pero
-                // no sé cuáles opciones extra hay.
+                System.out.println("=============================================");
+                System.out.println("           Panel de Empresa                  ");
+                System.out.println("=============================================");
+                System.out.println("");
 
-                // Implementación de la funcionalidad 4.
+                // Mostrar opciones del panel de empresa
+                System.out.println("Opciones disponibles:");
+                System.out.println("1. Agregar Chofer");
+                System.out.println("2. Eliminar Chofer");
+                System.out.println("3. Agregar Bus");
+                System.out.println("4. Eliminar Bus");
+                System.out.println("5. Añadir Ruta");
+                System.out.println("6. Eliminar Ruta");
+                System.out.println("7. Volver al Menú Principal");
+                System.out.print("Seleccione una opción (1-7): ");
+
+                int opcionEmpresa = scanner.nextInt();
+                scanner.nextLine(); // Consumir la nueva línea
+                System.out.println("");
+
+                switch (opcionEmpresa) {
+                    case 1:
+                        Chofer.anadirChofer(scanner);
+                        break;
+                    case 2:
+                        Chofer.eliminarChofer(scanner);
+                        break;
+                    case 3:
+                        Bus.anadirBus(scanner);
+                        break;
+                    case 4:
+                        Bus.eliminarBus(scanner);
+                        break;
+                    case 5:
+                        Ruta.anadirRuta(scanner);
+                        break;
+                    case 6:
+                        Ruta.eliminarRuta(scanner);
+                        break;
+                    case 7:
+                        // Volver al menú principal
+                        int opcion1 = mostrarMenuPrincipal(scanner);
+                        ejecutarCaso(scanner, opcion1);
+                        break;
+                    default:
+                        System.out.println("Opción no válida. Intente nuevamente.");
+                }
+
+                // Mostrar el panel de empresa nuevamente después de ejecutar una opción
+                // (excepto si se elige volver al menú principal)
+                if (opcionEmpresa >= 7) {
+                    ejecutarCaso(scanner, 4); // Volver a mostrar el panel de empresa
+                }
                 funcionalidad4(scanner);
             default:
                 System.out.println("Opción no válida. Intente nuevamente.");
@@ -811,4 +861,5 @@ public class Main {
                 rutaCreada.getBusAsociado().toString() + " con chofer " +
                 rutaCreada.getChoferAsociado().toString());
     }
+
 }

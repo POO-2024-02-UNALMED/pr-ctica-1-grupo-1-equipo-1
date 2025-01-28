@@ -1,4 +1,5 @@
 package gestorAplicacion.administracion;
+
 import java.util.ArrayList;
 
 public abstract class Red {
@@ -54,8 +55,8 @@ public abstract class Red {
         // de Floyd-Warshall.
         // Iniciando la matriz de pesos.
         for (int[][] arista : carreteras) {
-            distancias[arista[0][0]][arista[0][1]] = w(arista[1][0], arista[1][1]);
-            distancias[arista[0][1]][arista[0][0]] = w(arista[1][0], arista[1][1]);
+            distancias[arista[0][0] - 1][arista[0][1] - 1] = w(arista[1][0], arista[0][1]);
+            distancias[arista[0][1] - 1][arista[0][0] - 1] = w(arista[1][0], arista[0][1]);
         }
         // Definiendo distancia infinita entre puntos que no tiene una ruta directa.
         for (int i = 0; i < totalParadas; i++) {
@@ -79,7 +80,7 @@ public abstract class Red {
 
     public static Parada Parada(int i) {
         // Devuelve la parada con ordinal i.
-        return Parada.values()[i - 1];
+        return Parada.values()[i];
     }
 
     private static int w(int distancia, int tiempo) {
@@ -126,7 +127,7 @@ public abstract class Red {
         if (ordinalTrayecto.length < 1) {
             // Mostrar error.
         }
-        if((ordinal < 0) || (ordinal >= totalParadas)){
+        if ((ordinal < 0) || (ordinal >= totalParadas)) {
             return null;
         }
 
@@ -209,7 +210,7 @@ public abstract class Red {
 
         // Pasando las paradas a ordinales.
         int[] ordinalesTrayecto = new int[trayecto.length];
-        for(int i = 0; i < trayecto.length; i++){
+        for (int i = 0; i < trayecto.length; i++) {
             ordinalesTrayecto[i] = trayecto[i].ordinal();
         }
 
@@ -349,7 +350,8 @@ public abstract class Red {
         for (int i = 0; i < totalParadas; i++) {
             padres[i] = -1;
             recorrido[i] = 100000; // Distancia infinita.
-        }recorrido[verticeInicial] = 0;
+        }
+        recorrido[verticeInicial] = 0;
 
         // Implementación del algoritmo de Bell-Forman para hallar el predecesor y
         // distancia asociada óptima
@@ -411,15 +413,14 @@ public abstract class Red {
          */
 
         // Verificación de errores.
-        if(ordinales == null){
+        if (ordinales == null) {
             return new int[0];
-        }
-        else if(ordinales.length < 1){
+        } else if (ordinales.length < 1) {
             return ordinales;
         }
 
         // Creando el array que contendrá las apradas ordenadas.
-        int[] paradasOrdenadas = new int[] {ordinales[0], ordinales[1]};
+        int[] paradasOrdenadas = new int[] { ordinales[0], ordinales[1] };
 
         // Ordenando el array.
         int[] temp = new int[2];
@@ -603,7 +604,7 @@ public abstract class Red {
         }
 
         // Desplazando de manera correcta el último elemento.
-        if(estaEnElArray){
+        if (estaEnElArray) {
             nuevoTrayecto[numeroParadas - 2] = ordinalTrayecto[numeroParadas - 1];
         }
 

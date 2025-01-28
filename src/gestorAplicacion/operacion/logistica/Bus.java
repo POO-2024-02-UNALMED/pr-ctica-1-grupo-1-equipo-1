@@ -1,13 +1,15 @@
 package gestorAplicacion.operacion.logistica;
 
 import gestorAplicacion.administracion.Empresa;
+import gestorAplicacion.administracion.Red.Parada;
 import gestorAplicacion.administracion.Ruta;
 import gestorAplicacion.operacion.individuos.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-
-public class Bus {
+import java.util.Scanner;
+import java.io.Serializable;
+public class Bus implements Serializable{
     public enum PesoMaxEquipaje { // Esto nos dira cual es el maximo que soporta el bus
         LIGERO(500), // Peso máximo en kilogramos
         MEDIO(750),
@@ -29,25 +31,34 @@ public class Bus {
 
     private String placa;
     private int cantidadAsientos;
-    private ArrayList<Asiento> asientos = new ArrayList<>(); // Initialize asientos here
+    private ArrayList<Asiento> asientos = new ArrayList<>(cantidadAsientos); // Initialize asientos here
     private int kilometrosRecorridos = 0;
     private ArrayList<Ruta> rutasFuturas = new ArrayList<>();
     private Empresa empresa;
     private ArrayList<Maleta> equipaje = new ArrayList<>(); // Initialize equipaje here
     private double consumoReportado;
-    
+    private Bus.PesoMaxEquipaje pesoMaxEquipaje;
+    private static ArrayList<Bus> buses = new ArrayList<>(); // Initialize
 
     // Constructores
-    public Bus(String placa, int cantidadAsientos, PesoMaxEquipaje pesoMaxEquipaje) {
-        this(placa, cantidadAsientos, pesoMaxEquipaje, null);
-    }
-
-    public Bus(String placa, int cantidadAsientos, PesoMaxEquipaje pesoMaxEquipaje, ArrayList<Ruta> rutasFuturas) {
+    public Bus(String placa, int cantidadAsientos, Bus.PesoMaxEquipaje pesoMaxEquipaje) {
         this.placa = placa;
         this.cantidadAsientos = cantidadAsientos;
-        // Removed duplicate line: this.cantidadAsientos = cantidadAsientos;
+        this.pesoMaxEquipaje = pesoMaxEquipaje;
+        for (int i = 0; i < cantidadAsientos; i++) {
+            asientos.add(new Asiento());
+        }
+    }
+
+    public Bus(String placa, int cantidadAsientos, Bus.PesoMaxEquipaje pesoMaxEquipaje, ArrayList<Ruta> rutasFuturas) {
+        this.placa = placa;
+        this.cantidadAsientos = cantidadAsientos;
+
         if (rutasFuturas != null) {
             this.setRutasFuturas(rutasFuturas);
+        }
+        for (int i = 0; i < cantidadAsientos; i++) {
+            asientos.add(new Asiento());
         }
     }
 
@@ -169,11 +180,11 @@ public class Bus {
          * - asignado: Boolean,
          * Indica si se pudo añadir la ruta.
          */
-            // Verificar si la ruta ya existe en la lista
+        // Verificar si la ruta ya existe en la lista
         if (rutasFuturas.contains(nuevaRuta)) {
             System.out.println("La ruta ya está asignada a este bus.");
             return false;
-    }
+        }
 
         for (Ruta ruta : rutasFuturas) {
             // Check for overlaps with existing routes, considering a 1-hour buffer
@@ -261,6 +272,44 @@ public class Bus {
 
     public String toString() {
         return "Soy el bus con placa " + placa;
+    }
+
+    public static void eliminarBus(Scanner scanner) {
+        System.out.println("Eliminar Bus");
+        System.out.print("Placa del Bus a eliminar: ");
+        String idRuta = scanner.nextLine().trim().toUpperCase();
+        scanner.nextLine(); // Consumir la nueva línea
+
+        // Eliminar la ruta de la empresa
+        for (Bus bus : buses) {
+            if (bus.getPlaca() == idRuta) { 
+                System.out.println("Bus eliminado con éxito.");
+                buses.remove(bus);
+                break;
+            } else {
+                System.out.println("No se encontró ninguna bus con esa placa.");
+            }
+        }
+    }
+
+    public static void anadirBus(Scanner scanner) {
+        System.out.println("Añadir Bus");
+        System.out.print("Placa del Bus: ");
+        String idBus = scanner.nextLine();
+        System.out.print("Cantidad de Asientos: ");
+        int asientos = scanner.nextInt();
+        scanner.nextLine();
+        System.out.print("Peso Máximo: ");
+        for (int i = 0; i < PesoMaxEquipaje.values().length; i++) {
+            System.out.println((i + 1) + ") " + PesoMaxEquipaje.values()[i].name());
+        }
+        int pesoMax = scanner.nextInt();
+        scanner.nextLine();
+        PesoMaxEquipaje pesoMaximo = PesoMaxEquipaje.values()[pesoMax - 1];
+        Bus newBus = new Bus(idBus, asientos, pesoMaximo);
+        buses.add(newBus);
+
+        System.out.println("Bus añadido con exito.");
     }
 
     // You can implement these methods later if needed

@@ -28,6 +28,7 @@ public class Pasajero extends Persona {
         this.edad = edad;
         this.id = Integer.parseInt(id);
         pasajerosEnSistema.add(this);
+        this.maletas = new ArrayList<>();
     }
 
     // Getters y Setters//
@@ -144,7 +145,7 @@ public class Pasajero extends Persona {
         LocalDateTime nowTime = LocalDateTime.now(); // Obtengo el tiempo exacto de solicitud
         // Diferencia en segundos reales
         long segundosReales = Duration.between(horaZero, nowTime).getSeconds();
-        //Diferencia Simulada
+        // Diferencia Simulada
         long diferenciaZero = (long) (segundosReales * RATIO);
         String mensaje = "";
         int numReembolsoDispUser = this.getNumReembolsoDisp();
@@ -220,64 +221,71 @@ public class Pasajero extends Persona {
         }
     }
 
-    public Factura comprarTiquete(String lugarInicio, String lugarFinal, String metodoPago, LocalDateTime horaZero,
-            Scanner scanner) {
-        ArrayList<Ruta> rutasDisponibles = Ruta.filtrarRutas(lugarInicio, lugarFinal);
-        if (rutasDisponibles.isEmpty()) {
-            System.out.println("No hay rutas disponibles para ese trayecto.");
-            return null;
-        }
-
-        System.out.println("Rutas disponibles:");
-        for (int i = 0; i < rutasDisponibles.size(); i++) {
-            Ruta ruta = rutasDisponibles.get(i);
-            System.out.println((i + 1) + ". " + ruta);
-        }
-
-        int opcionRuta;
-        do {
-            System.out.print("Seleccione una ruta: ");
-            opcionRuta = scanner.nextInt();
-        } while (opcionRuta < 1 || opcionRuta > rutasDisponibles.size());
-
-        Ruta rutaSeleccionada = rutasDisponibles.get(opcionRuta - 1);
+    public Factura comprarTiquete(Ruta rutaSeleccionada, String metodoPago, LocalDateTime horaZero, Scanner scanner,
+            Pasajero pasajero) {
+        String lugarInicio = String.valueOf(rutaSeleccionada.getLugarInicio());
+        String lugarFinal = String.valueOf(rutaSeleccionada.getLugarFinal());
         Bus busAsignado = rutaSeleccionada.getBusAsociado();
 
         System.out.println("Asientos disponibles en el bus " + busAsignado.getPlaca() + ":");
-        Asiento[] asientos = busAsignado.getAsientos().toArray(new Asiento[0]);
-        for (int i = 0; i < asientos.length; i++) {
-            if (asientos[i].isEstado()) {
-                System.out.print((i + 1) + " ");
+        ArrayList<Asiento> asientos = busAsignado.getAsientos();
+        int contadorAsientos = 0;
+        for (int i = 0; i < asientos.size(); i++) {
+            if (asientos.get(i).isEstado()) {
+                if (i + 1 < 10) {
+                    System.out.print((i + 1) + "  |_| ");
+
+                } else if (i + 1 == 10) {
+                    System.out.print((i + 1) + " |_| ");
+
+                } else {
+                    System.out.print((i + 1) + " |_| ");
+
+                }
+                contadorAsientos++;
             } else {
-                System.out.print("X ");
+                System.out.print(" |X| ");
+            }
+            if (contadorAsientos % 2 == 0) {
+                System.out.print("     ");
+                contadorAsientos = -2;
             }
             if ((i + 1) % 4 == 0) {
                 System.out.println();
             }
         }
 
-        int opcionAsiento;
+        int opcionAsiento = 0;
         do {
             System.out.print("Seleccione un asiento: ");
+
             opcionAsiento = scanner.nextInt();
-        } while (opcionAsiento < 1 || opcionAsiento > asientos.length || !asientos[opcionAsiento - 1].isEstado());
 
-        Asiento asientoSeleccionado = asientos[opcionAsiento - 1];
+            if (opcionAsiento < 1 || opcionAsiento > asientos.size() || !asientos.get(opcionAsiento - 1).isEstado()) {
+                System.out.println("El asiento seleccionado no está disponible.");
+
+                opcionAsiento = scanner.nextInt();
+            }
+
+        } while (opcionAsiento < 1 || opcionAsiento > asientos.size() || !asientos.get(opcionAsiento - 1).isEstado());
+
+        Asiento asientoSeleccionado = asientos.get(opcionAsiento - 1);
         asientoSeleccionado.setEstado(false);
-        asientoSeleccionado.setUsuario(this);
-        this.setAsiento(asientoSeleccionado);
+        asientoSeleccionado.setUsuario(pasajero);
+        pasajero.setAsiento(asientoSeleccionado);
 
-        double valorTiquete = Contabilidad.calcularValorTiquete(rutaSeleccionada, lugarInicio, lugarFinal);
+        double valorTiquete = Contabilidad.calcularValorTiquete(rutaSeleccionada);
 
         // Calculate discount based on age
-        double descuento = this.getEdad() < 18 ? 0.1 : 0;
+        double descuento = pasajero.getEdad() < 18 ? 0.1 : 0;
         valorTiquete *= (1 - descuento);
 
-        System.out.println("El valor del tiquete es: " + valorTiquete);
+        System.out.println("El valor del tiquete es: " + valorTiquete + "USD");
 
         // Create and return the invoice
-        Factura nuevaFactura = new Factura(this.getNombre(), this.getId(), valorTiquete, 1, asientoSeleccionado,
-                LocalDateTime.now(), this.getMaletas().size(), rutaSeleccionada, lugarInicio, lugarFinal, metodoPago);
+        Factura nuevaFactura = new Factura(pasajero.getNombre(), pasajero.getId(), valorTiquete, 1, asientoSeleccionado,
+                LocalDateTime.now(), pasajero.getMaletas().size(), rutaSeleccionada, lugarInicio, lugarFinal,
+                metodoPago);
         Contabilidad.registrarVenta(nuevaFactura);
         this.setFactura(nuevaFactura);
         return nuevaFactura;
