@@ -139,14 +139,18 @@ public class Pasajero extends Persona {
 
     public ArrayList<Object> solicitarReembolso(int idPasajeroUser, int idFacturaUser, LocalDateTime horaZero) {
         ArrayList<Object> respuesta = new ArrayList<>();
+        double RATIO = 86400.0 / 10.0; // 10 segundos reales = 1 día
         // Calculo la diferencia con la fecha de inicio del programa
         LocalDateTime nowTime = LocalDateTime.now(); // Obtengo el tiempo exacto de solicitud
-        Duration diferenciaZero = Duration.between(horaZero, nowTime);
+        // Diferencia en segundos reales
+        long segundosReales = Duration.between(horaZero, nowTime).getSeconds();
+        //Diferencia Simulada
+        long diferenciaZero = (long) (segundosReales * RATIO);
         String mensaje = "";
         int numReembolsoDispUser = this.getNumReembolsoDisp();
         // Verificar si la diferencia es mayor a un año (en segundos)
         long secondsInOneYear = 365L * 24 * 60 * 60; // 365 días en segundos
-        if (diferenciaZero.getSeconds() > secondsInOneYear) {
+        if (diferenciaZero > secondsInOneYear) {
             numReembolsoDispUser = 2;
         } else if (numReembolsoDispUser == 0) {
             mensaje = "El Pasajero no tiene mas reembolsos por este ano, segun los terminos y condiciones";
