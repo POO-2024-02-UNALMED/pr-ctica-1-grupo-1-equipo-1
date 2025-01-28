@@ -17,6 +17,12 @@ public class Ruta extends Red {
     private Parada lugarInicio;
     private Parada lugarFinal;
     private Parada[] paradas;
+    private float distanciaRuta;
+
+            // Constantes de dificultad
+    public static final float DIFICULTAD_BAJA = 20; // km
+    public static final float DIFICULTAD_MEDIA = 40; // km
+    public static final float DIFICULTAD_ALTA = 60; // km
 
 
 
@@ -292,6 +298,30 @@ public class Ruta extends Red {
             }
         }
         return rutasAlternativas;
+    }
+        public String evaluarComplejidad(float distanciaRuta) {
+
+        if (distanciaRuta <= DIFICULTAD_BAJA) {
+            return "La ruta" + lugarInicio + "-" + lugarFinal +
+                    "cuenta con una dificultad BAJA";
+
+        } else if ((DIFICULTAD_BAJA < distanciaRuta) &&
+                (distanciaRuta <= DIFICULTAD_MEDIA) && DIFICULTAD_ALTA > distanciaRuta) {
+            return "La ruta" + lugarInicio + "-" + lugarFinal +
+                    "cuenta con una dificultad Media";
+        }
+        return "La ruta" + lugarInicio + "-" + lugarFinal +
+                "cuenta con una dificultad ALTA";
+
+    }
+
+    public void evaluarBonificacion(Ruta ruta)
+    {
+      if( ruta.distanciaRuta >= 40)
+      {
+        float bonificacion = ruta.distanciaRuta*4;
+        ruta.choferAsociado.aumentarSueldo((int) bonificacion);
+      }
     }
 
 }

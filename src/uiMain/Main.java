@@ -157,8 +157,8 @@ public class Main {
                     if (asientos[i].isEstado()) {
                         System.out.print((i + 1) + " ");
                     } else {
-                        System.out.print("X ");
-                    }
+                       System.out.print("X ");
+                    } 
                     if ((i + 1) % 4 == 0) {
                         System.out.println();
                     }
@@ -188,11 +188,15 @@ public class Main {
                 // Lógica para ver pasajes comprados (pendiente de implementar)
                 break;
             case 4: // Funcionalidad 3 Reembolso de Tiquete
+            System.out.println("=============================================");
+            System.out.println(" Bienvenido al sistema de reembolsos de tiquetes ");
+            System.out.println("=============================================");
+            System.out.println("");
                 System.out.print("Para hacerse efectivo el reembolso se le pediran una serie de datos" +
                         "\nAntes de esto tenga en cuenta que el dinero reembolsado" +
                         "\nSera ingresado a su monedero virtual," +
                         "\nQuiere seguir el proceso?");
-                System.out.println("1. Sí");
+                System.out.println("\n1. Sí");
                 System.out.println("2. No");
                 Scanner sc = new Scanner(System.in);
                 int respuestaIngreso = sc.nextInt();
@@ -203,7 +207,7 @@ public class Main {
                     break;
                 }
                 System.out.println("ingrese su nombre exactamente como esta en la factura");
-                String nombrePasajero = sc.nextLine();
+                String nombrePasajero = scanner.next();
                 System.out.println("ingrese su numero de documento");
                 int numId = sc.nextInt();
                 System.out.println("ingrese el numero de la factura");
@@ -224,21 +228,25 @@ public class Main {
                 // Se Hacen las primeras Comprobaciones superficiales
                 String mensaje1 = (String) respuesta.get(0);
                 System.out.println(mensaje1);
+                System.out.println("=============================================");
                 // Si el Proceso sigue Se verificara si existe el Bus asociado
                 if (mensaje1.equals("Su solicitud sigue en proceso, valoramos su paciencia y gracias por escojernos")) {
                     Factura factura1 = (Factura) respuesta.get(1);
                     String mensaje2 = factura1.verificarBusAsociado();
                     System.out.println(mensaje2);
+                    System.out.println("=============================================");
                     // Si el proceso Sigue Se verificara si existe una Ruta asociada
                     if (mensaje2.equals(
                             "Existe un Bus Asociado a la ruta de la factura, Su solicitud seguira en proceso")) {
                         String mensaje3 = factura1.verificarRutaAsociada();
                         System.out.println(mensaje3);
+                        System.out.println("=============================================");
 
                         if (mensaje3.equals(
                                 "El asiento liberado puede ser reservado nuevamente, Su reembolso sigue en proceso")) {
 
                             System.out.println("Ingrese el Numero de Maletas del Pasajero");
+                            System.out.println("=============================================");
                             int cantidadMaletas = sc.nextInt();
                             // Creamos una array para poder rectificar si dichos identificadores si son
                             // correctos
@@ -246,6 +254,7 @@ public class Main {
 
                             for (int index = 0; index < cantidadMaletas; index++) {
                                 System.out.println("Ingrese el identificador de la maleta");
+                                System.out.println("=============================================");
                                 Integer numMaleta = sc.nextInt();
                                 // Verificamos que la maleta si existe en el bus asociado a la factura
                                 boolean verificacion = factura1.verificarMaletaBusAsociado(numMaleta);
@@ -258,6 +267,7 @@ public class Main {
                                     System.out.println("Desea volver a ingresar otra vez el numero de la maleta");
                                     System.out.println("1. Sí");
                                     System.out.println("2. No");
+                                    System.out.println("=============================================");
                                     int respuestaMaleta = sc.nextInt();
                                     if (respuestaMaleta == 1) {
                                         index--;
@@ -283,7 +293,9 @@ public class Main {
                                 pasajero1.AgregarWallet(Contabilidad.montoReembolso(factura1));
                                 System.out.println("Su reembolso ha sido agregado a su wallet");
                                 System.out.println("Su wallet actual es: " + pasajero1.getWallet());
+                                System.out.println("=============================================");
                                 // Ejecucion Correcta
+                                
                                 break;
 
                             } else {
