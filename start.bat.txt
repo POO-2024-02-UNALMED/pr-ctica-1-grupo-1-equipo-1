@@ -1,0 +1,3 @@
+java -jar (nombre que le diste más atras).jar
+@echo off
+pause
