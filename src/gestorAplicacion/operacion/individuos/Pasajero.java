@@ -15,7 +15,7 @@ import java.time.Duration;
 public class Pasajero extends Persona {
 
     // Atributos //
-    private static ArrayList<Pasajero> pasajerosEnSistema;
+    private static ArrayList<Pasajero> pasajerosEnSistema = new ArrayList<>();;
     private ArrayList<Maleta> maletas;
     private double wallet;
     private Factura factura;
