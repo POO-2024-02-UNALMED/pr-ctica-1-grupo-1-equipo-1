@@ -53,7 +53,7 @@ public class Chofer extends Persona {
     }
      public void aumentarSueldo(int sueldo) {
         this.sueldo += sueldo;
-
+     }
     public int getCantidadHorasConducidas() {
         return cantidadHorasConducidas;
     }

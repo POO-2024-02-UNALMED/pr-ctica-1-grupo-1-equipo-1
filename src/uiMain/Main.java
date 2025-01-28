@@ -134,7 +134,7 @@ public class Main {
                        System.out.print((i + 1) + " ");
                     } else {
                        System.out.print("X ");
-                    }
+                    } 
                     if ((i + 1) % 4 == 0) {
                        System.out.println();
                     }
@@ -162,11 +162,15 @@ public class Main {
                 // Lógica para ver pasajes comprados (pendiente de implementar)
                 break;
             case 4: // Funcionalidad 3 Reembolso de Tiquete
+            System.out.println("=============================================");
+            System.out.println(" Bienvenido al sistema de reembolsos de tiquetes ");
+            System.out.println("=============================================");
+            System.out.println("");
                 System.out.print("Para hacerse efectivo el reembolso se le pediran una serie de datos" +
                         "\nAntes de esto tenga en cuenta que el dinero reembolsado" +
                         "\nSera ingresado a su monedero virtual," +
                         "\nQuiere seguir el proceso?");
-                System.out.println("1. Sí");
+                System.out.println("\n1. Sí");
                 System.out.println("2. No");
                 Scanner sc = new Scanner(System.in);
                 int respuestaIngreso = sc.nextInt();
@@ -177,7 +181,7 @@ public class Main {
                     break;
                 }
                 System.out.println("ingrese su nombre exactamente como esta en la factura");
-                String nombrePasajero = sc.nextLine();
+                String nombrePasajero = scanner.next();
                 System.out.println("ingrese su numero de documento");
                 int numId = sc.nextInt();
                 System.out.println("ingrese el numero de la factura");

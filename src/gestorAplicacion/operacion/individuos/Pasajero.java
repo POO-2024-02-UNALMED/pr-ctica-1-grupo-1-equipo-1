@@ -27,6 +27,7 @@ public class Pasajero extends Persona {
         this.nombre = nombre;
         this.edad = edad;
         this.id = Integer.parseInt(id);
+        pasajerosEnSistema.add(this);
     }
 
     // Getters y Setters//

@@ -65,11 +65,6 @@ public class Contabilidad implements Serializable {
         return tarifaBase + porcentajeReembolso + tarifaPorMetodo;
     }
 
-    public static double calcularDescuentos(Factura factura) {
-        double descuento = 0.0;
-
-
-        }
 
     public static double calcularDescuentos(Factura factura) {
         double descuento = 0.0;
